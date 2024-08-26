@@ -12,7 +12,7 @@ function App() {
     {
       icon: "?",
       title: "Bill Split",
-      description: "coming soon.",
+      description: "App Store app to split bills with friends.",
       status: "Soon"
     },
     {
