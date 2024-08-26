@@ -1,102 +1,103 @@
 import React, { useState } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { motion, useAnimation, AnimatePresence } from 'framer-motion';
-import './App.css';
-import Layout from './components/Layout';
-import Hero from './components/Hero';
-import ProjectShowcase from './components/ProjectShowcase';
-import ProjectDetails from './components/ProjectDetails';
+import { motion } from 'framer-motion';
 
 function App() {
-  const [mode, setMode] = useState('day'); // 'day' or 'night'
-  const [key, setKey] = useState(0); // New state to manage re-rendering more distinctly
-  const [selectedProject, setSelectedProject] = useState(null);
-  const controls = useAnimation();
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    rootMargin: '-100px 0px',
-  });
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const toggleMode = () => {
-    setMode(mode === 'day' ? 'night' : 'day');
-    setKey(prev => prev + 1); // Increase key to force re-render
-  };
-
-  const handleProjectClick = (project) => {
-    setSelectedProject(project);
-  };
-
-  const handleCloseProject = () => {
-    setSelectedProject(null);
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
   };
 
   const projects = [
     {
-      id: 1,
-      title: "MECHEAL BEAUREGARD",
-      description: "NextJs, Tailwind CSS",
-      imageUrl: "https://mockupcloud-themety.imgix.net/uploads/images/2024/03/12/Image0008_copy.jpg?auto=compress,format&fit=clip,max&w=1170",
-      detailsText: "Your text for project 1 here",
+      icon: "?",
+      title: "the web starter kit",
+      description: "coming soon.",
+      status: "Soon"
     },
     {
-      id: 2,
-      title: "BILLIFY",
-      description: "JS, Flutter",
-      imageUrl: "https://mockupcloud-themety.imgix.net/uploads/images/2024/03/12/Image0008_copy.jpg?auto=compress,format&fit=clip,max&w=1170",
-      detailsText: "Your text for project 2 here",
+      icon: "👾",
+      title: "uilabs",
+      description: "I share UI experiments and components I code.",
+      status: "Live"
     },
     {
-      id: 3,
-      title: "BILLIFY",
-      description: "JS, Flutter",
-      imageUrl: "https://mockupcloud-themety.imgix.net/uploads/images/2024/03/12/Image0008_copy.jpg?auto=compress,format&fit=clip,max&w=1170",
-      detailsText: "Your text for project 1 here",
-    },
+      icon: "■",
+      title: "ui engineering 101 for designers",
+      description: "I teach designers how to build polished components.",
+      status: "Live"
+    }
   ];
 
-  const fadeVariants = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1, transition: { duration: 0.5 } },
-    exit: { opacity: 0, transition: { duration: 0.5 } }
-  };
+  const collaborators = [
+    "@emilkowalski_", "@shadcn", "@fat", "@mdo", "@shuding_", "@alexanton",
+    "@jaredpalmer", "@jjcrosby", "@pixeljanitor", "@almonk", "@sklcrn",
+    "@sambecker", "@max_leiter", "@welirabbit_", "@joeungraceyun", "@nandafyi"
+  ];
 
   return (
-    <Layout mode={mode} toggleMode={toggleMode}>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={key} // Using the new state to ensure key changes
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          variants={fadeVariants}
-        >
-          <Hero key={key} />
-          <motion.div
-            id="projects"
-            className="flex flex-wrap justify-center items-start mx-auto my-12 gap-x-5"
-            key={key}
-          >
-            {projects.map((project, i) => (
-              <ProjectShowcase
-                key={project.id}
-                title={project.title}
-                description={project.description}
-                imageUrl={project.imageUrl}
-                onViewClick={() => handleProjectClick(project)}
-              />
+    <div className={`min-h-screen p-8 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
+      <button
+        onClick={toggleDarkMode}
+        className="fixed top-4 right-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+      >
+        {isDarkMode ? '☀️' : '🌙'}
+      </button>
+
+      <div className="max-w-3xl mx-auto">
+        <div className="mb-8">
+          <span className="text-4xl mb-4">🕹️</span>
+          <h1 className="text-4xl font-bold mb-4">
+            I'm a software designer building things for the web.
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400">
+            Currently Staff Product Designer designing and coding Pierre, the new way to build software.
+            Prior Senior Product Designer at Vercel, leading product design for AI and Marketplace. I'm
+            passionate about UI engineering, so I spend a lot of time coding and crafting my own work,
+            creating tools that empower people to express themselves in the world.
+          </p>
+        </div>
+
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4 text-gray-500 dark:text-gray-400">~/side projects</h2>
+          {projects.map((project, index) => (
+            <motion.div
+              key={index}
+              className="flex items-center mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <span className="text-2xl mr-4">{project.icon}</span>
+              <div className="flex-grow">
+                <h3 className="font-semibold">{project.title}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{project.description}</p>
+              </div>
+              <span className={`text-sm ${project.status === 'Live' ? 'text-green-500' : 'text-gray-500'}`}>
+                • {project.status}
+              </span>
+            </motion.div>
+          ))}
+        </div>
+
+        <div>
+          <h2 className="text-xl font-semibold mb-4 text-gray-500 dark:text-gray-400">~/some amazing people I have collaborated with</h2>
+          <div className="flex flex-wrap gap-2">
+            {collaborators.map((collaborator, index) => (
+              <motion.span
+                key={index}
+                className="bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-sm"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                {collaborator}
+              </motion.span>
             ))}
-          </motion.div>
-          {selectedProject && (
-            <ProjectDetails
-              key={key}
-              project={selectedProject}
-              onClose={handleCloseProject}
-              detailsText={selectedProject.detailsText}
-            />
-          )}
-        </motion.div>
-      </AnimatePresence>
-    </Layout>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
