@@ -4,25 +4,48 @@ import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView.js";
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLiveVisible, setIsLiveVisible] = useState(true);
 
   const skillsRef = useRef(null);
   const educationRef = useRef(null);
+  const projectsRef = useRef(null);
 
+  const isProjectsInView = useInView(projectsRef, { threshold: 0.1 });
   const isSkillsInView = useInView(skillsRef, { threshold: 0.1 });
   const isEducationInView = useInView(educationRef, { threshold: 0.1 });
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // Check if user has a saved preference
+    if (typeof window !== "undefined") {
+      const savedMode = localStorage.getItem("darkMode");
+      if (savedMode !== null) {
+        return savedMode === "true";
+      }
+    }
+    // If no saved preference, use system preference
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    // Update class on html element
+    document.documentElement.classList.toggle("dark", isDarkMode);
+    // Save user preference
+    localStorage.setItem("darkMode", isDarkMode);
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    // Listen for changes in system color scheme
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e) => {
+      setIsDarkMode(e.matches);
+    };
+    mediaQuery.addListener(handleChange);
+    return () => mediaQuery.removeListener(handleChange);
+  }, []);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
   };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsLiveVisible((prev) => !prev);
-    }, 1500);
-    return () => clearInterval(interval);
-  }, []);
 
   const education = [
     {
@@ -45,7 +68,7 @@ function App() {
       title: "Bill Split",
       description:
         "Cross-platform bill splitting app using Flutter with perfect bill splitting algorithm.",
-      status: "Coming Soon",
+      status: "In Development",
       url: null,
     },
     {
@@ -72,13 +95,80 @@ function App() {
       status: "Live",
       url: "https://github.com/yourusername/email-asterisk-decoder",
     },
+
     {
-      icon: "🔒",
-      title: "Outline VPN",
+      icon: "🏢",
+      title: "Nedea",
       description:
-        "Hosted and managed VPN Servers using Shadowsocks on various cloud platforms.",
-      status: "Live",
-      url: "https://outline.example.com",
+        "ERP application for document analysis and data extraction using AI technologies.",
+      status: "In Development",
+      url: null,
+    },
+    {
+      icon: "📄",
+      title: "AIResume",
+      description:
+        "AI-powered resume tailoring system with frontend and backend components.",
+      status: "In Development",
+      url: null,
+    },
+    {
+      icon: "📝",
+      title: "Textara",
+      description:
+        "Text analysis and processing tool with JavaScript frontend and C# backend.",
+      status: "In Development",
+      url: null,
+    },
+    {
+      icon: "📚",
+      title: "StudyHub",
+      description:
+        "Educational platform with JavaScript frontend and backend components.",
+      status: "In Development",
+      url: null,
+    },
+    {
+      icon: "💭",
+      title: "Dream",
+      description:
+        "C++ project exploring dream analysis or simulation (details not provided).",
+      status: "Public",
+      url: "https://github.com/yourusername/dream",
+    },
+    {
+      icon: "🍳",
+      title: "Cookify",
+      description:
+        "C++ application for recipe management or cooking assistance.",
+      status: "Public",
+      url: "https://github.com/yourusername/cookify",
+    },
+
+    {
+      icon: "💼",
+      title: "CryptoVault",
+      description:
+        "JavaScript-based cryptocurrency management or storage solution.",
+      status: "Public",
+      url: "https://github.com/yourusername/cryptovault",
+    },
+    {
+      icon: "🔗",
+      title: "Blockchain Backend",
+      description:
+        "Python-based backend system for blockchain-related applications.",
+      status: "Public",
+      url: "https://github.com/yourusername/blockchain_backend",
+    },
+
+    {
+      icon: "✉️",
+      title: "Generate Email Address",
+      description:
+        "Tool for generating or predicting email addresses (details not provided).",
+      status: "Private",
+      url: null,
     },
   ];
 
@@ -111,8 +201,13 @@ function App() {
   ];
 
   const email = "hey@aeden.me";
-  const linkedinUrl = "https://www.linkedin.com/in/aeden-thomas";
-  const githubUrl = "https://github.com/aeden-thomas";
+  const linkedinUrl = "https://www.linkedin.com/in/aedenthomas/";
+  const githubUrl = "https://github.com/AedenThomas/";
+
+  const sortedProjects = projects.sort((a, b) => {
+    const order = ["Live", "In Development", "Public", "Private"];
+    return order.indexOf(a.status) - order.indexOf(b.status);
+  });
 
   return (
     <div
@@ -211,66 +306,88 @@ function App() {
           </div>
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4 text-gray-500 dark:text-gray-400">
-            ~/projects
+        <div ref={projectsRef} className="mb-8">
+          <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            ~/side projects
           </h2>
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              className={`flex items-start mb-4 p-3 rounded-lg transition-all duration-200 ease-in-out hover:bg-navy-800 dark:hover:bg-navy-900 ${
-                project.url ? "cursor-pointer" : ""
-              }`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ scale: 1.01 }}
-              onClick={() => project.url && window.open(project.url, "_blank")}
-            >
-              <span className="text-2xl mr-4 mt-1 flex-shrink-0">
-                {project.icon}
-              </span>
-              <div className="flex-grow min-w-0">
-                <div className="flex justify-between items-center">
-                  <h3 className="font-semibold truncate mr-2 group-hover:text-white">
-                    {project.title}
-                  </h3>
-                  <button
-                    className={`text-sm rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative ${
-                      project.status === "Live"
-                        ? "border-green-500 text-green-500 w-[4.75rem] pl-3 pr-0"
-                        : "border-gray-300 text-gray-500 w-32 px-3"
-                    }`}
-                  >
-                    <AnimatePresence>
-                      {project.status === "Live" && isLiveVisible && (
-                        <motion.span
-                          className="absolute left-2 w-2 h-2 rounded-full bg-green-500"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.5 }}
-                        />
-                      )}
-                    </AnimatePresence>
-                    <span
-                      className={`flex-grow text-center ${
-                        project.status === "Live" ? "mr-1" : ""
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={
+              isProjectsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+            }
+            transition={{ duration: 0.5 }}
+          >
+            {sortedProjects.map((project, index) => (
+              <motion.div
+                key={index}
+                className={`flex items-start mb-1 p-2 rounded-lg transition-all duration-200 ease-in-out ${
+                  project.url
+                    ? "hover:bg-navy-800 dark:hover:bg-navy-900 cursor-pointer"
+                    : ""
+                } ${
+                  project.status === "Coming Soon"
+                    ? ""
+                    : "hover:bg-navy-800 dark:hover:bg-navy-900"
+                }`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={
+                  project.status !== "Coming Soon" ? { scale: 1.01 } : {}
+                }
+                onClick={() =>
+                  project.url && window.open(project.url, "_blank")
+                }
+              >
+                <span className="text-2xl mr-4 mt-1 flex-shrink-0">
+                  {project.icon}
+                </span>
+                <div className="flex-grow min-w-0">
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-semibold truncate mr-2 group-hover:text-white">
+                      {project.title}
+                    </h3>
+                    <button
+                      className={`text-sm rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative ${
+                        project.status === "Live"
+                          ? "border-green-500 text-green-500 w-[4.75rem] pl-3 pr-0"
+                          : project.status === "Public"
+                          ? "border-blue-500 text-blue-500 w-20 px-3"
+                          : project.status === "In Development"
+                          ? "border-yellow-500 text-yellow-500 w-32 px-3"
+                          : "border-gray-300 text-gray-500 w-32 px-3"
                       }`}
                     >
-                      {project.status}
-                    </span>
-                  </button>
+                      <AnimatePresence>
+                        {project.status === "Live" && isLiveVisible && (
+                          <motion.span
+                            className="absolute left-2 w-2 h-2 rounded-full bg-green-500"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                          />
+                        )}
+                      </AnimatePresence>
+                      <span
+                        className={`flex-grow text-center ${
+                          project.status === "Live" ? "mr-1" : ""
+                        }`}
+                      >
+                        {project.status}
+                      </span>
+                    </button>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 break-words group-hover:text-gray-200">
+                    {project.description}
+                  </p>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 break-words group-hover:text-gray-200">
-                  {project.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
 
         <div ref={skillsRef} className="mb-8">
-          <h2 className="text-xl font-semibold mb-4 text-gray-500 dark:text-gray-400">
+          <h2 className="text-xl font-semibold mb-5 text-gray-500 dark:text-gray-400">
             ~/skills
           </h2>
           <motion.div
@@ -304,7 +421,7 @@ function App() {
         </div>
 
         <div ref={educationRef} className="mb-8">
-          <h2 className="text-xl font-semibold mb-4 text-gray-500 dark:text-gray-400">
+          <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
             ~/education
           </h2>
           <motion.div
@@ -317,7 +434,7 @@ function App() {
             {education.map((edu, index) => (
               <motion.div
                 key={index}
-                className="mb-4 p-3 rounded-lg transition-all duration-200 ease-in-out hover:bg-navy-800 dark:hover:bg-navy-900"
+                className="mb-4 p-2 rounded-lg transition-all duration-200 ease-in-out hover:bg-navy-800 dark:hover:bg-navy-900"
                 initial={{ opacity: 0, y: 20 }}
                 animate={
                   isEducationInView
