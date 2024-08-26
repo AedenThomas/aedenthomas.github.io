@@ -11,7 +11,7 @@ function App() {
   const projects = [
     {
       icon: "?",
-      title: "the web starter kit",
+      title: "Bill Split",
       description: "coming soon.",
       status: "Soon"
     },
