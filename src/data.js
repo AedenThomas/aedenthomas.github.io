@@ -1,12 +1,12 @@
 export const research = [
   {
-    title: "An Example Publication Title",
-    authors: "Thomas, A., Smith, J., & Jones, K.",
-    journal: "Journal of Computer Science",
-    year: 2023,
-    doi: "10.1234/example.doi.2023"
+    title:
+      "Military Split: A Flutter Mobile Application for Efficient Bill Splitting Based on Individual Consumption",
+    authors: "Aeden Geo Thomas, Kavana N. Murthy, Anitha H M, Jayarekha P",
+    journal: "ICT for Intelligent Systems.",
+    year: 2024,
+    doi: "10.1007/978-981-97-6681-9",
   },
-  
 ];
 export const coursework = [
   "Engineering Mathematics - 1",
