@@ -157,47 +157,41 @@ function App() {
           </h1>
 
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-            I'm a{" "}
-            <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
-              code enthusiast
-            </span>{" "}
-            with a solid foundation in Python, Flutter, C++, C, and Unix. I've
-            been diving deep into the world of{" "}
-            <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
-              software development
-            </span>
-            , cooking up some cool mobile and web applications along the way. My
-            sweet spot? That awesome{" "}
-            <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
-              intersection where design meets engineering
-            </span>{" "}
-            – creating stuff that not only looks great but also runs like a
-            dream under the hood.
-          </p>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-            Right now, I'm on the hunt for an{" "}
-            <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
-              opportunity
-            </span>{" "}
-            where I can level up my skills and contribute to something amazing.
-            I'm all about{" "}
-            <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
-              pushing boundaries
-            </span>
-            , solving tricky problems, and bringing fresh ideas to the table. If
-            you're looking for a{" "}
-            <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
-              motivated engineer
-            </span>{" "}
-            who can blend creativity with technical know-how, I'm your person!
-            Let's team up and build some{" "}
-            <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
-              digital magic
-            </span>{" "}
-            together. Feel free to contact me if any of these interests align
-            with your research or if you have any questions. I am always open to
-            new opportunities and collaborations.
-          </p>
+  As a{" "}
+  <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+    full-stack developer
+  </span>
+  , I've built a strong foundation in React, Flutter, ASP.NET Core, and
+  C#. My journey in{" "}
+  <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
+    software development
+  </span>{" "}
+  has led me to create various mobile and web applications, always
+  striving to find that perfect{" "}
+  <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
+    balance between design and functionality
+  </span>
+  .
+</p>
+<p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+  I'm passionate about{" "}
+  <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
+    creating innovative solutions
+  </span>{" "}
+  and bringing fresh perspectives to projects. My goal is to
+  contribute to meaningful initiatives where I can apply my{" "}
+  <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
+    expertise in cross-platform and web development
+  </span>{" "}
+  using cutting-edge technologies. I'm always eager to explore new{" "}
+  <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+    challenging opportunities
+  </span>{" "}
+  that align with my interests in full-stack development and enterprise solutions.
+  Feel free to reach out if you'd like to discuss potential projects
+  or collaborations in these areas.
+</p>
+
 
           <div className="flex flex-wrap items-center justify-between mb-4">
             <div className="flex flex-wrap items-center space-x-4">
