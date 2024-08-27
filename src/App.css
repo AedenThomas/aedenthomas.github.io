@@ -5,13 +5,20 @@ body {
   font-family: 'Besley', serif;
 }
 
-/* .handwritten-font {
-  font-family: "Great Vibes", cursive;
-  font-weight: 600;
-  font-style: normal;
-  font-size: 64px; 
-  line-height: 1.2;
-} */
+.reach-out-text {
+  border-bottom: 2px dotted #4CAF50;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reach-out-text:hover {
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.blur-background {
+  filter: blur(5px);
+  transition: filter 0.3s ease;
+}
 
 .backdrop-blur {
   backdrop-filter: blur(8px);
