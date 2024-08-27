@@ -6,11 +6,11 @@ import "./App.css";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 
 const statusConfig = {
-  Live: { color: "green", width: "w-[4.75rem]" },
-  Public: { color: "blue", width: "w-20" },
-  "In Development": { color: "yellow", width: "w-40" },
-  "Coming Soon": { color: "gray", width: "w-24" },
-  Private: { color: "gray", width: "w-20" }, // Added Private with gray color and same width as Public
+  Live: { colorClass: "text-green-500 border-green-500", width: "w-[4.75rem]" },
+  Public: { colorClass: "text-blue-500 border-blue-500", width: "w-20" },
+  "In Development": { colorClass: "text-yellow-500 border-yellow-500", width: "w-40" },
+  "Coming Soon": { colorClass: "text-gray-500 border-gray-500", width: "w-24" },
+  Private: { colorClass: "text-gray-500 border-gray-500", width: "w-20" },
 };
 
 
@@ -33,9 +33,8 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
     if (status === "Private") return statusConfig["Private"];
     return statusConfig["In Development"];
   };
+  
 
-  
-  
   useEffect(() => {
     const handleScroll = () => {
       if (contentRef.current) {
@@ -77,19 +76,19 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
         whileHover={project.status !== "Coming Soon" ? { scale: 1.015 } : {}}
         onClick={openModal}
       >
-               <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
-               <div className="flex-grow min-w-0">
+        <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
+        <div className="flex-grow min-w-0">
           <div className="flex justify-between items-center">
             <h3 className="font-semibold truncate mr-2 group-hover:text-white">
               {project.title}
             </h3>
             <button
-              className={`text-sm rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative
-                ${getStatusConfig(project.status).width}
-                border-${getStatusConfig(project.status).color}-500
-                text-${getStatusConfig(project.status).color}-500
-                ${project.status === "Live" || project.status.includes("In Development") ? "pl-6 pr-3" : "px-3"}`}
-            >
+  className={`text-sm rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative
+    ${getStatusConfig(project.status).width}
+    ${getStatusConfig(project.status).colorClass}
+    ${project.status === "Live" || project.status.includes("In Development") ? "pl-6 pr-3" : "px-3"}`}
+>
+
               <AnimatePresence>
                 {project.status === "Live" && isLiveVisible && (
                   <motion.span
@@ -116,9 +115,7 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
                   </motion.span>
                 )}
               </AnimatePresence>
-              <span className="flex-grow text-center">
-                {project.status}
-              </span>
+              <span className="flex-grow text-center">{project.status}</span>
             </button>
           </div>
 

@@ -122,7 +122,13 @@ function App() {
 
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <span className="text-4xl mb-4">👨🏻‍💻</span>
+
+          <img
+            src="/Face.png"
+            alt="Face"
+            className="text-4xl mb-4"
+            style={{ width: "45px", height: "45px" }}
+          />
           <h1 className="text-4xl font-bold mb-5 mt-5 h-[2em] flex items-center">
             <AnimatePresence mode="wait">
               <AnimatedGreeting
@@ -208,15 +214,16 @@ function App() {
                 GitHub
               </a>
             </div>
-            <button
+                        <a
+              href="/Resume.pdf"
+              download
               className="text-sm bg-transparent border border-gray-300 text-gray-500 px-4 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200 mt-2 md:mt-0"
               onClick={() => {
-                // Add logic to view/download resume
                 console.log("Resume clicked");
               }}
             >
               Résumé
-            </button>
+            </a>
           </div>
         </div>
 
