@@ -41,7 +41,7 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
       <motion.div
         ref={projectRef}
         key={index}
-        className={`flex items-start mb-1 p-2 rounded-lg transition-all duration-200 ease-in-out ${
+        className={`flex items-start mb-1 p-2 rounded-lg transition-all duration-0 ease-in-out ${
           project.url
             ? "hover:bg-navy-800 dark:hover:bg-navy-900 cursor-pointer"
             : ""
@@ -53,7 +53,7 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
-        whileHover={project.status !== "Coming Soon" ? { scale: 1.01 } : {}}
+        whileHover={project.status !== "Coming Soon" ? { scale: 1.02 } : {}}
         onClick={openModal}
       >
         <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
