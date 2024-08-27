@@ -1,3 +1,44 @@
+export const research = [
+  {
+    title: "An Example Publication Title",
+    authors: "Thomas, A., Smith, J., & Jones, K.",
+    journal: "Journal of Computer Science",
+    year: 2023,
+    doi: "10.1234/example.doi.2023"
+  },
+  
+];
+export const coursework = [
+  "Engineering Mathematics - 1",
+  "Engineering Mathematics - 2",
+  "Statistics and Discrete Mathematics",
+  "Operating System",
+  "Data Structures with C",
+  "Object Oriented Programming using C++",
+  "Digital Logic Design",
+  "Computer Organization and Architecture",
+  "Web Application Development",
+  "Linear Algebra",
+  "Database Management System",
+  "Analysis and Design of Algorithms",
+  "Java Programming",
+  "Theoretical Foundations of Computations",
+  "Unix System Programming",
+  "Machine Learning",
+  "Cloud Computing",
+  "Computer Networks - 1",
+  "Advanced Python Programming",
+  "Advanced Data Structures and Algorithms",
+  "Cryptography and Network Security",
+  "Computer Networks - 2",
+  "Software Testing",
+  "Software Project Management and Finance",
+  "Social Networking and Analysis",
+  "Mobile Computing and 5G Technologies",
+  "DevOps",
+  "Information Security and Digital Forensics",
+];
+
 export const education = [
   {
     university: "University of Bath",

@@ -5,17 +5,23 @@ import useInView from "./useInView.js";
 import AnimatedGreeting from "./AnimatedGreeting.js";
 import "./App.css";
 import Project from "./Project.js";
-import { education, projects, skills } from "./data";
+import { education, projects, skills, research, coursework } from "./data";
 
 function App() {
   const [isLiveVisible, setIsLiveVisible] = useState(true);
   const greetingRef = useRef(null);
   const [greetingHeight, setGreetingHeight] = useState(0);
 
+  const courseworkRef = useRef(null);
+  const isCourseworkInView = useInView(courseworkRef, { threshold: 0.1 });
+
   const skillsRef = useRef(null);
   const educationRef = useRef(null);
   const isSkillsInView = useInView(skillsRef, { threshold: 0.1 });
   const isEducationInView = useInView(educationRef, { threshold: 0.1 });
+
+  const publicationsRef = useRef(null);
+  const isPublicationsInView = useInView(publicationsRef, { threshold: 0.1 });
 
   const greetings = [
     "Hey!",
@@ -100,13 +106,23 @@ function App() {
   const email = "hey@aeden.me";
   const linkedinUrl = "https://www.linkedin.com/in/aedenthomas/";
   const githubUrl = "https://github.com/AedenThomas/";
-
   const sortedProjects = projects.sort((a, b) => {
     const order = ["Live", "Public", "In Development", "Private"];
     const indexA = order.findIndex((status) => a.status.includes(status));
     const indexB = order.findIndex((status) => b.status.includes(status));
+  
+    if (indexA === indexB) {
+      // If both are "In Development", prioritize the one with a URL
+      if (a.status === "In Development" && b.status === "In Development") {
+        if (a.url && !b.url) return -1;
+        if (!a.url && b.url) return 1;
+      }
+      return 0;
+    }
+  
     return indexA - indexB;
   });
+  
 
   return (
     <div
@@ -142,22 +158,45 @@ function App() {
           </h1>
 
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-  I'm a <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">code enthusiast</span> with a solid foundation in Python, Flutter,
-  C++, C, and Unix. I've been diving deep into the world of <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">software
-  development</span>, cooking up some cool mobile and web applications along
-  the way. My sweet spot? That awesome <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">intersection where design meets
-  engineering</span> – creating stuff that not only looks great but also runs
-  like a dream under the hood.
-</p>
-<p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-  Right now, I'm on the hunt for an <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">opportunity</span> where I can level up
-  my skills and contribute to something amazing. I'm all about <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">pushing
-  boundaries</span>, solving tricky problems, and bringing fresh ideas to the
-  table. If you're looking for a <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">motivated engineer</span> who can blend
-  creativity with technical know-how, I'm your person! Let's team up
-  and build some <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">digital magic</span> together.
-</p>
-
+            I'm a{" "}
+            <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+              code enthusiast
+            </span>{" "}
+            with a solid foundation in Python, Flutter, C++, C, and Unix. I've
+            been diving deep into the world of{" "}
+            <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
+              software development
+            </span>
+            , cooking up some cool mobile and web applications along the way. My
+            sweet spot? That awesome{" "}
+            <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
+              intersection where design meets engineering
+            </span>{" "}
+            – creating stuff that not only looks great but also runs like a
+            dream under the hood.
+          </p>
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+            Right now, I'm on the hunt for an{" "}
+            <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+              opportunity
+            </span>{" "}
+            where I can level up my skills and contribute to something amazing.
+            I'm all about{" "}
+            <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
+              pushing boundaries
+            </span>
+            , solving tricky problems, and bringing fresh ideas to the table. If
+            you're looking for a{" "}
+            <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
+              motivated engineer
+            </span>{" "}
+            who can blend creativity with technical know-how, I'm your person!
+            Let's team up and build some{" "}
+            <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+              digital magic
+            </span>{" "}
+            together.
+          </p>
 
           <div className="flex flex-wrap items-center justify-between mb-4">
             <div className="flex flex-wrap items-center space-x-4">
@@ -316,6 +355,94 @@ function App() {
             ))}
           </motion.div>
         </div>
+
+        <div ref={publicationsRef} className="mb-8">
+          <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            ~/research
+          </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={
+              isPublicationsInView
+                ? { opacity: 1, y: 0 }
+                : { opacity: 0, y: 20 }
+            }
+            transition={{ duration: 0.5 }}
+          >
+            {research.map((pub, index) => (
+              <motion.div
+                key={index}
+                className="mb-4 p-2 rounded-lg transition-all duration-200 ease-in-out hover:bg-navy-800 dark:hover:bg-navy-900"
+                initial={{ opacity: 0, y: 20 }}
+                animate={
+                  isPublicationsInView
+                    ? { opacity: 1, y: 0 }
+                    : { opacity: 0, y: 20 }
+                }
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.01 }}
+              >
+                <h3 className="font-semibold group-hover:text-white">
+                  {pub.title}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-200">
+                  {pub.authors}
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300">
+                  {pub.journal}, {pub.year}
+                </p>
+                {pub.doi && (
+                  <a
+                    href={`https://doi.org/${pub.doi}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-500 hover:underline"
+                  >
+                    DOI: {pub.doi}
+                  </a>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+
+
+        <div ref={courseworkRef} className="mb-8">
+        <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+          ~/coursework
+        </h2>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={
+            isCourseworkInView
+              ? { opacity: 1, y: 0 }
+              : { opacity: 0, y: 20 }
+          }
+          transition={{ duration: 0.5 }}
+          className="flex flex-wrap gap-2"
+        >
+          {coursework.map((course, index) => (
+            <motion.span
+              key={index}
+              className="bg-gray-200 text-gray-700 dark:bg-gray-900 dark:text-gray-200 rounded-full px-3 py-1 text-sm cursor-pointer"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={
+                isCourseworkInView
+                  ? { opacity: 1, scale: 1 }
+                  : { opacity: 0, scale: 0.9 }
+              }
+              transition={{ delay: index * 0.05 }}
+              whileHover={{
+                scale: 1.05,
+                transition: { duration: 0.2 },
+              }}
+            >
+              {course}
+            </motion.span>
+          ))}
+        </motion.div>
+      </div>
+
       </div>
     </div>
   );
