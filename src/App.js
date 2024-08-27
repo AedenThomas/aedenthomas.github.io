@@ -6,6 +6,7 @@ import "./App.css";
 import Project from "./Project.js";
 import { education, projects, skills, research, coursework } from "./data";
 import ContactLinks from "./ContactLinks";
+import LanguageIcon from "./LanguageIcon";
 
 function App() {
   const [isLiveVisible, setIsLiveVisible] = useState(true);
@@ -14,19 +15,27 @@ function App() {
   const [isReachOutHovered, setIsReachOutHovered] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
+  const [hoveredLanguage, setHoveredLanguage] = useState(null);
+
+  const handleLanguageHover = (language) => {
+    setHoveredLanguage(language);
+  };
+
+  const handleLanguageLeave = () => {
+    setHoveredLanguage(null);
+  };
 
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  
   const handleReachOutMouseEnter = () => setIsReachOutHovered(true);
   const handleReachOutMouseLeave = () => setIsReachOutHovered(false);
 
@@ -167,22 +176,20 @@ function App() {
       }`}
     >
       {!isMobile && (
-  <div
-    className={`fixed w-5 h-5 rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2`}
-    style={{
-      left: mousePosition.x,
-      top: mousePosition.y,
-      backgroundColor: isDarkMode
-        ? "rgba(255, 255, 255, 0.5)"
-        : "rgba(0, 0, 0, 0.5)",
-      boxShadow: isDarkMode
-        ? "0 0 10px rgba(255, 255, 255, 0.5)"
-        : "0 0 10px rgba(0, 0, 0, 0.5)",
-    }}
-  />
-)}
-
-
+        <div
+          className={`fixed w-5 h-5 rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2`}
+          style={{
+            left: mousePosition.x,
+            top: mousePosition.y,
+            backgroundColor: isDarkMode
+              ? "rgba(255, 255, 255, 0.5)"
+              : "rgba(0, 0, 0, 0.5)",
+            boxShadow: isDarkMode
+              ? "0 0 10px rgba(255, 255, 255, 0.5)"
+              : "0 0 10px rgba(0, 0, 0, 0.5)",
+          }}
+        />
+      )}
 
       <button
         onClick={toggleDarkMode}
@@ -219,8 +226,66 @@ function App() {
               <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
                 full-stack developer
               </span>
-              , I've built a strong foundation in React, React Native, Flutter, ASP.NET Core,
-              and Python. My journey in{" "}
+              , I've built a strong foundation in{" "}
+              <span
+                onMouseEnter={() => handleLanguageHover("react")}
+                onMouseLeave={handleLanguageLeave}
+                className="relative"
+              >
+                React
+                <AnimatePresence>
+                  {hoveredLanguage === "react" && (
+                    <LanguageIcon language="react" />
+                  )}
+                </AnimatePresence>
+              </span>
+              ,{" "}
+              <span
+                onMouseEnter={() => handleLanguageHover("react native")}
+                onMouseLeave={handleLanguageLeave}
+                className="relative"
+              >
+                React Native
+                <AnimatePresence>
+                  {hoveredLanguage === "react native" && (
+                    <LanguageIcon language="react native" />
+                  )}
+                </AnimatePresence>
+              </span>
+              ,{" "}
+              <span
+                onMouseEnter={() => handleLanguageHover("flutter")}
+                onMouseLeave={handleLanguageLeave}
+                className="relative"
+              >
+                Flutter
+                <AnimatePresence>
+                  {hoveredLanguage === "flutter" && (
+                    <LanguageIcon language="flutter" />
+                  )}
+                </AnimatePresence>
+              </span>
+              ,{" "}
+              <span
+                onMouseEnter={() => handleLanguageHover("asp.net core")}
+                onMouseLeave={handleLanguageLeave}
+                className="relative"
+              >
+                ASP.NET Core
+          <AnimatePresence>
+            {hoveredLanguage === 'asp.net core' && <LanguageIcon language="asp.net core" />}
+          </AnimatePresence>
+        </span>, and{' '}
+        <span 
+          onMouseEnter={() => handleLanguageHover('python')}
+          onMouseLeave={handleLanguageLeave}
+          className="relative"
+        >
+          Python
+          <AnimatePresence>
+            {hoveredLanguage === 'python' && <LanguageIcon language="python" />}
+          </AnimatePresence>
+        </span>. My journey in{" "}
               <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
                 software development
               </span>{" "}
@@ -265,7 +330,6 @@ function App() {
           linkedinUrl={linkedinUrl}
           githubUrl={githubUrl}
         />
-        
 
         <div className={`${isReachOutHovered ? "blur-background" : ""}`}>
           <div className="mb-8">
