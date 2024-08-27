@@ -110,7 +110,7 @@ function App() {
     const order = ["Live", "Public", "In Development", "Private"];
     const indexA = order.findIndex((status) => a.status.includes(status));
     const indexB = order.findIndex((status) => b.status.includes(status));
-  
+
     if (indexA === indexB) {
       // If both are "In Development", prioritize the one with a URL
       if (a.status === "In Development" && b.status === "In Development") {
@@ -119,10 +119,9 @@ function App() {
       }
       return 0;
     }
-  
+
     return indexA - indexB;
   });
-  
 
   return (
     <div
@@ -144,7 +143,7 @@ function App() {
           <img
             src="/Face.png"
             alt="Face"
-            className="text-4xl mb-4"
+            className="text-4xl mb-7"
             style={{ width: "45px", height: "45px" }}
           />
           <h1 className="text-4xl font-bold mb-5 mt-5 h-[2em] flex items-center">
@@ -195,7 +194,9 @@ function App() {
             <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
               digital magic
             </span>{" "}
-            together.
+            together. Feel free to contact me if any of these interests align
+            with your research or if you have any questions. I am always open to
+            new opportunities and collaborations.
           </p>
 
           <div className="flex flex-wrap items-center justify-between mb-4">
@@ -393,10 +394,9 @@ function App() {
                 </p>
                 {pub.doi && (
                   <a
-                    href={`https://doi.org/${pub.doi}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-blue-500 hover:underline"
+                    className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-200"
                   >
                     DOI: {pub.doi}
                   </a>
@@ -406,43 +406,39 @@ function App() {
           </motion.div>
         </div>
 
-
         <div ref={courseworkRef} className="mb-8">
-        <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
-          ~/coursework
-        </h2>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={
-            isCourseworkInView
-              ? { opacity: 1, y: 0 }
-              : { opacity: 0, y: 20 }
-          }
-          transition={{ duration: 0.5 }}
-          className="flex flex-wrap gap-2"
-        >
-          {coursework.map((course, index) => (
-            <motion.span
-              key={index}
-              className="bg-gray-200 text-gray-700 dark:bg-gray-900 dark:text-gray-200 rounded-full px-3 py-1 text-sm cursor-pointer"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={
-                isCourseworkInView
-                  ? { opacity: 1, scale: 1 }
-                  : { opacity: 0, scale: 0.9 }
-              }
-              transition={{ delay: index * 0.05 }}
-              whileHover={{
-                scale: 1.05,
-                transition: { duration: 0.2 },
-              }}
-            >
-              {course}
-            </motion.span>
-          ))}
-        </motion.div>
-      </div>
-
+          <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            ~/coursework
+          </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={
+              isCourseworkInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+            }
+            transition={{ duration: 0.5 }}
+            className="flex flex-wrap gap-2"
+          >
+            {coursework.map((course, index) => (
+              <motion.span
+                key={index}
+                className="bg-gray-200 text-gray-700 dark:bg-gray-900 dark:text-gray-200 rounded-full px-3 py-1 text-sm cursor-pointer"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={
+                  isCourseworkInView
+                    ? { opacity: 1, scale: 1 }
+                    : { opacity: 0, scale: 0.9 }
+                }
+                transition={{ delay: index * 0.05 }}
+                whileHover={{
+                  scale: 1.05,
+                  transition: { duration: 0.2 },
+                }}
+              >
+                {course}
+              </motion.span>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </div>
   );

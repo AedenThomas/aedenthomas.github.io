@@ -1,7 +1,9 @@
 .App {
   text-align: center;
 }
-
+body {
+  font-family: 'Besley', serif;
+}
 
 .handwritten-font {
   font-family: "Great Vibes", cursive;
