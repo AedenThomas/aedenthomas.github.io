@@ -99,7 +99,7 @@ function App() {
   const githubUrl = "https://github.com/AedenThomas/";
 
   const sortedProjects = projects.sort((a, b) => {
-    const order = ["Live", "In Development", "Public", "Private"];
+    const order = ["Live", "Public", "In Development", "Private"];
     const indexA = order.findIndex((status) => a.status.includes(status));
     const indexB = order.findIndex((status) => b.status.includes(status));
     return indexA - indexB;

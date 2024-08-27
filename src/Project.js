@@ -3,6 +3,16 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView";
 import "./App.css";
+import { FaLock, FaLockOpen } from "react-icons/fa";
+
+const statusConfig = {
+  Live: { color: "green", width: "w-[4.75rem]" },
+  Public: { color: "blue", width: "w-20" },
+  "In Development": { color: "yellow", width: "w-40" },
+  "Coming Soon": { color: "gray", width: "w-24" },
+  Private: { color: "gray", width: "w-20" }, // Added Private with gray color and same width as Public
+};
+
 
 const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
   const projectRef = useRef(null);
@@ -15,6 +25,16 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  const getStatusConfig = (status) => {
+    if (status === "Live") return statusConfig["Live"];
+    if (status.includes("In Development")) return statusConfig["In Development"];
+    if (status === "Public") return statusConfig["Public"];
+    if (status === "Coming Soon") return statusConfig["Coming Soon"];
+    if (status === "Private") return statusConfig["Private"];
+    return statusConfig["In Development"]; // Default to In Development if no match
+  };
+  
+  
   useEffect(() => {
     const handleScroll = () => {
       if (contentRef.current) {
@@ -56,22 +76,18 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
         whileHover={project.status !== "Coming Soon" ? { scale: 1.015 } : {}}
         onClick={openModal}
       >
-        <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
+               <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
         <div className="flex-grow min-w-0">
           <div className="flex justify-between items-center">
             <h3 className="font-semibold truncate mr-2 group-hover:text-white">
               {project.title}
             </h3>
             <button
-              className={`text-sm rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative ${
-                project.status === "Live"
-                  ? "border-green-500 text-green-500 w-[4.75rem] pl-3 pr-0"
-                  : project.status === "Public"
-                  ? "border-blue-500 text-blue-500 w-20 px-3"
-                  : project.status.includes("In Development")
-                  ? "border-yellow-500 text-yellow-500 w-32 px-3"
-                  : "border-gray-300 text-gray-500 w-24 px-3"
-              }`}
+              className={`text-sm rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative
+                ${getStatusConfig(project.status).width}
+                border-${getStatusConfig(project.status).color}-500
+                text-${getStatusConfig(project.status).color}-500
+                ${project.status === "Live" || project.status.includes("In Development") || project.status === "Private" ? "pl-6 pr-3" : "px-3"}`}
             >
               <AnimatePresence>
                 {project.status === "Live" && isLiveVisible && (
@@ -83,15 +99,29 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
                     transition={{ duration: 0.5 }}
                   />
                 )}
+                {(project.status.includes("In Development") || project.status === "Private") && (
+                  <motion.span
+                    className="absolute left-2"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {project.status === "Private" ? (
+                      <FaLock className="text-gray-500" size={12} />
+                    ) : project.url ? (
+                      <FaLockOpen className="text-yellow-500" size={12} />
+                    ) : (
+                      <FaLock className="text-yellow-500" size={12} />
+                    )}
+                  </motion.span>
+                )}
               </AnimatePresence>
-              <span
-                className={`flex-grow text-center ${
-                  project.status === "Live" ? "mr-1" : ""
-                }`}
-              >
+              <span className="flex-grow text-center">
                 {project.status}
               </span>
             </button>
+
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 break-words group-hover:text-gray-200">
             {project.description}
@@ -113,11 +143,13 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
         </div>
       </motion.div>
 
-            <AnimatePresence>
+      <AnimatePresence>
         {isModalOpen && (
           <motion.div
             className={`fixed inset-0 ${
-              isDarkMode ? "dark-mode-backdrop" : "bg-black bg-opacity-30 backdrop-blur"
+              isDarkMode
+                ? "dark-mode-backdrop"
+                : "bg-black bg-opacity-30 backdrop-blur"
             } flex items-center justify-center z-50`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -155,7 +187,7 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
               <div className="px-6 overflow-y-auto flex-grow">
                 <div className="mb-6">
                   <img
-                    src={project.image }
+                    src={project.image}
                     alt={project.title}
                     className="w-full h-auto object-cover rounded-lg"
                   />

@@ -58,7 +58,8 @@ export const projects = [
     description:
       "ERP application for document analysis and data extraction using AI technologies. Includes modules like HR, Procurement, Invoice, Payroll, etc.",
     status: "In Development",
-    url: null,
+    url: "https://insightx.example.com",
+
     technologies: ["React", "Node.js", "AI", "OCR"],
   },
   {
