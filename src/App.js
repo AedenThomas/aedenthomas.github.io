@@ -5,8 +5,7 @@ import useInView from "./useInView.js";
 import AnimatedGreeting from "./AnimatedGreeting.js";
 import "./App.css";
 import Project from "./Project.js";
-import { education, projects, skills } from './data';
-
+import { education, projects, skills } from "./data";
 
 function App() {
   const [isLiveVisible, setIsLiveVisible] = useState(true);
@@ -27,8 +26,6 @@ function App() {
     "Hallo!",
     "你好!",
     "नमस्ते!",
-    "こんにちは!",
-    "مرحبا!",
     "여보세요!",
   ];
 
@@ -46,11 +43,16 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentGreeting((prev) => (prev + 1) % greetings.length);
-    }, 3000);
-
+      setCurrentGreeting((prev) => {
+        const next = (prev + 1) % greetings.length;
+        console.log(`Changing greeting to: ${greetings[next]} at ${new Date().toISOString()}`);
+        return next;
+      });
+    }, 5000); // Should be at least 13 seconds (3s for reveal + 10s display)
+  
     return () => clearInterval(interval);
   }, []);
+  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -91,7 +93,6 @@ function App() {
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
   };
-
 
   const email = "hey@aeden.me";
   const linkedinUrl = "https://www.linkedin.com/in/aedenthomas/";
@@ -214,7 +215,7 @@ function App() {
                 console.log("Resume clicked");
               }}
             >
-              Resume
+              Résumé
             </button>
           </div>
         </div>

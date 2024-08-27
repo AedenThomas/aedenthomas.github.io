@@ -53,7 +53,7 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
-        whileHover={project.status !== "Coming Soon" ? { scale: 1.02 } : {}}
+        whileHover={project.status !== "Coming Soon" ? { scale: 1.015 } : {}}
         onClick={openModal}
       >
         <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
@@ -113,10 +113,12 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
         </div>
       </motion.div>
 
-      <AnimatePresence>
+            <AnimatePresence>
         {isModalOpen && (
           <motion.div
-            className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur flex items-center justify-center z-50"
+            className={`fixed inset-0 ${
+              isDarkMode ? "dark-mode-backdrop" : "bg-black bg-opacity-30 backdrop-blur"
+            } flex items-center justify-center z-50`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -125,12 +127,12 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
           >
             <motion.div
               className={`
-    ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}
-    rounded-2xl w-full shadow-xl overflow-hidden m-4 flex flex-col
-    max-w-[90vw] md:max-w-2xl lg:max-w-4xl
-    max-h-[90vh] md:max-h-[80vh] lg:max-h-[90vh]
-    min-h-[50vh] md:min-h-0
-  `}
+                ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}
+                rounded-2xl w-full shadow-xl overflow-hidden m-4 flex flex-col
+                max-w-[90vw] md:max-w-2xl lg:max-w-4xl
+                max-h-[90vh] md:max-h-[80vh] lg:max-h-[90vh]
+                min-h-[50vh] md:min-h-0
+              `}
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
@@ -151,23 +153,20 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
                 </button>
               </div>
               <div className="px-6 overflow-y-auto flex-grow">
+                <div className="mb-6">
+                  <img
+                    src={project.image }
+                    alt={project.title}
+                    className="w-full h-auto object-cover rounded-lg"
+                  />
+                </div>
                 <p
                   className={`text-lg mb-6 ${
                     isDarkMode ? "text-gray-300" : "text-gray-600"
                   }`}
                 >
-                  {project.description}
+                  {project.popupDescription || project.description}
                 </p>
-                <div className="mb-6">
-                  <img
-                    src={
-                      project.image ||
-                      "https://www.apple.com/v/mac/home/ca/images/overview/consider/boc_ease_01__fubebwkx80q6_large_2x.jpg"
-                    }
-                    alt={project.title}
-                    className="w-full h-auto object-cover rounded-lg"
-                  />
-                </div>
                 <div className="flex flex-wrap gap-2 mb-4">
                   {project.technologies.map((tech, index) => (
                     <span

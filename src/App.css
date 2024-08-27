@@ -14,6 +14,11 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
+.dark-mode-backdrop {
+   background-color: rgba(24, 24, 24, 0.8);/* Dark grey with opacity */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
 
 
 .App-logo {

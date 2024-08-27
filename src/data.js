@@ -17,20 +17,22 @@ export const projects = [
   {
     icon: "💰",
     title: "Bill Split",
-    description:
-      "Cross-platform bill splitting app using Flutter with perfect bill splitting algorithm.",
+    description: "Cross-platform bill splitting app using Flutter with perfect bill splitting algorithm.",
+    popupDescription: "Bill Split is a sophisticated mobile application designed to simplify the process of splitting bills among friends, roommates, or colleagues. It uses a perfect bill splitting algorithm to ensure fair and accurate distribution of expenses. The app supports various currencies, multiple payment methods, and even handles unequal splits for those times when not everyone consumes equally.",
     status: "In Development",
     url: null,
     technologies: ["Flutter", "Dart"],
+    image: "https://www.apple.com/v/mac/home/ca/images/overview/consider/boc_ease_01__fubebwkx80q6_large_2x.jpg"
   },
   {
     icon: "🧠",
     title: "InsightX",
-    description:
-      "Video analysis web application leveraging LLM for insight extraction.",
+    description: "Video analysis web application leveraging LLM for insight extraction.",
+    popupDescription: "InsightX is a cutting-edge web application that utilizes advanced Large Language Models (LLMs) to analyze video content and extract meaningful insights. It can process various types of video content, including lectures, interviews, and presentations, providing users with key points, summaries, and even generating related questions. This tool is particularly useful for researchers, students, and content creators looking to quickly grasp the essence of video materials.",
     status: "Live",
     url: "https://insightx.example.com",
     technologies: ["React", "Node.js", "LLM API"],
+    image: "https://www.apple.com/v/mac/home/ca/images/overview/consider/boc_ease_01__fubebwkx80q6_large_2x.jpg"
   },
   {
     icon: "🎙️",
