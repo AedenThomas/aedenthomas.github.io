@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView.js";
-import AnimatedGreeting from "./AnimatedGreeting.js"; // Make sure to create this file
+import AnimatedGreeting from "./AnimatedGreeting.js";
 import "./App.css";
 
 function App() {
@@ -12,14 +12,13 @@ function App() {
 
   const skillsRef = useRef(null);
   const educationRef = useRef(null);
-  const projectsRef = useRef(null);
+  // const projectsRef = useRef(null);
 
-  const isProjectsInView = useInView(projectsRef, { threshold: 0.1 });
+  // const isProjectsInView = useInView(projectsRef, { threshold: 0.1 });
   const isSkillsInView = useInView(skillsRef, { threshold: 0.1 });
   const isEducationInView = useInView(educationRef, { threshold: 0.1 });
 
   const greetings = [
-    "नमस्ते!",
     "Hey!",
     "Hola!",
     "Bonjour!",
@@ -27,12 +26,17 @@ function App() {
     "Olá!",
     "Hallo!",
     "你好!",
+    "नमस्ते!",
     "こんにちは!",
     "مرحبا!",
     "여보세요!",
   ];
 
   const [currentGreeting, setCurrentGreeting] = useState(0);
+
+  useEffect(() => {
+    console.log("Hello, World!");
+  }, []);
 
   useEffect(() => {
     if (greetingRef.current) {
@@ -102,6 +106,8 @@ function App() {
       period: "2020–2024",
     },
   ];
+  
+  
 
   const projects = [
     {
@@ -111,6 +117,7 @@ function App() {
         "Cross-platform bill splitting app using Flutter with perfect bill splitting algorithm.",
       status: "In Development",
       url: null,
+      technologies: ["Flutter", "Dart"],
     },
     {
       icon: "🧠",
@@ -119,6 +126,7 @@ function App() {
         "Video analysis web application leveraging LLM for insight extraction.",
       status: "Live",
       url: "https://insightx.example.com",
+      technologies: ["React", "Node.js", "LLM API"],
     },
     {
       icon: "🎙️",
@@ -127,6 +135,7 @@ function App() {
         "Real-time interview assistant web application using React.js and Cohere API.",
       status: "Live",
       url: "https://interviewpal.example.com",
+      technologies: ["React", "Cohere API", "WebSocket"],
     },
     {
       icon: "📧",
@@ -135,8 +144,8 @@ function App() {
         "Python script to predict and decode emails hidden behind asterisks for OSINT.",
       status: "Live",
       url: "https://github.com/yourusername/email-asterisk-decoder",
+      technologies: ["Python", "NLP"],
     },
-
     {
       icon: "🏢",
       title: "Nedea",
@@ -144,6 +153,7 @@ function App() {
         "ERP application for document analysis and data extraction using AI technologies. Includes modules like HR, Procurement, Invoice, Payroll, etc.",
       status: "In Development",
       url: null,
+      technologies: ["React", "Node.js", "AI", "OCR"],
     },
     {
       icon: "📄",
@@ -152,6 +162,7 @@ function App() {
         "AI-powered resume tailoring system with frontend and backend components.",
       status: "In Development",
       url: null,
+      technologies: ["React", "Node.js", "AI", "NLP"],
     },
     {
       icon: "📝",
@@ -160,6 +171,7 @@ function App() {
         "Text analysis and processing tool with JavaScript frontend and C# backend.",
       status: "In Development",
       url: null,
+      technologies: ["JavaScript", "C#", "NLP"],
     },
     {
       icon: "📚",
@@ -168,6 +180,7 @@ function App() {
         "Educational platform with JavaScript frontend and backend components.",
       status: "In Development",
       url: null,
+      technologies: ["JavaScript", "Node.js", "MongoDB"],
     },
     {
       icon: "💭",
@@ -176,6 +189,7 @@ function App() {
         "C++ project exploring dream analysis or simulation (details not provided).",
       status: "Public",
       url: "https://github.com/yourusername/dream",
+      technologies: ["C++"],
     },
     {
       icon: "🍳",
@@ -184,8 +198,8 @@ function App() {
         "C++ application for recipe management or cooking assistance.",
       status: "Public",
       url: "https://github.com/yourusername/cookify",
+      technologies: ["C++", "SQLite"],
     },
-
     {
       icon: "💼",
       title: "CryptoVault",
@@ -193,6 +207,7 @@ function App() {
         "JavaScript-based cryptocurrency management or storage solution.",
       status: "Public",
       url: "https://github.com/yourusername/cryptovault",
+      technologies: ["JavaScript", "Blockchain API"],
     },
     {
       icon: "🔗",
@@ -201,8 +216,8 @@ function App() {
         "Python-based backend system for blockchain-related applications.",
       status: "Public",
       url: "https://github.com/yourusername/blockchain_backend",
+      technologies: ["Python", "Blockchain"],
     },
-
     {
       icon: "✉️",
       title: "Generate Email Address",
@@ -210,6 +225,7 @@ function App() {
         "Tool for generating or predicting email addresses (details not provided).",
       status: "Private",
       url: null,
+      technologies: ["Python", "ML"],
     },
   ];
 
@@ -247,7 +263,9 @@ function App() {
 
   const sortedProjects = projects.sort((a, b) => {
     const order = ["Live", "In Development", "Public", "Private"];
-    return order.indexOf(a.status) - order.indexOf(b.status);
+    const indexA = order.findIndex(status => a.status.includes(status));
+    const indexB = order.findIndex(status => b.status.includes(status));
+    return indexA - indexB;
   });
 
   return (
@@ -267,7 +285,7 @@ function App() {
 
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-          <span className="text-4xl mb-4">👨‍💻</span>
+          <span className="text-4xl mb-4">👨🏻‍💻</span>
           <h1 className="text-4xl font-bold mb-5 mt-5 h-[2em] flex items-center">
             <AnimatePresence mode="wait">
               <AnimatedGreeting
@@ -287,12 +305,12 @@ function App() {
             like a dream under the hood.
           </p>
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-            Right now, I'm on the hunt for an internship opportunity where I can
-            level up my skills and contribute to something amazing. I'm all
-            about pushing boundaries, solving tricky problems, and bringing
-            fresh ideas to the table. If you're looking for a motivated engineer
-            who can blend creativity with technical know-how, I'm your person!
-            Let's team up and build some digital magic together.
+            Right now, I'm on the hunt for an opportunity where I can level up
+            my skills and contribute to something amazing. I'm all about pushing
+            boundaries, solving tricky problems, and bringing fresh ideas to the
+            table. If you're looking for a motivated engineer who can blend
+            creativity with technical know-how, I'm your person! Let's team up
+            and build some digital magic together.
           </p>
 
           <div className="flex flex-wrap items-center justify-between mb-4">
@@ -411,7 +429,7 @@ function App() {
                           ? "border-green-500 text-green-500 w-[4.75rem] pl-3 pr-0"
                           : project.status === "Public"
                           ? "border-blue-500 text-blue-500 w-20 px-3"
-                          : project.status === "In Development"
+                                                    : project.status.includes("In Development")
                           ? "border-yellow-500 text-yellow-500 w-32 px-3"
                           : "border-gray-300 text-gray-500 w-24 px-3"
                       }`}
@@ -439,6 +457,21 @@ function App() {
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 break-words group-hover:text-gray-200">
                     {project.description}
                   </p>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {project.technologies.map((tech, techIndex) => (
+                     <span
+                     key={techIndex}
+                     className={`text-xs px-2 py-1 rounded-full ${
+                       isDarkMode
+                         ? "bg-gray-900 text-gray-200"
+                         : "bg-gray-200 text-gray-700"
+                     }`}
+                   >
+                     {tech}
+                   </span>
+                   
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -460,7 +493,7 @@ function App() {
             {skills.map((skill, index) => (
               <motion.span
                 key={index}
-                className="bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-800 rounded-full px-3 py-1 text-sm cursor-pointer"
+                className="bg-gray-200 text-gray-700 dark:bg-gray-900 dark:text-gray-200 rounded-full px-3 py-1 text-sm cursor-pointer"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={
                   isSkillsInView

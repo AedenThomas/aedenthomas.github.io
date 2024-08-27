@@ -1,11 +1,13 @@
+// useInView.js
 import { useEffect, useState } from 'react';
 
-function useInView(ref, options) {
+function useInView(ref, options, callback) {
   const [isInView, setIsInView] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       setIsInView(entry.isIntersecting);
+      if (callback) callback(entry.isIntersecting);
     }, options);
 
     if (ref.current) {
@@ -17,7 +19,7 @@ function useInView(ref, options) {
         observer.unobserve(ref.current);
       }
     };
-  }, [ref, options]);
+  }, [ref, options, callback]);
 
   return isInView;
 }
