@@ -10,8 +10,7 @@ export const research = [
 ];
 
 export const coursework = [
-  "Engineering Mathematics - 1",
-  "Engineering Mathematics - 2",
+  "Engineering Mathematics",
   "Statistics and Discrete Mathematics",
   "Operating System",
   "Data Structures with C",
@@ -27,11 +26,10 @@ export const coursework = [
   "Unix System Programming",
   "Machine Learning",
   "Cloud Computing",
-  "Computer Networks - 1",
+  "Computer Networks",
   "Advanced Python Programming",
   "Advanced Data Structures and Algorithms",
   "Cryptography and Network Security",
-  "Computer Networks - 2",
   "Software Testing",
   "Software Project Management and Finance",
   "Social Networking and Analysis",
@@ -39,6 +37,7 @@ export const coursework = [
   "DevOps",
   "Information Security and Digital Forensics",
 ];
+
 
 export const education = [
   {
