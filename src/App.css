@@ -10,6 +10,11 @@
   line-height: 1.2;
 }
 
+.backdrop-blur {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
 
 .App-logo {
   height: 40vmin;
