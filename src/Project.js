@@ -31,8 +31,9 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
     if (status === "Public") return statusConfig["Public"];
     if (status === "Coming Soon") return statusConfig["Coming Soon"];
     if (status === "Private") return statusConfig["Private"];
-    return statusConfig["In Development"]; // Default to In Development if no match
+    return statusConfig["In Development"];
   };
+
   
   
   useEffect(() => {
@@ -77,7 +78,7 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
         onClick={openModal}
       >
                <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
-        <div className="flex-grow min-w-0">
+               <div className="flex-grow min-w-0">
           <div className="flex justify-between items-center">
             <h3 className="font-semibold truncate mr-2 group-hover:text-white">
               {project.title}
@@ -87,7 +88,7 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
                 ${getStatusConfig(project.status).width}
                 border-${getStatusConfig(project.status).color}-500
                 text-${getStatusConfig(project.status).color}-500
-                ${project.status === "Live" || project.status.includes("In Development") || project.status === "Private" ? "pl-6 pr-3" : "px-3"}`}
+                ${project.status === "Live" || project.status.includes("In Development") ? "pl-6 pr-3" : "px-3"}`}
             >
               <AnimatePresence>
                 {project.status === "Live" && isLiveVisible && (
@@ -99,7 +100,7 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
                     transition={{ duration: 0.5 }}
                   />
                 )}
-                {(project.status.includes("In Development") || project.status === "Private") && (
+                {project.status.includes("In Development") && (
                   <motion.span
                     className="absolute left-2"
                     initial={{ opacity: 0 }}
@@ -107,9 +108,7 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5 }}
                   >
-                    {project.status === "Private" ? (
-                      <FaLock className="text-gray-500" size={12} />
-                    ) : project.url ? (
+                    {project.url ? (
                       <FaLockOpen className="text-yellow-500" size={12} />
                     ) : (
                       <FaLock className="text-yellow-500" size={12} />
@@ -121,8 +120,8 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
                 {project.status}
               </span>
             </button>
-
           </div>
+
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 break-words group-hover:text-gray-200">
             {project.description}
           </p>
