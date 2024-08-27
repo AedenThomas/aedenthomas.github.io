@@ -5,13 +5,13 @@ body {
   font-family: 'Besley', serif;
 }
 
-.handwritten-font {
+/* .handwritten-font {
   font-family: "Great Vibes", cursive;
   font-weight: 600;
   font-style: normal;
   font-size: 64px; 
   line-height: 1.2;
-}
+} */
 
 .backdrop-blur {
   backdrop-filter: blur(8px);

@@ -83,7 +83,7 @@ export const projects = [
     status: "Live",
     url: "https://ai-interviewer-beige.vercel.app/",
     technologies: ["TypeScript", "React"],
-    image: "/InterviewPal.png",
+    image: "/InterviewPal.webp",
   },
   {
     icon: "📧",
