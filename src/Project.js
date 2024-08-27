@@ -100,10 +100,14 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
               {project.title}
             </h3>
             <button
-              className={`text-sm rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative
+              className={`text-xs rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative
     ${getStatusConfig(project.status).width}
     ${getStatusConfig(project.status).colorClass}
-    ${project.status === "Live" || project.status.includes("In Development") ? "pl-6 pr-3" : "px-3"}`}
+    ${
+      project.status === "Live" || project.status.includes("In Development")
+        ? "pl-6 pr-3"
+        : "px-3"
+    }`}
             >
               <AnimatePresence>
                 {project.status === "Live" && isLiveVisible && (
