@@ -13,7 +13,20 @@ function App() {
   const [greetingHeight, setGreetingHeight] = useState(0);
   const [isReachOutHovered, setIsReachOutHovered] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
 
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  
   const handleReachOutMouseEnter = () => setIsReachOutHovered(true);
   const handleReachOutMouseLeave = () => setIsReachOutHovered(false);
 
@@ -31,13 +44,13 @@ function App() {
   const greetings = [
     "Hey!",
     "Hola!",
+    "नमस्ते!",
     "Bonjour!",
+    "你好!",
     "Ciao!",
     "Olá!",
-    "Hallo!",
-    "你好!",
-    "नमस्ते!",
     "여보세요!",
+    "Hallo!",
   ];
 
   const [currentGreeting, setCurrentGreeting] = useState(0);
@@ -59,7 +72,7 @@ function App() {
         console.log(
           `Changing greeting to: ${
             greetings[next]
-          } at ${new Date().toISOString()}`,
+          } at ${new Date().toISOString()}`
         );
         return next;
       });
@@ -153,19 +166,24 @@ function App() {
         isDarkMode ? "bg-black text-white" : "bg-white text-gray-900"
       }`}
     >
-      <div
-        className={`fixed w-5 h-5 rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2`}
-        style={{
-          left: mousePosition.x,
-          top: mousePosition.y,
-          backgroundColor: isDarkMode
-            ? "rgba(255, 255, 255, 0.5)"
-            : "rgba(0, 0, 0, 0.5)",
-          boxShadow: isDarkMode
-            ? "0 0 10px rgba(255, 255, 255, 0.5)"
-            : "0 0 10px rgba(0, 0, 0, 0.5)",
-        }}
-      />
+      {!isMobile && (
+  <div
+    className={`fixed w-5 h-5 rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2`}
+    style={{
+      left: mousePosition.x,
+      top: mousePosition.y,
+      backgroundColor: isDarkMode
+        ? "rgba(255, 255, 255, 0.5)"
+        : "rgba(0, 0, 0, 0.5)",
+      boxShadow: isDarkMode
+        ? "0 0 10px rgba(255, 255, 255, 0.5)"
+        : "0 0 10px rgba(0, 0, 0, 0.5)",
+    }}
+  />
+)}
+
+
+
       <button
         onClick={toggleDarkMode}
         className={`fixed top-4 right-4 p-2 rounded-full ${
@@ -201,8 +219,8 @@ function App() {
               <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
                 full-stack developer
               </span>
-              , I've built a strong foundation in React, Flutter, ASP.NET Core,
-              and C#. My journey in{" "}
+              , I've built a strong foundation in React, React Native, Flutter, ASP.NET Core,
+              and Python. My journey in{" "}
               <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
                 software development
               </span>{" "}
@@ -247,6 +265,7 @@ function App() {
           linkedinUrl={linkedinUrl}
           githubUrl={githubUrl}
         />
+        
 
         <div className={`${isReachOutHovered ? "blur-background" : ""}`}>
           <div className="mb-8">

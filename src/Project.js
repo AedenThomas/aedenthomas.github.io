@@ -58,6 +58,21 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
     };
   }, [isModalOpen]);
 
+  useEffect(() => {
+    const handleWheel = (e) => {
+      if (isModalOpen && contentRef.current) {
+        e.preventDefault();
+        contentRef.current.scrollTop += e.deltaY;
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+    };
+  }, [isModalOpen]);
+
   return (
     <>
       <motion.div
@@ -181,7 +196,7 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
                   ×
                 </button>
               </div>
-              <div className="px-6 overflow-y-auto flex-grow">
+              <div ref={contentRef} className="px-6 overflow-y-auto flex-grow">
                 <div className="mb-6">
                   <img
                     src={project.image}

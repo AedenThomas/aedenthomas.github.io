@@ -62,10 +62,10 @@ const ContactLinks = ({ email, linkedinUrl, githubUrl }) => {
             GitHub
           </a>
         </div>
-        <a
+                <a
           href="/Resume.pdf"
           download
-          className="text-sm bg-transparent border border-gray-300 text-gray-500 px-4 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200 mt-2 md:mt-0"
+          className="text-sm bg-transparent border border-gray-300 text-gray-500 px-4 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200 mt-2 md:mt-0 mr-2"
           onClick={() => {
             console.log("Resume clicked");
           }}

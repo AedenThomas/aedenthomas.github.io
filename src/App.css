@@ -1,20 +1,21 @@
+
 .App {
-    text-align: center;
+  text-align: center;
 }
 body {
-    font-family: "Besley", serif;
+  font-family: "Besley", serif;
 }
 
 .custom-cursor {
-    cursor: none;
+  cursor: none;
 }
 
 .custom-cursor-clickable {
-    cursor: none;
+  cursor: none;
 }
 
 * {
-    cursor: none !important;
+  cursor: none !important;
 }
 
 a,
@@ -23,8 +24,9 @@ button,
 input[type="submit"],
 input[type="reset"],
 input[type="button"] {
-    cursor: none !important;
+  cursor: none !important;
 }
+
 .reach-out-text {
     border-bottom: 2px dotted #4caf50;
     cursor: pointer;
@@ -44,6 +46,7 @@ input[type="button"] {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
+
 .dark-mode-backdrop {
     background-color: rgba(24, 24, 24, 0.95);
     backdrop-filter: blur(8px);
@@ -83,4 +86,18 @@ input[type="button"] {
     to {
         transform: rotate(360deg);
     }
+}
+
+@media (max-width: 768px) {
+  body .custom-cursor,
+  body .custom-cursor-clickable,
+  body *,
+  body a,
+  body button,
+  body [role="button"],
+  body input[type="submit"],
+  body input[type="reset"],
+  body input[type="button"] {
+    cursor: auto !important;
+  }
 }
