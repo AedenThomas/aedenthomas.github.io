@@ -45,14 +45,17 @@ function App() {
     const interval = setInterval(() => {
       setCurrentGreeting((prev) => {
         const next = (prev + 1) % greetings.length;
-        console.log(`Changing greeting to: ${greetings[next]} at ${new Date().toISOString()}`);
+        console.log(
+          `Changing greeting to: ${
+            greetings[next]
+          } at ${new Date().toISOString()}`
+        );
         return next;
       });
     }, 5000); // Should be at least 13 seconds (3s for reveal + 10s display)
-  
+
     return () => clearInterval(interval);
   }, []);
-  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -122,7 +125,6 @@ function App() {
 
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
-
           <img
             src="/Face.png"
             alt="Face"
@@ -140,21 +142,22 @@ function App() {
           </h1>
 
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-            I'm a code enthusiast with a solid foundation in Python, Flutter,
-            C++, C, and Unix. I've been diving deep into the world of software
-            development, cooking up some cool mobile and web applications along
-            the way. My sweet spot? That awesome intersection where design meets
-            engineering – creating stuff that not only looks great but also runs
-            like a dream under the hood.
-          </p>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-            Right now, I'm on the hunt for an opportunity where I can level up
-            my skills and contribute to something amazing. I'm all about pushing
-            boundaries, solving tricky problems, and bringing fresh ideas to the
-            table. If you're looking for a motivated engineer who can blend
-            creativity with technical know-how, I'm your person! Let's team up
-            and build some digital magic together.
-          </p>
+  I'm a <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">code enthusiast</span> with a solid foundation in Python, Flutter,
+  C++, C, and Unix. I've been diving deep into the world of <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">software
+  development</span>, cooking up some cool mobile and web applications along
+  the way. My sweet spot? That awesome <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">intersection where design meets
+  engineering</span> – creating stuff that not only looks great but also runs
+  like a dream under the hood.
+</p>
+<p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+  Right now, I'm on the hunt for an <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">opportunity</span> where I can level up
+  my skills and contribute to something amazing. I'm all about <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">pushing
+  boundaries</span>, solving tricky problems, and bringing fresh ideas to the
+  table. If you're looking for a <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">motivated engineer</span> who can blend
+  creativity with technical know-how, I'm your person! Let's team up
+  and build some <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">digital magic</span> together.
+</p>
+
 
           <div className="flex flex-wrap items-center justify-between mb-4">
             <div className="flex flex-wrap items-center space-x-4">
@@ -214,7 +217,7 @@ function App() {
                 GitHub
               </a>
             </div>
-                        <a
+            <a
               href="/Resume.pdf"
               download
               className="text-sm bg-transparent border border-gray-300 text-gray-500 px-4 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200 mt-2 md:mt-0"
