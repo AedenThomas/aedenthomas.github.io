@@ -2,9 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView.js";
+import AnimatedGreeting from "./AnimatedGreeting.js"; // Make sure to create this file
+import "./App.css";
 
 function App() {
   const [isLiveVisible, setIsLiveVisible] = useState(true);
+  const greetingRef = useRef(null);
+  const [greetingHeight, setGreetingHeight] = useState(0);
 
   const skillsRef = useRef(null);
   const educationRef = useRef(null);
@@ -14,19 +18,36 @@ function App() {
   const isSkillsInView = useInView(skillsRef, { threshold: 0.1 });
   const isEducationInView = useInView(educationRef, { threshold: 0.1 });
 
-  const greetings = ["Hey", "Hola", "Bonjour", "Ciao", "Olá", "Hallo", "你好", "こんにちは"];
+  const greetings = [
+    "नमस्ते!",
+    "Hey!",
+    "Hola!",
+    "Bonjour!",
+    "Ciao!",
+    "Olá!",
+    "Hallo!",
+    "你好!",
+    "こんにちは!",
+    "مرحبا!",
+    "여보세요!",
+  ];
 
   const [currentGreeting, setCurrentGreeting] = useState(0);
 
   useEffect(() => {
+    if (greetingRef.current) {
+      setGreetingHeight(greetingRef.current.offsetHeight);
+    }
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setCurrentGreeting((prev) => (prev + 1) % greetings.length);
-    }, 2000); // Change greeting every 2 seconds
-  
+    }, 3000);
+
     return () => clearInterval(interval);
   }, []);
 
-  
   useEffect(() => {
     const interval = setInterval(() => {
       setIsLiveVisible((prev) => !prev);
@@ -120,7 +141,7 @@ function App() {
       icon: "🏢",
       title: "Nedea",
       description:
-        "ERP application for document analysis and data extraction using AI technologies.",
+        "ERP application for document analysis and data extraction using AI technologies. Includes modules like HR, Procurement, Invoice, Payroll, etc.",
       status: "In Development",
       url: null,
     },
@@ -247,26 +268,23 @@ function App() {
       <div className="max-w-3xl mx-auto">
         <div className="mb-8">
           <span className="text-4xl mb-4">👨‍💻</span>
-          <AnimatePresence mode="wait">
-  <motion.h1
-    key={currentGreeting}
-    initial={{ opacity: 0, y: -20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: 20 }}
-    transition={{ duration: 0.5 }}
-    className="text-4xl font-bold mb-4 mt-5"
-  >
-    {greetings[currentGreeting]}!
-  </motion.h1>
-</AnimatePresence>
+          <h1 className="text-4xl font-bold mb-5 mt-5 h-[2em] flex items-center">
+            <AnimatePresence mode="wait">
+              <AnimatedGreeting
+                key={currentGreeting}
+                greeting={greetings[currentGreeting]}
+                className="handwritten-font"
+              />
+            </AnimatePresence>
+          </h1>
 
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-            I'm a code enthusiast with a solid foundation in Python,
-            Flutter, C++, C, and Unix. I've been diving deep into the world of
-            software development, cooking up some cool mobile and web
-            applications along the way. My sweet spot? That awesome intersection
-            where design meets engineering – creating stuff that not only looks
-            great but also runs like a dream under the hood.
+            I'm a code enthusiast with a solid foundation in Python, Flutter,
+            C++, C, and Unix. I've been diving deep into the world of software
+            development, cooking up some cool mobile and web applications along
+            the way. My sweet spot? That awesome intersection where design meets
+            engineering – creating stuff that not only looks great but also runs
+            like a dream under the hood.
           </p>
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
             Right now, I'm on the hunt for an internship opportunity where I can

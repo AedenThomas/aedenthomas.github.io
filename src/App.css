@@ -2,6 +2,15 @@
   text-align: center;
 }
 
+.handwritten-font {
+  font-family: "Great Vibes", cursive;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 64px; 
+  line-height: 1.2;
+}
+
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
