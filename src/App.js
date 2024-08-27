@@ -12,6 +12,7 @@ function App() {
   const greetingRef = useRef(null);
   const [greetingHeight, setGreetingHeight] = useState(0);
   const [isReachOutHovered, setIsReachOutHovered] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const handleReachOutMouseEnter = () => setIsReachOutHovered(true);
   const handleReachOutMouseLeave = () => setIsReachOutHovered(false);
@@ -103,6 +104,25 @@ function App() {
     return () => mediaQuery.removeListener(handleChange);
   }, []);
 
+  useEffect(() => {
+    document.body.classList.add("custom-cursor");
+    return () => {
+      document.body.classList.remove("custom-cursor");
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      setMousePosition({ x: event.clientX, y: event.clientY });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
   };
@@ -129,10 +149,23 @@ function App() {
 
   return (
     <div
-      className={`min-h-screen p-8 ${
+      className={`custom-cursor min-h-screen p-8 ${
         isDarkMode ? "bg-black text-white" : "bg-white text-gray-900"
       }`}
     >
+      <div
+        className={`fixed w-5 h-5 rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2`}
+        style={{
+          left: mousePosition.x,
+          top: mousePosition.y,
+          backgroundColor: isDarkMode
+            ? "rgba(255, 255, 255, 0.5)"
+            : "rgba(0, 0, 0, 0.5)",
+          boxShadow: isDarkMode
+            ? "0 0 10px rgba(255, 255, 255, 0.5)"
+            : "0 0 10px rgba(0, 0, 0, 0.5)",
+        }}
+      />
       <button
         onClick={toggleDarkMode}
         className={`fixed top-4 right-4 p-2 rounded-full ${
@@ -209,7 +242,6 @@ function App() {
           </div>
         </div>
 
-        {/* ContactLinks outside the blurred area */}
         <ContactLinks
           email={email}
           linkedinUrl={linkedinUrl}

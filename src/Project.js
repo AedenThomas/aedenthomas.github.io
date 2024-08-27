@@ -8,11 +8,13 @@ import { FaLock, FaLockOpen } from "react-icons/fa";
 const statusConfig = {
   Live: { colorClass: "text-green-500 border-green-500", width: "w-[4.75rem]" },
   Public: { colorClass: "text-blue-500 border-blue-500", width: "w-20" },
-  "In Development": { colorClass: "text-yellow-500 border-yellow-500", width: "w-40" },
+  "In Development": {
+    colorClass: "text-yellow-500 border-yellow-500",
+    width: "w-40",
+  },
   "Coming Soon": { colorClass: "text-gray-500 border-gray-500", width: "w-24" },
   Private: { colorClass: "text-gray-500 border-gray-500", width: "w-20" },
 };
-
 
 const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
   const projectRef = useRef(null);
@@ -27,13 +29,13 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
 
   const getStatusConfig = (status) => {
     if (status === "Live") return statusConfig["Live"];
-    if (status.includes("In Development")) return statusConfig["In Development"];
+    if (status.includes("In Development"))
+      return statusConfig["In Development"];
     if (status === "Public") return statusConfig["Public"];
     if (status === "Coming Soon") return statusConfig["Coming Soon"];
     if (status === "Private") return statusConfig["Private"];
     return statusConfig["In Development"];
   };
-  
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,12 +85,11 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
               {project.title}
             </h3>
             <button
-  className={`text-sm rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative
+              className={`text-sm rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative
     ${getStatusConfig(project.status).width}
     ${getStatusConfig(project.status).colorClass}
     ${project.status === "Live" || project.status.includes("In Development") ? "pl-6 pr-3" : "px-3"}`}
->
-
+            >
               <AnimatePresence>
                 {project.status === "Live" && isLiveVisible && (
                   <motion.span
@@ -146,7 +147,7 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
               isDarkMode
                 ? "dark-mode-backdrop"
                 : "bg-black bg-opacity-30 backdrop-blur"
-            } flex items-center justify-center z-50`}
+            } flex items-center justify-center z-[9998]`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
