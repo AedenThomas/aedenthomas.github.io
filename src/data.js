@@ -103,7 +103,7 @@ export const projects = [
     status: "In Development",
     url: "https://insightx.example.com", 
     technologies: ["React", "ASP.NET Core", "C#", "SQL Server"],
-    image: "/Nedea.png", 
+    image: "/Nedea.webp", 
   },
   {
     icon: "📄",
