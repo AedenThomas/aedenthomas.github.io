@@ -165,16 +165,20 @@ function App() {
   }, []);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Always start with light mode
-    return false;
+    // Always start with the opposite of the system preference
+    return !window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
   useEffect(() => {
-    // Set a timeout to switch to dark mode after 1 second
+    const prefersDarkMode = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+
+    // Set initial mode to the opposite of the system preference
+    setIsDarkMode(!prefersDarkMode);
+
+    // Set a timeout to switch to the correct mode after 1 second
     const timer = setTimeout(() => {
-      const prefersDarkMode = window.matchMedia(
-        "(prefers-color-scheme: dark)",
-      ).matches;
       setIsDarkMode(prefersDarkMode);
       setInitialAnimationComplete(true);
     }, 1000);
@@ -183,17 +187,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Only apply the class if the initial animation is complete
-    if (initialAnimationComplete) {
-      document.documentElement.classList.toggle("dark", isDarkMode);
-    }
-  }, [isDarkMode, initialAnimationComplete]);
-
-  useEffect(() => {
-    // Update class on html element
+    // Apply the class immediately to show the initial opposite mode
     document.documentElement.classList.toggle("dark", isDarkMode);
-    // Save user preference
-    localStorage.setItem("darkMode", isDarkMode);
   }, [isDarkMode]);
 
   useEffect(() => {
