@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.c87e2aa2.css",
-    "main.js": "/static/js/main.1c9ec088.js",
+    "main.js": "/static/js/main.fb215b0e.js",
     "static/js/453.a0343227.chunk.js": "/static/js/453.a0343227.chunk.js",
     "static/media/react-native.svg": "/static/media/react-native.be71bed1bce21ae23843e3443f0b1408.svg",
     "static/media/aspnetcore.svg": "/static/media/aspnetcore.015330fad44a0f3cbc5cb0c95353daf0.svg",
@@ -11,11 +11,11 @@
     "static/media/default.svg": "/static/media/default.6b9b428864d6f95ada3092145e4be76b.svg",
     "static/media/flutter.svg": "/static/media/flutter.50bb17c0e69f24a17adbcca9bd6e8528.svg",
     "main.c87e2aa2.css.map": "/static/css/main.c87e2aa2.css.map",
-    "main.1c9ec088.js.map": "/static/js/main.1c9ec088.js.map",
+    "main.fb215b0e.js.map": "/static/js/main.fb215b0e.js.map",
     "453.a0343227.chunk.js.map": "/static/js/453.a0343227.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c87e2aa2.css",
-    "static/js/main.1c9ec088.js"
+    "static/js/main.fb215b0e.js"
   ]
 }
