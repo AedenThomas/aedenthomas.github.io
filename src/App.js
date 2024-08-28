@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView.js";
 import AnimatedGreeting from "./AnimatedGreeting.js";
@@ -23,42 +29,43 @@ function App() {
   const [initialAnimationComplete, setInitialAnimationComplete] =
     useState(false);
 
+  const animationSequence = useMemo(
+    () => [
+      () => setHoveredLanguage("react"),
+      () => setHoveredLanguage("react native"),
+      () => setHoveredLanguage("flutter"),
+      () => setHoveredLanguage("asp.net core"),
+      () => setHoveredLanguage("python"),
+      () =>
+        document
+          .querySelector(".after\\:w-0")
+          .classList.add("hover:after:w-full"),
+      () =>
+        document
+          .querySelector(".hover\\:text-transparent")
+          .classList.add(
+            "text-transparent",
+            "bg-gradient-to-r",
+            "from-green-400",
+            "to-blue-500",
+          ),
+    ],
+    [],
+  );
+
   useEffect(() => {
     if (!hasPlayedInitialAnimation) {
-      const animationSequence = [
-        () => setHoveredLanguage("react"),
-        () => setHoveredLanguage("react native"),
-        () => setHoveredLanguage("flutter"),
-        () => setHoveredLanguage("asp.net core"),
-        () => setHoveredLanguage("python"),
-        () =>
-          document
-            .querySelector(".after\\:w-0")
-            .classList.add("hover:after:w-full"),
-        () =>
-          document
-            .querySelector(".hover\\:text-transparent")
-            .classList.add(
-              "text-transparent",
-              "bg-gradient-to-r",
-              "from-green-400",
-              "to-blue-500",
-            ),
-      ];
-
       let delay = 0;
       animationSequence.forEach((animation, index) => {
         setTimeout(() => {
           animation();
           if (index < 5) {
-            // For language icons
             setTimeout(() => setHoveredLanguage(null), 1000);
           }
         }, delay);
-        delay += 1500; // Increase delay for next animation
+        delay += 1500;
       });
 
-      // Reset classes after all animations
       setTimeout(() => {
         document
           .querySelector(".after\\:w-0")
@@ -74,23 +81,23 @@ function App() {
         setHasPlayedInitialAnimation(true);
       }, delay);
     }
-  }, [hasPlayedInitialAnimation]);
+  }, [hasPlayedInitialAnimation, animationSequence]);
 
-  const handleProjectHover = (index) => {
+  const handleProjectHover = useCallback((index) => {
     setHoveredProjectIndex(index);
-  };
+  }, []);
 
-  const handleClickableHover = (isHovered) => {
+  const handleClickableHover = useCallback((isHovered) => {
     setIsHoveredClickable(isHovered);
-  };
+  }, []);
 
-  const handleLanguageHover = (language) => {
+  const handleLanguageHover = useCallback((language) => {
     setHoveredLanguage(language);
-  };
+  }, []);
 
-  const handleLanguageLeave = () => {
+  const handleLanguageLeave = useCallback(() => {
     setHoveredLanguage(null);
-  };
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -103,8 +110,14 @@ function App() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const handleReachOutMouseEnter = () => setIsReachOutHovered(true);
-  const handleReachOutMouseLeave = () => setIsReachOutHovered(false);
+  const handleReachOutMouseEnter = useCallback(
+    () => setIsReachOutHovered(true),
+    [],
+  );
+  const handleReachOutMouseLeave = useCallback(
+    () => setIsReachOutHovered(false),
+    [],
+  );
 
   const courseworkRef = useRef(null);
   const isCourseworkInView = useInView(courseworkRef, { threshold: 0.1 });
@@ -117,17 +130,20 @@ function App() {
   const publicationsRef = useRef(null);
   const isPublicationsInView = useInView(publicationsRef, { threshold: 0.1 });
 
-  const greetings = [
-    "Hey!",
-    "Hola!",
-    "नमस्ते!",
-    "Bonjour!",
-    "你好!",
-    "Ciao!",
-    "Olá!",
-    "여보세요!",
-    "Hallo!",
-  ];
+  const greetings = useMemo(
+    () => [
+      "Hey!",
+      "Hola!",
+      "नमस्ते!",
+      "Bonjour!",
+      "你好!",
+      "Ciao!",
+      "Olá!",
+      "여보세요!",
+      "Hallo!",
+    ],
+    [],
+  );
 
   const [currentGreeting, setCurrentGreeting] = useState(0);
 
@@ -143,19 +159,11 @@ function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentGreeting((prev) => {
-        const next = (prev + 1) % greetings.length;
-        console.log(
-          `Changing greeting to: ${
-            greetings[next]
-          } at ${new Date().toISOString()}`,
-        );
-        return next;
-      });
-    }, 5000); // Should be at least 13 seconds (3s for reveal + 10s display)
+      setCurrentGreeting((prev) => (prev + 1) % greetings.length);
+    }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [greetings]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -165,7 +173,6 @@ function App() {
   }, []);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Always start with the opposite of the system preference
     return !window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
@@ -174,10 +181,8 @@ function App() {
       "(prefers-color-scheme: dark)",
     ).matches;
 
-    // Set initial mode to the opposite of the system preference
     setIsDarkMode(!prefersDarkMode);
 
-    // Set a timeout to switch to the correct mode after 1 second
     const timer = setTimeout(() => {
       setIsDarkMode(prefersDarkMode);
       setInitialAnimationComplete(true);
@@ -187,12 +192,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Apply the class immediately to show the initial opposite mode
     document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
   useEffect(() => {
-    // Listen for changes in system color scheme
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (e) => {
       setIsDarkMode(e.matches);
@@ -220,29 +223,32 @@ function App() {
     };
   }, []);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const toggleDarkMode = useCallback(() => {
+    setIsDarkMode((prev) => !prev);
+  }, []);
 
   const email = "hey@aeden.me";
   const linkedinUrl = "https://www.linkedin.com/in/aedenthomas/";
   const githubUrl = "https://github.com/AedenThomas/";
-  const sortedProjects = projects.sort((a, b) => {
-    const order = ["Live", "Public", "In Development", "Private"];
-    const indexA = order.findIndex((status) => a.status.includes(status));
-    const indexB = order.findIndex((status) => b.status.includes(status));
+  const sortedProjects = useMemo(
+    () =>
+      projects.sort((a, b) => {
+        const order = ["Live", "Public", "In Development", "Private"];
+        const indexA = order.findIndex((status) => a.status.includes(status));
+        const indexB = order.findIndex((status) => b.status.includes(status));
 
-    if (indexA === indexB) {
-      // If both are "In Development", prioritize the one with a URL
-      if (a.status === "In Development" && b.status === "In Development") {
-        if (a.url && !b.url) return -1;
-        if (!a.url && b.url) return 1;
-      }
-      return 0;
-    }
+        if (indexA === indexB) {
+          if (a.status === "In Development" && b.status === "In Development") {
+            if (a.url && !b.url) return -1;
+            if (!a.url && b.url) return 1;
+          }
+          return 0;
+        }
 
-    return indexA - indexB;
-  });
+        return indexA - indexB;
+      }),
+    [projects],
+  );
 
   return (
     <div
@@ -294,7 +300,6 @@ function App() {
       </button>
 
       <div className="max-w-3xl mx-auto">
-        {/* Introduction section */}
         <div
           className={`transition-all duration-300 ${
             hoveredProjectIndex !== null
@@ -310,7 +315,7 @@ function App() {
               alt="Face"
               width="45"
               height="45"
-              class="text-4xl mb-7"
+              className="text-4xl mb-7"
             />
 
             <h1 className="text-4xl font-bold mb-5 mt-5 h-[2em] flex items-center">
