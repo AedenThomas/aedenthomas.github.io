@@ -4,6 +4,9 @@
 body {
     font-family: "Besley", serif;
 }
+.blur-xs {
+        filter: blur(1px);
+}
 
 * {
     cursor: none !important;

@@ -22,6 +22,9 @@ const Project = ({
   isDarkMode,
   isLiveVisible,
   handleClickableHover,
+  onProjectHover,
+  isBlurred,
+  hoveredProjectIndex,
 }) => {
   const projectRef = useRef(null);
   const contentRef = useRef(null);
@@ -29,20 +32,21 @@ const Project = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-
   const handleMouseEnter = () => {
     if (project.status !== "Coming Soon") {
       handleClickableHover(true);
+      onProjectHover(index);
     }
   };
 
   const handleMouseLeave = () => {
     handleClickableHover(false);
+    onProjectHover(null);
   };
-
   const getStatusConfig = (status) => {
     if (status === "Live") return statusConfig["Live"];
     if (status.includes("In Development"))
@@ -94,7 +98,7 @@ const Project = ({
       <motion.div
         ref={projectRef}
         key={index}
-        className={`flex items-start mb-1 p-2 rounded-lg transition-all duration-0 ease-in-out ${
+        className={`flex items-start mb-1 p-2 rounded-lg transition-all duration-300 ease-in-out ${
           project.url
             ? "hover:bg-navy-800 dark:hover:bg-navy-900 cursor-pointer"
             : ""
@@ -102,14 +106,26 @@ const Project = ({
           project.status === "Coming Soon"
             ? ""
             : "hover:bg-navy-800 dark:hover:bg-navy-900"
-        } custom-cursor-clickable`}
+        } custom-cursor-clickable ${
+          (isBlurred ||
+            (hoveredProjectIndex !== null && hoveredProjectIndex !== index)) &&
+          !isHovered
+            ? "blur-xs"
+            : ""
+        } ${hoveredProjectIndex === index || isHovered ? "z-10 relative" : ""}`}
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
         whileHover={project.status !== "Coming Soon" ? { scale: 1.015 } : {}}
         onClick={openModal}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          handleMouseEnter();
+        }}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          handleMouseLeave();
+        }}
       >
         <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
         <div className="flex-grow min-w-0">

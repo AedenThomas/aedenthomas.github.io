@@ -18,6 +18,12 @@ function App() {
   const [hoveredLanguage, setHoveredLanguage] = useState(null);
   const [isHoveredClickable, setIsHoveredClickable] = useState(false);
 
+  const [hoveredProjectIndex, setHoveredProjectIndex] = useState(null);
+
+  const handleProjectHover = (index) => {
+    setHoveredProjectIndex(index);
+  };
+
   const handleClickableHover = (isHovered) => {
     setIsHoveredClickable(isHovered);
   };
@@ -197,8 +203,9 @@ function App() {
           />
           <div
             className={`fixed w-7 h-7 rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 ${
-              isHoveredClickable ? "opacity-100 scale-110" : "opacity-0 scale-100"
-
+              isHoveredClickable
+                ? "opacity-100 scale-110"
+                : "opacity-0 scale-100"
             }`}
             style={{
               left: mousePosition.x,
@@ -207,7 +214,7 @@ function App() {
               boxShadow: "0 0 15px rgba(74, 222, 128, 0.7)",
               animation: isHoveredClickable ? "pulse 1.5s infinite" : "none",
             }}
-                />
+          />
         </>
       )}
 
@@ -223,7 +230,10 @@ function App() {
       </button>
 
       <div className="max-w-3xl mx-auto">
-        <div className={`${isReachOutHovered ? "blur-background" : ""}`}>
+        {/* Introduction section */}
+        <div
+          className={`transition-all duration-300 ${hoveredProjectIndex !== null || isReachOutHovered ? "blur-xs" : ""}`}
+        >
           <div className="mb-8">
             <img
               src="/Face.webp"
@@ -359,30 +369,50 @@ function App() {
           </div>
         </div>
 
-        <ContactLinks
-          email={email}
-          linkedinUrl={linkedinUrl}
-          githubUrl={githubUrl}
-          handleClickableHover={handleClickableHover}
-        />
+        <div
+          className={`transition-all duration-300 ${
+            hoveredProjectIndex !== null ? "blur-xs" : ""
+          }`}
+        >
+          <ContactLinks
+            email={email}
+            linkedinUrl={linkedinUrl}
+            githubUrl={githubUrl}
+            handleClickableHover={handleClickableHover}
+          />
+        </div>
 
-        <div className={`${isReachOutHovered ? "blur-background" : ""}`}>
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
-              ~/side projects
-            </h2>
-            {sortedProjects.map((project, index) => (
-              <Project
-                key={index}
-                project={project}
-                index={index}
-                isDarkMode={isDarkMode}
-                isLiveVisible={isLiveVisible}
-                handleClickableHover={handleClickableHover}
-              />
-            ))}
-          </div>
+        <div
+          className={`mb-8 transition-all duration-300 ${
+            isReachOutHovered ? "blur-xs" : ""
+          }`}
+        >
+          <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            ~/side projects
+          </h2>
+          {sortedProjects.map((project, index) => (
+            <Project
+              key={index}
+              project={project}
+              index={index}
+              isDarkMode={isDarkMode}
+              isLiveVisible={isLiveVisible}
+              handleClickableHover={handleClickableHover}
+              onProjectHover={handleProjectHover}
+              isBlurred={
+                hoveredProjectIndex !== null && hoveredProjectIndex !== index
+              }
+              hoveredProjectIndex={hoveredProjectIndex}
+              isReachOutHovered={isReachOutHovered}
+            />
+          ))}
+        </div>
 
+        <div
+          className={`transition-all duration-300 ${
+            hoveredProjectIndex !== null || isReachOutHovered ? "blur-xs" : ""
+          }`}
+        >
           <div ref={skillsRef} className="mb-8">
             <h2 className="text-xl font-semibold mb-5 text-gray-500 dark:text-gray-400">
               ~/skills
