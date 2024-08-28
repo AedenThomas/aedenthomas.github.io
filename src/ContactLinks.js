@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import axios from "axios";
+import { Tooltip } from "react-tooltip";
 
 const ContactLinks = ({
   email,
@@ -6,6 +8,98 @@ const ContactLinks = ({
   githubUrl,
   handleClickableHover,
 }) => {
+  const [contributionData, setContributionData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchContributions = async () => {
+      try {
+        if (!githubUrl) {
+          throw new Error("GitHub URL is missing");
+        }
+
+        const urlParts = githubUrl.split("/");
+        const username =
+          urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2];
+
+        if (!username) {
+          throw new Error("Invalid GitHub URL");
+        }
+
+        const apiUrl = `https://github-contributions-api.deno.dev/${username}.json`;
+        const response = await axios.get(apiUrl);
+        setContributionData(response.data);
+        setError(null);
+      } catch (error) {
+        console.error("Error in fetchContributions:", error);
+        setError(error.message || "Failed to fetch contributions");
+      }
+    };
+
+    if (githubUrl) {
+      fetchContributions();
+    }
+  }, [githubUrl]);
+
+  const pastYearContributions = useMemo(() => {
+    if (!contributionData) return null;
+    // Flatten the contributions array and take the last 365 days
+    return contributionData.contributions.flat().slice(-365);
+  }, [contributionData]);
+
+  const totalPastYearContributions = useMemo(() => {
+    if (!pastYearContributions) return 0;
+    return pastYearContributions.reduce(
+      (sum, day) => sum + day.contributionCount,
+      0,
+    );
+  }, [pastYearContributions]);
+
+  const getContributionsSummary = useCallback(() => {
+    if (error) return error;
+    if (!contributionData) return "Loading contributions...";
+
+    const currentStreak = calculateCurrentStreak(pastYearContributions);
+    const longestStreak = calculateLongestStreak(pastYearContributions);
+
+    return [
+      `Past year: ${totalPastYearContributions} contributions`,
+      `Current streak: ${currentStreak} days`,
+      `Longest streak: ${longestStreak} days`,
+    ];
+  }, [
+    error,
+    contributionData,
+    pastYearContributions,
+    totalPastYearContributions,
+  ]);
+
+  const calculateCurrentStreak = (contributions) => {
+    let streak = 0;
+    for (let i = contributions.length - 1; i >= 0; i--) {
+      if (contributions[i].contributionCount > 0) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  };
+
+  const calculateLongestStreak = (contributions) => {
+    let longestStreak = 0;
+    let currentStreak = 0;
+    for (const day of contributions) {
+      if (day.contributionCount > 0) {
+        currentStreak++;
+        longestStreak = Math.max(longestStreak, currentStreak);
+      } else {
+        currentStreak = 0;
+      }
+    }
+    return longestStreak;
+  };
+
   return (
     <div className="mb-8">
       <div className="flex flex-wrap items-center justify-between mb-4">
@@ -56,6 +150,7 @@ const ContactLinks = ({
             className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
             onMouseEnter={() => handleClickableHover(true)}
             onMouseLeave={() => handleClickableHover(false)}
+            data-tooltip-id="github-tooltip"
           >
             <svg
               className="w-4 h-4 mr-2"
@@ -71,6 +166,16 @@ const ContactLinks = ({
             </svg>
             GitHub
           </a>
+          <Tooltip
+            id="github-tooltip"
+            place="top"
+            effect="solid"
+            className="custom-tooltip"
+          >
+            {getContributionsSummary().map((line, index) => (
+              <div key={index}>{line}</div>
+            ))}
+          </Tooltip>
         </div>
         <a
           href="/Resume.pdf"
