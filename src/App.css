@@ -5,7 +5,11 @@ body {
     font-family: "Besley", serif;
 }
 .blur-xs {
-        filter: blur(1px);
+    filter: blur(0.8px);
+}
+
+.blur-sm {
+    filter: blur(4px);
 }
 
 * {

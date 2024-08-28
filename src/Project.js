@@ -106,26 +106,15 @@ const Project = ({
           project.status === "Coming Soon"
             ? ""
             : "hover:bg-navy-800 dark:hover:bg-navy-900"
-        } custom-cursor-clickable ${
-          (isBlurred ||
-            (hoveredProjectIndex !== null && hoveredProjectIndex !== index)) &&
-          !isHovered
-            ? "blur-xs"
-            : ""
-        } ${hoveredProjectIndex === index || isHovered ? "z-10 relative" : ""}`}
+        } custom-cursor-clickable ${isBlurred ? "blur-xs" : ""} ${
+          hoveredProjectIndex === index ? "z-10 relative" : ""
+        }`}
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
-        whileHover={project.status !== "Coming Soon" ? { scale: 1.015 } : {}}
         onClick={openModal}
-        onMouseEnter={() => {
-          setIsHovered(true);
-          handleMouseEnter();
-        }}
-        onMouseLeave={() => {
-          setIsHovered(false);
-          handleMouseLeave();
-        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
         <div className="flex-grow min-w-0">

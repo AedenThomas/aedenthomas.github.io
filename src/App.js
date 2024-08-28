@@ -232,7 +232,13 @@ function App() {
       <div className="max-w-3xl mx-auto">
         {/* Introduction section */}
         <div
-          className={`transition-all duration-300 ${hoveredProjectIndex !== null || isReachOutHovered ? "blur-xs" : ""}`}
+          className={`transition-all duration-300 ${
+            hoveredProjectIndex !== null
+              ? "blur-xs"
+              : isReachOutHovered
+                ? "blur-sm"
+                : ""
+          }`}
         >
           <div className="mb-8">
             <img
@@ -384,7 +390,7 @@ function App() {
 
         <div
           className={`mb-8 transition-all duration-300 ${
-            isReachOutHovered ? "blur-xs" : ""
+            isReachOutHovered ? "blur-sm" : ""
           }`}
         >
           <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
