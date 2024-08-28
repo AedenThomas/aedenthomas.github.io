@@ -20,6 +20,8 @@ function App() {
   const [hasPlayedInitialAnimation, setHasPlayedInitialAnimation] =
     useState(false);
   const [hoveredProjectIndex, setHoveredProjectIndex] = useState(null);
+  const [initialAnimationComplete, setInitialAnimationComplete] =
+    useState(false);
 
   useEffect(() => {
     if (!hasPlayedInitialAnimation) {
@@ -163,16 +165,29 @@ function App() {
   }, []);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Check if user has a saved preference
-    if (typeof window !== "undefined") {
-      const savedMode = localStorage.getItem("darkMode");
-      if (savedMode !== null) {
-        return savedMode === "true";
-      }
-    }
-    // If no saved preference, use system preference
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    // Always start with light mode
+    return false;
   });
+
+  useEffect(() => {
+    // Set a timeout to switch to dark mode after 1 second
+    const timer = setTimeout(() => {
+      const prefersDarkMode = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+      setIsDarkMode(prefersDarkMode);
+      setInitialAnimationComplete(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    // Only apply the class if the initial animation is complete
+    if (initialAnimationComplete) {
+      document.documentElement.classList.toggle("dark", isDarkMode);
+    }
+  }, [isDarkMode, initialAnimationComplete]);
 
   useEffect(() => {
     // Update class on html element
@@ -236,7 +251,7 @@ function App() {
 
   return (
     <div
-      className={`custom-cursor min-h-screen p-8 ${
+      className={`custom-cursor min-h-screen p-8 transition-colors duration-1000 ${
         isDarkMode ? "bg-black text-white" : "bg-white text-gray-900"
       }`}
     >
