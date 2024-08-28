@@ -58,6 +58,22 @@ const Project = ({
   };
 
   useEffect(() => {
+    const handleEscapeKey = (event) => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener("keydown", handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, [isModalOpen]);
+
+  useEffect(() => {
     const handleScroll = () => {
       if (contentRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = contentRef.current;

@@ -73,7 +73,7 @@ export const projects = [
     status: "Live",
     url: "https://insightx.example.com",
     technologies: ["React", "Node.js", "LLM API"],
-    image: "https://www.apple.com/v/mac/home/ca/images/overview/consider/boc_ease_01__fubebwkx80q6_large_2x.jpg",
+    image: "/InsightX.webp",
   },
   {
     icon: "🎙️",

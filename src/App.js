@@ -522,7 +522,6 @@ function App() {
                 <motion.div
                   key={index}
                   className="mb-4 p-2 rounded-lg hover:bg-navy-800 dark:hover:bg-navy-900 transition-transform duration-200 ease-in-out"
-
                   initial={{ opacity: 0, y: 20 }}
                   animate={
                     isEducationInView
