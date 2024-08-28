@@ -1,16 +1,23 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
+import { ReactComponent as ReactIcon } from "./icons/react.svg";
+import { ReactComponent as ReactNativeIcon } from "./icons/react-native.svg";
+import { ReactComponent as PythonIcon } from "./icons/python.svg";
+import { ReactComponent as FlutterIcon } from "./icons/flutter.svg";
+import { ReactComponent as AspNetCoreIcon } from "./icons/aspnetcore.svg";
+import { ReactComponent as DefaultIcon } from "./icons/default.svg";
 
 const icons = {
-  react: '⚛️',
-  'react native': '📱',
-  python: '🐍',
-  flutter: '🦋',
-  'asp.net core': '🌐',
-  // Add more icons as needed
+  react: ReactIcon,
+  "react native": ReactNativeIcon,
+  python: PythonIcon,
+  flutter: FlutterIcon,
+  "asp.net core": AspNetCoreIcon,
 };
 
 const LanguageIcon = ({ language }) => {
+  const IconComponent = icons[language.toLowerCase()] || DefaultIcon;
+
   return (
     <motion.span
       initial={{ opacity: 0, scale: 0 }}
@@ -18,7 +25,7 @@ const LanguageIcon = ({ language }) => {
       exit={{ opacity: 0, scale: 0 }}
       className="inline-block ml-1"
     >
-      {icons[language.toLowerCase()] || '🚀'}
+      <IconComponent width="24" height="24" />
     </motion.span>
   );
 };
