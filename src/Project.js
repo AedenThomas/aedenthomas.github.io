@@ -16,7 +16,13 @@ const statusConfig = {
   Private: { colorClass: "text-gray-500 border-gray-500", width: "w-20" },
 };
 
-const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
+const Project = ({
+  project,
+  index,
+  isDarkMode,
+  isLiveVisible,
+  handleClickableHover,
+}) => {
   const projectRef = useRef(null);
   const contentRef = useRef(null);
   const isInView = useInView(projectRef, { threshold: 0.1 });
@@ -26,6 +32,16 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const handleMouseEnter = () => {
+    if (project.status !== "Coming Soon") {
+      handleClickableHover(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    handleClickableHover(false);
+  };
 
   const getStatusConfig = (status) => {
     if (status === "Live") return statusConfig["Live"];
@@ -86,12 +102,14 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
           project.status === "Coming Soon"
             ? ""
             : "hover:bg-navy-800 dark:hover:bg-navy-900"
-        }`}
+        } custom-cursor-clickable`}
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
         whileHover={project.status !== "Coming Soon" ? { scale: 1.015 } : {}}
         onClick={openModal}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
         <div className="flex-grow min-w-0">
@@ -175,12 +193,12 @@ const Project = ({ project, index, isDarkMode, isLiveVisible }) => {
           >
             <motion.div
               className={`
-                ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}
-                rounded-2xl w-full shadow-xl overflow-hidden m-4 flex flex-col
-                max-w-[90vw] md:max-w-2xl lg:max-w-4xl
-                max-h-[90vh] md:max-h-[80vh] lg:max-h-[90vh]
-                min-h-[50vh] md:min-h-0
-              `}
+                  ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}
+                  rounded-2xl w-full shadow-xl overflow-hidden m-4 flex flex-col
+                  max-w-[90vw] md:max-w-2xl lg:max-w-4xl
+                  max-h-[90vh] md:max-h-[80vh] lg:max-h-[90vh]
+                  min-h-[50vh] md:min-h-0
+                `}
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}

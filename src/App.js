@@ -16,6 +16,11 @@ function App() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
   const [hoveredLanguage, setHoveredLanguage] = useState(null);
+  const [isHoveredClickable, setIsHoveredClickable] = useState(false);
+
+  const handleClickableHover = (isHovered) => {
+    setIsHoveredClickable(isHovered);
+  };
 
   const handleLanguageHover = (language) => {
     setHoveredLanguage(language);
@@ -81,7 +86,7 @@ function App() {
         console.log(
           `Changing greeting to: ${
             greetings[next]
-          } at ${new Date().toISOString()}`
+          } at ${new Date().toISOString()}`,
         );
         return next;
       });
@@ -176,24 +181,41 @@ function App() {
       }`}
     >
       {!isMobile && (
-        <div
-          className={`fixed w-5 h-5 rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2`}
-          style={{
-            left: mousePosition.x,
-            top: mousePosition.y,
-            backgroundColor: isDarkMode
-              ? "rgba(255, 255, 255, 0.5)"
-              : "rgba(0, 0, 0, 0.5)",
-            boxShadow: isDarkMode
-              ? "0 0 10px rgba(255, 255, 255, 0.5)"
-              : "0 0 10px rgba(0, 0, 0, 0.5)",
-          }}
-        />
+        <>
+          <div
+            className={`fixed w-5 h-5 rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2`}
+            style={{
+              left: mousePosition.x,
+              top: mousePosition.y,
+              backgroundColor: isDarkMode
+                ? "rgba(255, 255, 255, 0.5)"
+                : "rgba(0, 0, 0, 0.5)",
+              boxShadow: isDarkMode
+                ? "0 0 10px rgba(255, 255, 255, 0.5)"
+                : "0 0 10px rgba(0, 0, 0, 0.5)",
+            }}
+          />
+          <div
+            className={`fixed w-7 h-7 rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 ${
+              isHoveredClickable ? "opacity-100 scale-110" : "opacity-0 scale-100"
+
+            }`}
+            style={{
+              left: mousePosition.x,
+              top: mousePosition.y,
+              backgroundColor: "rgba(74, 222, 128, 0.7)",
+              boxShadow: "0 0 15px rgba(74, 222, 128, 0.7)",
+              animation: isHoveredClickable ? "pulse 1.5s infinite" : "none",
+            }}
+                />
+        </>
       )}
 
       <button
         onClick={toggleDarkMode}
-        className={`fixed top-4 right-4 p-2 rounded-full ${
+        onMouseEnter={() => handleClickableHover(true)}
+        onMouseLeave={() => handleClickableHover(false)}
+        className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable ${
           isDarkMode ? "bg-white text-black" : "bg-black text-white"
         }`}
       >
@@ -272,20 +294,26 @@ function App() {
                 className="relative"
               >
                 ASP.NET Core
-          <AnimatePresence>
-            {hoveredLanguage === 'asp.net core' && <LanguageIcon language="asp.net core" />}
-          </AnimatePresence>
-        </span>, and{' '}
-        <span 
-          onMouseEnter={() => handleLanguageHover('python')}
-          onMouseLeave={handleLanguageLeave}
-          className="relative"
-        >
-          Python
-          <AnimatePresence>
-            {hoveredLanguage === 'python' && <LanguageIcon language="python" />}
-          </AnimatePresence>
-        </span>. My journey in{" "}
+                <AnimatePresence>
+                  {hoveredLanguage === "asp.net core" && (
+                    <LanguageIcon language="asp.net core" />
+                  )}
+                </AnimatePresence>
+              </span>
+              , and{" "}
+              <span
+                onMouseEnter={() => handleLanguageHover("python")}
+                onMouseLeave={handleLanguageLeave}
+                className="relative"
+              >
+                Python
+                <AnimatePresence>
+                  {hoveredLanguage === "python" && (
+                    <LanguageIcon language="python" />
+                  )}
+                </AnimatePresence>
+              </span>
+              . My journey in{" "}
               <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
                 software development
               </span>{" "}
@@ -313,9 +341,15 @@ function App() {
               that align with my interests in full-stack development and
               enterprise solutions. Feel free to{" "}
               <span
-                className="reach-out-text relative"
-                onMouseEnter={handleReachOutMouseEnter}
-                onMouseLeave={handleReachOutMouseLeave}
+                className="reach-out-text relative custom-cursor-clickable"
+                onMouseEnter={() => {
+                  handleReachOutMouseEnter();
+                  handleClickableHover(true);
+                }}
+                onMouseLeave={() => {
+                  handleReachOutMouseLeave();
+                  handleClickableHover(false);
+                }}
               >
                 reach out
               </span>{" "}
@@ -329,6 +363,7 @@ function App() {
           email={email}
           linkedinUrl={linkedinUrl}
           githubUrl={githubUrl}
+          handleClickableHover={handleClickableHover}
         />
 
         <div className={`${isReachOutHovered ? "blur-background" : ""}`}>
@@ -343,6 +378,7 @@ function App() {
                 index={index}
                 isDarkMode={isDarkMode}
                 isLiveVisible={isLiveVisible}
+                handleClickableHover={handleClickableHover}
               />
             ))}
           </div>

@@ -1,36 +1,22 @@
-
 .App {
-  text-align: center;
+    text-align: center;
 }
 body {
-  font-family: "Besley", serif;
-}
-
-.custom-cursor {
-  cursor: none;
-}
-
-.custom-cursor-clickable {
-  cursor: none;
+    font-family: "Besley", serif;
 }
 
 * {
-  cursor: none !important;
-}
-
-a,
-button,
-[role="button"],
-input[type="submit"],
-input[type="reset"],
-input[type="button"] {
-  cursor: none !important;
+    cursor: none !important;
 }
 
 .reach-out-text {
     border-bottom: 2px dotted #4caf50;
     cursor: pointer;
     transition: all 0.3s ease;
+}
+
+.custom-cursor-clickable {
+    cursor: none !important;
 }
 
 .reach-out-text:hover {
@@ -89,15 +75,15 @@ input[type="button"] {
 }
 
 @media (max-width: 768px) {
-  body .custom-cursor,
-  body .custom-cursor-clickable,
-  body *,
-  body a,
-  body button,
-  body [role="button"],
-  body input[type="submit"],
-  body input[type="reset"],
-  body input[type="button"] {
-    cursor: auto !important;
-  }
+    body .custom-cursor,
+    body .custom-cursor-clickable,
+    body *,
+    body a,
+    body button,
+    body [role="button"],
+    body input[type="submit"],
+    body input[type="reset"],
+    body input[type="button"] {
+        cursor: auto !important;
+    }
 }

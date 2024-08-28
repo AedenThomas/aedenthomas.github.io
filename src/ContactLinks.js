@@ -1,14 +1,20 @@
-// ContactLinks.js
-import React from 'react';
+import React from "react";
 
-const ContactLinks = ({ email, linkedinUrl, githubUrl }) => {
+const ContactLinks = ({
+  email,
+  linkedinUrl,
+  githubUrl,
+  handleClickableHover,
+}) => {
   return (
     <div className="mb-8">
       <div className="flex flex-wrap items-center justify-between mb-4">
         <div className="flex flex-wrap items-center space-x-4">
           <a
             href={`mailto:${email}`}
-            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
+            onMouseEnter={() => handleClickableHover(true)}
+            onMouseLeave={() => handleClickableHover(false)}
           >
             <svg
               className="w-4 h-4 mr-2"
@@ -25,7 +31,9 @@ const ContactLinks = ({ email, linkedinUrl, githubUrl }) => {
             href={linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
+            onMouseEnter={() => handleClickableHover(true)}
+            onMouseLeave={() => handleClickableHover(false)}
           >
             <svg
               className="w-4 h-4 mr-2"
@@ -45,7 +53,9 @@ const ContactLinks = ({ email, linkedinUrl, githubUrl }) => {
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
+            onMouseEnter={() => handleClickableHover(true)}
+            onMouseLeave={() => handleClickableHover(false)}
           >
             <svg
               className="w-4 h-4 mr-2"
@@ -62,13 +72,15 @@ const ContactLinks = ({ email, linkedinUrl, githubUrl }) => {
             GitHub
           </a>
         </div>
-                <a
+        <a
           href="/Resume.pdf"
           download
-          className="text-sm bg-transparent border border-gray-300 text-gray-500 px-4 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200 mt-2 md:mt-0 mr-2"
+          className="text-sm bg-transparent border border-gray-300 text-gray-500 px-4 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200 mt-2 md:mt-0 mr-2 custom-cursor-clickable"
           onClick={() => {
             console.log("Resume clicked");
           }}
+          onMouseEnter={() => handleClickableHover(true)}
+          onMouseLeave={() => handleClickableHover(false)}
         >
           Résumé
         </a>
