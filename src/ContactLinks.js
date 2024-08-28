@@ -56,8 +56,8 @@ const ContactLinks = ({
   }, [pastYearContributions]);
 
   const getContributionsSummary = useCallback(() => {
-    if (error) return error;
-    if (!contributionData) return "Loading contributions...";
+    if (error) return [error];
+    if (!contributionData) return ["Loading contributions..."];
 
     const currentStreak = calculateCurrentStreak(pastYearContributions);
     const longestStreak = calculateLongestStreak(pastYearContributions);
@@ -172,9 +172,13 @@ const ContactLinks = ({
             effect="solid"
             className="custom-tooltip"
           >
-            {getContributionsSummary().map((line, index) => (
-              <div key={index}>{line}</div>
-            ))}
+            {Array.isArray(getContributionsSummary()) ? (
+              getContributionsSummary().map((line, index) => (
+                <div key={index}>{line}</div>
+              ))
+            ) : (
+              <div>{getContributionsSummary()}</div>
+            )}
           </Tooltip>
         </div>
         <a

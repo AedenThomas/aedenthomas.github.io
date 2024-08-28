@@ -17,8 +17,62 @@ function App() {
   const [isMobile, setIsMobile] = useState(false);
   const [hoveredLanguage, setHoveredLanguage] = useState(null);
   const [isHoveredClickable, setIsHoveredClickable] = useState(false);
-
+  const [hasPlayedInitialAnimation, setHasPlayedInitialAnimation] =
+    useState(false);
   const [hoveredProjectIndex, setHoveredProjectIndex] = useState(null);
+
+  useEffect(() => {
+    if (!hasPlayedInitialAnimation) {
+      const animationSequence = [
+        () => setHoveredLanguage("react"),
+        () => setHoveredLanguage("react native"),
+        () => setHoveredLanguage("flutter"),
+        () => setHoveredLanguage("asp.net core"),
+        () => setHoveredLanguage("python"),
+        () =>
+          document
+            .querySelector(".after\\:w-0")
+            .classList.add("hover:after:w-full"),
+        () =>
+          document
+            .querySelector(".hover\\:text-transparent")
+            .classList.add(
+              "text-transparent",
+              "bg-gradient-to-r",
+              "from-green-400",
+              "to-blue-500",
+            ),
+      ];
+
+      let delay = 0;
+      animationSequence.forEach((animation, index) => {
+        setTimeout(() => {
+          animation();
+          if (index < 5) {
+            // For language icons
+            setTimeout(() => setHoveredLanguage(null), 1000);
+          }
+        }, delay);
+        delay += 1500; // Increase delay for next animation
+      });
+
+      // Reset classes after all animations
+      setTimeout(() => {
+        document
+          .querySelector(".after\\:w-0")
+          .classList.remove("hover:after:w-full");
+        document
+          .querySelector(".hover\\:text-transparent")
+          .classList.remove(
+            "text-transparent",
+            "bg-gradient-to-r",
+            "from-green-400",
+            "to-blue-500",
+          );
+        setHasPlayedInitialAnimation(true);
+      }, delay);
+    }
+  }, [hasPlayedInitialAnimation]);
 
   const handleProjectHover = (index) => {
     setHoveredProjectIndex(index);
