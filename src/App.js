@@ -521,7 +521,8 @@ function App() {
               {education.map((edu, index) => (
                 <motion.div
                   key={index}
-                  className="mb-4 p-2 rounded-lg transition-all duration-200 ease-in-out hover:bg-navy-800 dark:hover:bg-navy-900"
+                  className="mb-4 p-2 rounded-lg hover:bg-navy-800 dark:hover:bg-navy-900 transition-transform duration-200 ease-in-out"
+
                   initial={{ opacity: 0, y: 20 }}
                   animate={
                     isEducationInView
@@ -561,7 +562,7 @@ function App() {
               {research.map((pub, index) => (
                 <motion.div
                   key={index}
-                  className="mb-4 p-2 rounded-lg transition-all duration-200 ease-in-out hover:bg-navy-800 dark:hover:bg-navy-900"
+                  className="mb-4 p-2 rounded-lg hover:bg-navy-800 dark:hover:bg-navy-900"
                   initial={{ opacity: 0, y: 20 }}
                   animate={
                     isPublicationsInView
@@ -582,9 +583,10 @@ function App() {
                   </p>
                   {pub.doi && (
                     <a
+                      href={`https://doi.org/${pub.doi}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-200"
+                      className="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
                     >
                       DOI: {pub.doi}
                     </a>

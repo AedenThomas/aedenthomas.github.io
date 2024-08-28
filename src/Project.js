@@ -98,7 +98,7 @@ const Project = ({
       <motion.div
         ref={projectRef}
         key={index}
-        className={`flex items-start mb-1 p-2 rounded-lg transition-all duration-300 ease-in-out ${
+        className={`flex items-start mb-1 p-2 rounded-lg  ${
           project.url
             ? "hover:bg-navy-800 dark:hover:bg-navy-900 cursor-pointer"
             : ""
