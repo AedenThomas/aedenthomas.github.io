@@ -115,13 +115,14 @@ export const projects = [
     technologies: ["Chrome Extension", "JavaScript", "C#", ".NET API"],
     image: "/AIResume.webp", 
   },
-  {
+    {
     icon: "📝",
     title: "Textara",
     description: "Text analysis and processing tool with a JavaScript frontend and a C# backend, offering features like sentiment analysis and keyword extraction.",
     popupDescription: "Textara provides a powerful platform for text analysis and processing. Its JavaScript frontend offers a user-friendly interface, while the C# backend handles complex NLP tasks, including sentiment analysis, keyword extraction, and text summarization.",
     status: "In Development",
     url: null,
+    relativePath: "textara",
     technologies: ["JavaScript", "C#", "NLP"],
     image: "/Textara.png", 
   },

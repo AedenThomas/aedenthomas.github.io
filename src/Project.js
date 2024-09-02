@@ -1,4 +1,3 @@
-// Project.js
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView";
@@ -108,6 +107,16 @@ const Project = ({
       window.removeEventListener("wheel", handleWheel);
     };
   }, [isModalOpen]);
+
+  const getProjectUrl = (project) => {
+    if (project.url) {
+      return project.url;
+    }
+    if (project.relativePath) {
+      return `${window.location.origin}/${project.relativePath}`;
+    }
+    return null;
+  };
 
   return (
     <>
@@ -268,9 +277,9 @@ const Project = ({
                     </span>
                   ))}
                 </div>
-                {project.url && (
+                {getProjectUrl(project) && (
                   <a
-                    href={project.url}
+                    href={getProjectUrl(project)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`inline-block px-4 py-2 border ${
