@@ -51,7 +51,7 @@ const ContactLinks = ({
     if (!pastYearContributions) return 0;
     return pastYearContributions.reduce(
       (sum, day) => sum + day.contributionCount,
-      0,
+      0
     );
   }, [pastYearContributions]);
 
@@ -180,6 +180,31 @@ const ContactLinks = ({
               <div>{getContributionsSummary()}</div>
             )}
           </Tooltip>
+
+          <button
+            data-cal-namespace="15min"
+            data-cal-link="aeden/15min"
+            data-cal-config='{"layout":"month_view"}'
+            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
+            onMouseEnter={() => handleClickableHover(true)}
+            onMouseLeave={() => handleClickableHover(false)}
+          >
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Talk to me
+          </button>
+
+          
         </div>
         <a
           href="/Resume.pdf"
