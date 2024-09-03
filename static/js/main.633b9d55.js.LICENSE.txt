@@ -11,6 +11,8 @@
 	http://jedwatson.github.io/classnames
 */
 
+/*!  Copying ends here. */
+
 /**
  * @license React
  * react-dom.production.min.js
