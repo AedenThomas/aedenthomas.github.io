@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect, useCallback } from "react";
-import { HashRouter as Router, Routes, Route } from "react-router-dom"; // Import HashRouter
+import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView.js";
 import AnimatedGreeting from "./AnimatedGreeting.js";
@@ -726,7 +726,7 @@ function App() {
           }
         />
         <Route path="billify/privacy" element={<Privacy />} />
-
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
