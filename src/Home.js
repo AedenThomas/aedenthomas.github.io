@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect, useCallback } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
 import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView.js";
 import AnimatedGreeting from "./AnimatedGreeting.js";
