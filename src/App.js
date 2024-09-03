@@ -1,5 +1,16 @@
-import React, { useState, useRef, useMemo, useEffect, useCallback } from "react";
-import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import React, {
+  useState,
+  useRef,
+  useMemo,
+  useEffect,
+  useCallback,
+} from "react";
+import {
+  HashRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView.js";
 import AnimatedGreeting from "./AnimatedGreeting.js";
@@ -8,10 +19,9 @@ import Project from "./Project.js";
 import { education, projects, skills, research, coursework } from "./data";
 import ContactLinks from "./ContactLinks";
 import LanguageIcon from "./LanguageIcon";
-import { getCalApi } from "@calcom/embed-react";
-import Privacy from "./BillifyPrivacy.js";
-import Home from './Home';
 
+import Privacy from "./BillifyPrivacy.js";
+import Home from "./Home";
 
 function MainContent({
   isDarkMode,
@@ -98,8 +108,8 @@ function MainContent({
             hoveredProjectIndex !== null
               ? "blur-xs"
               : isReachOutHovered
-                ? "blur-sm"
-                : ""
+              ? "blur-sm"
+              : ""
           }`}
         >
           <div className="mb-8">
@@ -459,66 +469,67 @@ function App() {
   const [initialAnimationComplete, setInitialAnimationComplete] =
     useState(false);
 
-    const animationSequence = useMemo(
-      () => [
-        () => setHoveredLanguage("react"),
-        () => setHoveredLanguage("react native"),
-        () => setHoveredLanguage("flutter"),
-        () => setHoveredLanguage("asp.net core"),
-        () => setHoveredLanguage("python"),
-        () => {
-          const element = document.querySelector(".after\\:w-0");
-          if (element) {
-            element.classList.add("hover:after:w-full");
-          }
-        },
-        () => {
-          const element = document.querySelector(".hover\\:text-transparent");
-          if (element) {
-            element.classList.add(
-              "text-transparent",
-              "bg-gradient-to-r",
-              "from-green-400",
-              "to-blue-500"
-            );
-          }
-        },
-      ],
-      []
-    );
-  
-    useEffect(() => {
-      if (!hasPlayedInitialAnimation) {
-        let delay = 0;
-        animationSequence.forEach((animation, index) => {
-          setTimeout(() => {
-            animation();
-            if (index < 5) {
-              setTimeout(() => setHoveredLanguage(null), 1000);
-            }
-          }, delay);
-          delay += 1500;
-        });
-  
+  const animationSequence = useMemo(
+    () => [
+      () => setHoveredLanguage("react"),
+      () => setHoveredLanguage("react native"),
+      () => setHoveredLanguage("flutter"),
+      () => setHoveredLanguage("asp.net core"),
+      () => setHoveredLanguage("python"),
+      () => {
+        const element = document.querySelector(".after\\:w-0");
+        if (element) {
+          element.classList.add("hover:after:w-full");
+        }
+      },
+      () => {
+        const element = document.querySelector(".hover\\:text-transparent");
+        if (element) {
+          element.classList.add(
+            "text-transparent",
+            "bg-gradient-to-r",
+            "from-green-400",
+            "to-blue-500"
+          );
+        }
+      },
+    ],
+    []
+  );
+
+  useEffect(() => {
+    if (!hasPlayedInitialAnimation) {
+      let delay = 0;
+      animationSequence.forEach((animation, index) => {
         setTimeout(() => {
-          const afterElement = document.querySelector(".after\\:w-0");
-          if (afterElement) {
-            afterElement.classList.remove("hover:after:w-full");
+          animation();
+          if (index < 5) {
+            setTimeout(() => setHoveredLanguage(null), 1000);
           }
-          const hoverElement = document.querySelector(".hover\\:text-transparent");
-          if (hoverElement) {
-            hoverElement.classList.remove(
-              "text-transparent",
-              "bg-gradient-to-r",
-              "from-green-400",
-              "to-blue-500"
-            );
-          }
-          setHasPlayedInitialAnimation(true);
         }, delay);
-      }
-    }, [hasPlayedInitialAnimation, animationSequence]);
-  
+        delay += 1500;
+      });
+
+      setTimeout(() => {
+        const afterElement = document.querySelector(".after\\:w-0");
+        if (afterElement) {
+          afterElement.classList.remove("hover:after:w-full");
+        }
+        const hoverElement = document.querySelector(
+          ".hover\\:text-transparent"
+        );
+        if (hoverElement) {
+          hoverElement.classList.remove(
+            "text-transparent",
+            "bg-gradient-to-r",
+            "from-green-400",
+            "to-blue-500"
+          );
+        }
+        setHasPlayedInitialAnimation(true);
+      }, delay);
+    }
+  }, [hasPlayedInitialAnimation, animationSequence]);
 
   const handleProjectHover = useCallback((index) => {
     setHoveredProjectIndex(index);
@@ -549,11 +560,11 @@ function App() {
 
   const handleReachOutMouseEnter = useCallback(
     () => setIsReachOutHovered(true),
-    [],
+    []
   );
   const handleReachOutMouseLeave = useCallback(
     () => setIsReachOutHovered(false),
-    [],
+    []
   );
 
   const courseworkRef = useRef(null);
@@ -579,7 +590,7 @@ function App() {
       "여보세요!",
       "Hallo!",
     ],
-    [],
+    []
   );
 
   const [currentGreeting, setCurrentGreeting] = useState(0);
@@ -615,7 +626,7 @@ function App() {
 
   useEffect(() => {
     const prefersDarkMode = window.matchMedia(
-      "(prefers-color-scheme: dark)",
+      "(prefers-color-scheme: dark)"
     ).matches;
 
     setIsDarkMode(!prefersDarkMode);
@@ -684,13 +695,15 @@ function App() {
 
         return indexA - indexB;
       }),
-    [projects],
+    [projects]
   );
+
+
 
   return (
     <Router>
       <Routes>
-      <Route
+        <Route
           path="/"
           element={
             <Home

@@ -1,3 +1,4 @@
+import { getCalApi } from "@calcom/embed-react";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
@@ -100,6 +101,17 @@ const ContactLinks = ({
     return longestStreak;
   };
 
+  useEffect(() => {
+    (async function () {
+      const cal = await getCalApi({ namespace: "15min" });
+      cal("ui", {
+        styles: { branding: { brandColor: "#000000" } },
+        hideEventTypeDetails: false,
+        layout: "week_view",
+      });
+    })();
+  }, []);
+
   return (
     <div className="mb-8">
       <div className="flex flex-wrap items-center justify-between mb-4">
@@ -184,7 +196,6 @@ const ContactLinks = ({
           <button
             data-cal-namespace="15min"
             data-cal-link="aeden/15min"
-            data-cal-config='{"layout":"month_view"}'
             className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
             onMouseEnter={() => handleClickableHover(true)}
             onMouseLeave={() => handleClickableHover(false)}
@@ -197,14 +208,12 @@ const ContactLinks = ({
             >
               <path
                 fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
                 clipRule="evenodd"
               />
             </svg>
-            Talk to me
+            Book a call
           </button>
-
-          
         </div>
         <a
           href="/Resume.pdf"
