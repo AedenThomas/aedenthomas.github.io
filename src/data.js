@@ -61,7 +61,7 @@ export const projects = [
     description: "Cross-platform bill splitting app using Flutter, Azure Functions, and Azure Form Recognizer for accurate expense distribution and receipt scanning.",
     popupDescription: "Bill Split simplifies splitting expenses. It utilizes a sophisticated algorithm for fair distribution, supports multiple currencies and payment methods, and integrates Azure Functions for secure API communication. Azure Form Recognizer enables seamless receipt scanning and data extraction.",
     status: "Live",
-    url: null,
+    url: "https://apps.apple.com/us/app/google-family-link/id1150085200",
     technologies: ["Flutter", "Dart", "Azure Functions", "Azure Form Recognizer", "Node.js"],
     image: "/BillSplit.webp",
   },
