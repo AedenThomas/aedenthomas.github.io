@@ -102,10 +102,10 @@ const AIResume = () => {
         <p className="mb-4">Last updated September 19, 2024</p>
 
         <p className="mb-4">
-          This Privacy Notice for AIResume ("we," "us," or "our"), describes
-          how and why we might access, collect, store, use, and/or share
-          ("process") your personal information when you use our services
-          ("Services"), including when you:
+          This Privacy Notice for AIResume ("we," "us," or "our"), describes how
+          and why we might access, collect, store, use, and/or share ("process")
+          your personal information when you use our services ("Services"),
+          including when you:
         </p>
 
         <ul className="list-disc list-inside mb-4 space-y-2">
@@ -938,9 +938,9 @@ const AIResume = () => {
             How to Exercise Your Rights
           </h3>
           <p className="mb-4">
-            To exercise these rights, you can contact us by visiting
-            data@aeden.me, by emailing us at __________, or by referring to the
-            contact details at the bottom of this document.
+            To exercise these rights, you can contact us by emailing us at
+            data@aeden.me, or by referring to the contact details at the bottom
+            of this document.
           </p>
           <p className="mb-4">
             Under certain US state data protection laws, you can designate an
@@ -973,7 +973,7 @@ const AIResume = () => {
           <p className="mb-4">
             Under certain US state data protection laws, if we decline to take
             action regarding your request, you may appeal our decision by
-            emailing us at __________. We will inform you in writing of any
+            emailing us at data@aeden.me. We will inform you in writing of any
             action taken or not taken in response to the appeal, including a
             written explanation of the reasons for the decisions. If your appeal
             is denied, you may submit a complaint to your state attorney
@@ -1019,18 +1019,7 @@ const AIResume = () => {
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold mb-4">
-            14. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?
-          </h2>
-          <p className="mb-4">
-            If you have questions or comments about this notice, you may email
-            us at privacy@aeden.me or contact us by post at:
-          </p>
-          {/* You may want to add your company's postal address here */}
-        </section>
-
-        <section className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">
-            15. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM
+            14. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM
             YOU?
           </h2>
           <p className="mb-4">
