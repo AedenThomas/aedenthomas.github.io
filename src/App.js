@@ -21,6 +21,7 @@ import ContactLinks from "./ContactLinks";
 import LanguageIcon from "./LanguageIcon";
 
 import Privacy from "./BillifyPrivacy.js";
+import AIResume from "./AIResume.js";
 import Home from "./Home";
 
 
@@ -310,6 +311,7 @@ function App() {
           }
         />
         <Route path="billify/privacy" element={<Privacy />} />
+        <Route path="airesume/privacy" element={<AIResume />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
