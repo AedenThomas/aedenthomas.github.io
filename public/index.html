@@ -64,7 +64,28 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!-- 100% privacy-first analytics -->
+    <script
+      src="https://tag.clearbitscripts.com/v1/pk_4bdec2adda3bb53800f282ab498e4259/tags.js"
+      referrerpolicy="strict-origin-when-cross-origin"
+    ></script>
+    <script>
+      function initApollo() {
+        var n = Math.random().toString(36).substring(7),
+          o = document.createElement("script");
+        (o.src =
+          "https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache=" +
+          n),
+          (o.async = !0),
+          (o.defer = !0),
+          (o.onload = function () {
+            window.trackingFunctions.onLoad({
+              appId: "6653c22e29ca470602b402f2",
+            });
+          }),
+          document.head.appendChild(o);
+      }
+      initApollo();
+    </script>
     <script
       data-collect-dnt="true"
       async

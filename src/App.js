@@ -168,7 +168,6 @@ function App() {
   const [currentGreeting, setCurrentGreeting] = useState(0);
 
   useEffect(() => {
-    console.log("Hello, World!");
   }, []);
 
   useEffect(() => {

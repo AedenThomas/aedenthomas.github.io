@@ -7,7 +7,6 @@ const AnimatedGreeting = ({ greeting, className }) => {
   const fadeOutTimeoutRef = useRef(null);
 
   useEffect(() => {
-    console.log(`New greeting: ${greeting}`);
     setVisibleLetters(0);
     setIsFadingOut(false);
 
@@ -22,11 +21,9 @@ const AnimatedGreeting = ({ greeting, className }) => {
           return prev + 1;
         } else {
           clearInterval(letterInterval);
-          console.log(`All letters revealed at: ${new Date().toISOString()}`);
           
           // Set new timeout for fading out
           fadeOutTimeoutRef.current = setTimeout(() => {
-            console.log(`Starting fade out at: ${new Date().toISOString()}`);
             setIsFadingOut(true);
           }, 4000); // Changed to 4 seconds
 

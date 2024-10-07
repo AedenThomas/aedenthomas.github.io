@@ -1,4 +1,10 @@
-import React, { useState, useRef, useMemo, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useMemo,
+  useEffect,
+  useCallback,
+} from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView.js";
@@ -10,8 +16,6 @@ import ContactLinks from "./ContactLinks";
 import LanguageIcon from "./LanguageIcon";
 import { getCalApi } from "@calcom/embed-react";
 import Privacy from "./BillifyPrivacy.js";
-
-
 
 function Home({
   isDarkMode,
@@ -43,7 +47,6 @@ function Home({
   courseworkRef,
   isCourseworkInView,
 }) {
-    
   return (
     <div
       className={`custom-cursor min-h-screen p-8 transition-colors duration-1000 ${
@@ -99,8 +102,8 @@ function Home({
             hoveredProjectIndex !== null
               ? "blur-xs"
               : isReachOutHovered
-                ? "blur-sm"
-                : ""
+              ? "blur-sm"
+              : ""
           }`}
         >
           <div className="mb-8">
@@ -192,33 +195,44 @@ function Home({
                   )}
                 </AnimatePresence>
               </span>
-              . My journey in{" "}
-              <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
-                software development
-              </span>{" "}
-              has led me to create various mobile and web applications, always
-              striving to find that perfect{" "}
-              <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
-                balance between design and functionality
-              </span>
-              .
-            </p>
+              . I've created various mobile and web applications, striving for that perfect{" "}
+  <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
+    balance between design and functionality
+  </span>
+  . I'm passionate about bringing{" "}
+  <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
+    innovative solutions
+  </span>{" "}
+  to projects, especially in{" "}
+  <span className="relative inline hover:text-green-500 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+    <span className="whitespace-nowrap">dynamic startup</span>{" "}
+    environments
+  </span>
+  .
+</p>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-              I'm passionate about{" "}
-              <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
-                creating innovative solutions
-              </span>{" "}
-              and bringing fresh perspectives to projects. My goal is to
-              contribute to meaningful initiatives where I can apply my{" "}
+              My goal is to apply my{" "}
               <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
-                expertise in cross-platform and web development
+                expertise
               </span>{" "}
-              using cutting-edge technologies. I'm always eager to explore new{" "}
+              to meaningful initiatives using cutting-edge technologies. I'm
+              eager to explore opportunities in{" "}
               <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
-                challenging opportunities
+                full-stack development
               </span>{" "}
-              that align with my interests in full-stack development and
-              enterprise solutions. Feel free to{" "}
+              and{" "}
+              <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+                enterprise solutions
+              </span>
+              , particularly within{" "}
+              <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
+                emerging startups
+              </span>
+              . With my{" "}
+              <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
+                adaptability and quick learning skills
+              </span>
+              , I'm well-suited for the ever-changing startup landscape.{" "}
               <span
                 className="reach-out-text relative custom-cursor-clickable"
                 onMouseEnter={() => {
@@ -230,10 +244,10 @@ function Home({
                   handleClickableHover(false);
                 }}
               >
-                reach out
+                Lemme know
               </span>{" "}
-              if you'd like to discuss potential projects or collaborations in
-              these areas.
+              if you'd like to discuss potential collaborations in these
+              exciting areas.
             </p>
           </div>
         </div>

@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView";
 import "./App.css";
-import { FaLock, FaLockOpen } from "react-icons/fa";
+import { FaLock, FaLockOpen, FaClock } from "react-icons/fa";
+
 
 const statusConfig = {
   Live: { colorClass: "text-green-500 border-green-500", width: "w-[4.75rem]" },
@@ -11,7 +12,11 @@ const statusConfig = {
     colorClass: "text-yellow-500 border-yellow-500",
     width: "w-40",
   },
-  "Coming Soon": { colorClass: "text-gray-500 border-gray-500", width: "w-24" },
+  
+  "Coming Soon": { 
+    colorClass: "text-purple-500 border-purple-500", 
+    width: "w-32"
+  },
   Private: { colorClass: "text-gray-500 border-gray-500", width: "w-20" },
 };
 
@@ -36,10 +41,8 @@ const Project = ({
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const handleMouseEnter = () => {
-    if (project.status !== "Coming Soon") {
-      handleClickableHover(true);
-      onProjectHover(index);
-    }
+    handleClickableHover(true);
+    onProjectHover(index);
   };
 
   const handleMouseLeave = () => {
@@ -123,17 +126,10 @@ const Project = ({
       <motion.div
         ref={projectRef}
         key={index}
-        className={`flex items-start mb-1 p-2 rounded-lg  ${
-          project.url
-            ? "hover:bg-navy-800 dark:hover:bg-navy-900 cursor-pointer"
-            : ""
-        } ${
-          project.status === "Coming Soon"
-            ? ""
-            : "hover:bg-navy-800 dark:hover:bg-navy-900"
-        } custom-cursor-clickable ${isBlurred ? "blur-xs" : ""} ${
-          hoveredProjectIndex === index ? "z-10 relative" : ""
-        }`}
+        className={`flex items-start mb-1 p-2 rounded-lg 
+          hover:bg-navy-800 dark:hover:bg-navy-900 cursor-pointer
+          custom-cursor-clickable ${isBlurred ? "blur-xs" : ""} 
+          ${hoveredProjectIndex === index ? "z-10 relative" : ""}`}
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
@@ -182,7 +178,18 @@ const Project = ({
                     )}
                   </motion.span>
                 )}
-              </AnimatePresence>
+              {project.status === "Coming Soon" && (
+              <motion.span
+                className="absolute left-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <FaClock className="text-purple-500" size={12} />
+              </motion.span>
+            )}
+          </AnimatePresence>
               <span className="flex-grow text-center">{project.status}</span>
             </button>
           </div>
