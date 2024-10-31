@@ -1,19 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const AnimatedGreeting = ({ greeting, className }) => {
+  const [isComplete, setIsComplete] = useState(false);
   const [visibleLetters, setVisibleLetters] = useState(0);
-  const [isFadingOut, setIsFadingOut] = useState(false);
-  const fadeOutTimeoutRef = useRef(null);
-
+  
   useEffect(() => {
     setVisibleLetters(0);
-    setIsFadingOut(false);
-
-    // Clear any existing timeout
-    if (fadeOutTimeoutRef.current) {
-      clearTimeout(fadeOutTimeoutRef.current);
-    }
+    setIsComplete(false);
 
     const letterInterval = setInterval(() => {
       setVisibleLetters((prev) => {
@@ -21,29 +15,21 @@ const AnimatedGreeting = ({ greeting, className }) => {
           return prev + 1;
         } else {
           clearInterval(letterInterval);
-          
-          // Set new timeout for fading out
-          fadeOutTimeoutRef.current = setTimeout(() => {
-            setIsFadingOut(true);
-          }, 4000); // Changed to 4 seconds
-
+          setIsComplete(true);
           return prev;
         }
       });
-    }, 280);
+    }, 100); // Faster typing speed
 
     return () => {
       clearInterval(letterInterval);
-      if (fadeOutTimeoutRef.current) {
-        clearTimeout(fadeOutTimeoutRef.current);
-      }
     };
   }, [greeting]);
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: isFadingOut ? 0 : 1 }}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
       className={className}
@@ -51,9 +37,16 @@ const AnimatedGreeting = ({ greeting, className }) => {
       {greeting.split('').map((letter, index) => (
         <motion.span
           key={index}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: index < visibleLetters ? 1 : 0 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ 
+            opacity: index < visibleLetters ? 1 : 0,
+            y: index < visibleLetters ? 0 : 20 
+          }}
+          transition={{ 
+            duration: 0.3,
+            ease: "easeOut",
+            delay: index < visibleLetters ? 0 : 0 
+          }}
         >
           {letter}
         </motion.span>

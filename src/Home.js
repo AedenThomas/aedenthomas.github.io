@@ -16,6 +16,7 @@ import ContactLinks from "./ContactLinks";
 import LanguageIcon from "./LanguageIcon";
 import { getCalApi } from "@calcom/embed-react";
 import Privacy from "./BillifyPrivacy.js";
+import { useNavigate } from "react-router-dom";
 
 function Home({
   isDarkMode,
@@ -47,10 +48,24 @@ function Home({
   courseworkRef,
   isCourseworkInView,
 }) {
+  const navigate = useNavigate();
+  const [isAIButtonHovered, setIsAIButtonHovered] = useState(false);
+
+  // Define animation variants
+  const textVariants = {
+    hidden: { opacity: 0, x: -10 },
+    visible: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -10 },
+  };
+
+  const handleAIClick = () => {
+    navigate('/ai');
+  };
+
   return (
     <div
       className={`custom-cursor min-h-screen p-8 transition-colors duration-1000 ${
-        isDarkMode ? "bg-black text-white" : "bg-white text-gray-900"
+        isDarkMode ? "bg-black text-white" : "bg-[#F2F0E9] text-gray-900"
       }`}
     >
       {!isMobile && (
@@ -94,6 +109,41 @@ function Home({
         }`}
       >
         {isDarkMode ? "☀️" : "🌙"}
+      </button>
+
+      <button
+        onClick={handleAIClick}
+        onMouseEnter={() => setIsAIButtonHovered(true)}
+        onMouseLeave={() => setIsAIButtonHovered(false)}
+        className={`fixed top-16 right-4 p-2 rounded-full custom-cursor-clickable flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out h-10 ${
+          isDarkMode ? "bg-white text-black" : "bg-black text-white"
+        }`}
+        style={{
+          width: isAIButtonHovered ? '110px' : '33px',
+        }}
+      >
+        <AnimatePresence mode="wait">
+          {isAIButtonHovered && (
+            <motion.span
+              className="whitespace-nowrap overflow-hidden text-sm"
+              variants={{
+                hidden: { width: 0, opacity: 0 },
+                visible: { width: 'auto', opacity: 1 },
+                exit: { width: 0, opacity: 0 }
+              }}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              transition={{ 
+                duration: 0.5,
+                ease: "easeInOut",
+              }}
+            >
+              AI Me&nbsp;
+            </motion.span>
+          )}
+        </AnimatePresence>
+        <span className="flex-shrink-0 text-sm">🤖</span>
       </button>
 
       <div className="max-w-3xl mx-auto">
@@ -195,21 +245,22 @@ function Home({
                   )}
                 </AnimatePresence>
               </span>
-              . I've created various mobile and web applications, striving for that perfect{" "}
-  <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
-    balance between design and functionality
-  </span>
-  . I'm passionate about bringing{" "}
-  <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
-    innovative solutions
-  </span>{" "}
-  to projects, especially in{" "}
-  <span className="relative inline hover:text-green-500 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
-    <span className="whitespace-nowrap">dynamic startup</span>{" "}
-    environments
-  </span>
-  .
-</p>
+              . I've created various mobile and web applications, striving for
+              that perfect{" "}
+              <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
+                balance between functionality and design
+              </span>
+              . I'm passionate about bringing{" "}
+              <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
+                innovative solutions
+              </span>{" "}
+              to projects, especially in{" "}
+              <span className="relative inline hover:text-green-500 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+                <span className="whitespace-nowrap">dynamic startup</span>{" "}
+                environments
+              </span>
+              .
+            </p>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
               My goal is to apply my{" "}
               <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
@@ -404,15 +455,18 @@ function Home({
                     {pub.journal}, {pub.year}
                   </p>
                   {pub.doi && (
-                    <a
-                      href={`https://doi.org/${pub.doi}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-                    >
+                    <p className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300">
                       DOI: {pub.doi}
-                    </a>
+                    </p>
                   )}
+                  <a
+                    href="https://link.springer.com/book/9789819766802"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                  >
+                    Releasing on 23 Dec 2024
+                  </a>
                 </motion.div>
               ))}
             </motion.div>

@@ -23,6 +23,7 @@ import LanguageIcon from "./LanguageIcon";
 import Privacy from "./BillifyPrivacy.js";
 import AIResume from "./AIResume.js";
 import Home from "./Home";
+import AIPage from "./AIPage";
 
 
 
@@ -308,6 +309,17 @@ function App() {
               isCourseworkInView={isCourseworkInView}
             />
           }
+        />
+        <Route 
+          path="/ai" 
+          element={
+            <AIPage 
+              isDarkMode={isDarkMode}
+              toggleDarkMode={toggleDarkMode}
+              handleClickableHover={handleClickableHover}
+              isMobile={isMobile}
+            />
+          } 
         />
         <Route path="billify/privacy" element={<Privacy />} />
         <Route path="airesume/privacy" element={<AIResume />} />
