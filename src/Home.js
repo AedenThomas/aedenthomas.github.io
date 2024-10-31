@@ -65,7 +65,7 @@ function Home({
     aiPageStatus: 'hidden',
     navigationStatus: 'idle'
   });
-  const [transitionTheme, setTransitionTheme] = useState(false);
+  const [transitionTheme, setTransitionTheme] = useState(isDarkMode);
 
   const updateButtonPosition = () => {
     if (aiButtonRef.current) {
@@ -221,6 +221,15 @@ function Home({
     }
   }, [isNavigating]);
 
+  // Add effect to smoothly transition the theme
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setTransitionTheme(isDarkMode);
+    }, 50);
+
+    return () => clearTimeout(timeout);
+  }, [isDarkMode]);
+
   // Define animation variants
   const textVariants = {
     hidden: { opacity: 0, x: -10 },
@@ -231,7 +240,7 @@ function Home({
   return (
     <div
       className={`custom-cursor min-h-screen p-8 transition-colors duration-1000 ${
-        isDarkMode ? "bg-black text-white" : "bg-[#F2F0E9] text-gray-900"
+        transitionTheme ? "bg-black text-white" : "bg-[#F2F0E9] text-gray-900"
       }`}
     >
       {!isMobile && (

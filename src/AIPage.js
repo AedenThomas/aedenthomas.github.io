@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import ReactMarkdown from 'react-markdown'; // Add this import
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom"; // Add this import
@@ -13,6 +13,7 @@ import {
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 import AnimatedGreeting from "./AnimatedGreeting";
+const Home = React.lazy(() => import('./Home')); // Add this import
 
 function AIPage({
   isDarkMode,
@@ -78,6 +79,10 @@ function AIPage({
   const [isHoveredClickable, setIsHoveredClickable] = useState(false); // Add this line
   const [isHomeButtonHovered, setIsHomeButtonHovered] = useState(false);
   const [themeTransition, setThemeTransition] = useState(isDarkMode);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const homeButtonRef = useRef(null);
+  const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
+  const [themeTransitionDirection, setThemeTransitionDirection] = useState(null);
 
   // Add effect to smoothly transition the theme
   useEffect(() => {
@@ -87,6 +92,34 @@ function AIPage({
 
     return () => clearTimeout(timeout);
   }, [isDarkMode]);
+
+  // Add effect to track button position
+  useEffect(() => {
+    const updateButtonPosition = () => {
+      if (homeButtonRef.current) {
+        const rect = homeButtonRef.current.getBoundingClientRect();
+        setButtonPosition({
+          x: rect.left,
+          y: rect.top,
+        });
+      }
+    };
+
+    updateButtonPosition();
+    window.addEventListener('resize', updateButtonPosition);
+    return () => window.removeEventListener('resize', updateButtonPosition);
+  }, []);
+
+  // Add this function before handleHomeClick
+  const updateButtonPosition = () => {
+    if (homeButtonRef.current) {
+      const rect = homeButtonRef.current.getBoundingClientRect();
+      setButtonPosition({
+        x: rect.left,
+        y: rect.top,
+      });
+    }
+  };
 
   // Update handleClickableHover to also update local state
   const handleLocalClickableHover = (isHovered) => {
@@ -185,14 +218,52 @@ function AIPage({
     }
   };
 
-  // Enhanced navigation tracking
-  const handleHomeClick = () => {
-    console.log('🏠 [AIPage] Home navigation triggered');
-    setAnimationState(prev => ({
-      ...prev,
-      navigating: true
-    }));
-    navigate('/');
+  // Add prefetch logic for Home component
+  useEffect(() => {
+    const prefetchHome = async () => {
+      console.log('🔄 Prefetching Home...');
+      try {
+        const module = await import('./Home');
+        console.log('✅ Home prefetch successful');
+      } catch (error) {
+        console.error('❌ Home prefetch failed:', error);
+      }
+    };
+    prefetchHome();
+  }, []);
+
+  // Enhanced navigation tracking with Home page transition
+  const handleHomeClick = async () => {
+    console.log('🏠 [Home Transition] Button clicked');
+    updateButtonPosition();
+    console.log('📍 [Home Transition] Button position:', buttonPosition);
+    
+    // Set initial opposite theme
+    setThemeTransition(!themeTransition);
+    console.log('🔄 [Home Transition] Setting temporary theme');
+    
+    setIsNavigating(true);
+    
+    try {
+      // Wait for circle animation to start expanding
+      console.log('⭕ [Home Transition] Starting circle animation');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('✅ [Home Transition] Circle animation complete');
+      
+      // Wait additional time with opposite theme
+      console.log('⏳ [Home Transition] Starting theme transition delay');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('✅ [Home Transition] Theme transition delay complete');
+      
+      // Navigate to home
+      console.log('🚀 [Home Transition] Executing navigation to /');
+      navigate('/');
+      
+    } catch (error) {
+      console.error('❌ [Home Transition] Error during transition:', error);
+      setIsNavigating(false);
+      setThemeTransition(isDarkMode);
+    }
   };
 
   return (
@@ -253,6 +324,7 @@ function AIPage({
 
       {/* Add Home button */}
       <button
+        ref={homeButtonRef}
         onClick={handleHomeClick}
         onMouseEnter={() => setIsHomeButtonHovered(true)}
         onMouseLeave={() => setIsHomeButtonHovered(false)}
@@ -286,6 +358,75 @@ function AIPage({
         </AnimatePresence>
         <span className="flex-shrink-0 text-sm">🏠</span>
       </button>
+
+      <AnimatePresence mode="wait">
+        {isNavigating && (
+          <motion.div
+            initial={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              clipPath: `circle(0px at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
+              zIndex: 9999,
+              backgroundColor: themeTransition ? '#000000' : '#F2F0E9',
+            }}
+            animate={{
+              clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
+            }}
+            transition={{
+              duration: 2,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="w-screen h-screen overflow-hidden"
+          >
+            <Suspense fallback={
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent" />
+              </div>
+            }>
+              <motion.div
+                animate={{
+                  transition: { duration: 0.5 }
+                }}
+                className="w-full h-full"
+              >
+                <Home 
+                  isDarkMode={!themeTransition}
+                  isMobile={isMobile}
+                  toggleDarkMode={toggleDarkMode}
+                  handleClickableHover={handleClickableHover}
+                  mousePosition={mousePosition}
+                  isHoveredClickable={isHoveredClickable}
+                  greetings={greetings}
+                  currentGreeting={currentGreeting}
+                  hoveredProjectIndex={null}
+                  isReachOutHovered={false}
+                  handleLanguageHover={() => {}}
+                  handleLanguageLeave={() => {}}
+                  hoveredLanguage={null}
+                  handleReachOutMouseEnter={() => {}}
+                  handleReachOutMouseLeave={() => {}}
+                  email=""
+                  linkedinUrl=""
+                  githubUrl=""
+                  isLiveVisible={false}
+                  handleProjectHover={() => {}}
+                  skillsRef={null}
+                  isSkillsInView={false}
+                  educationRef={null}
+                  isEducationInView={false}
+                  publicationsRef={null}
+                  isPublicationsInView={false}
+                  courseworkRef={null}
+                  isCourseworkInView={false}
+                />
+              </motion.div>
+            </Suspense>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main heading - show only if chat hasn't started */}
       {!chatStarted && (
@@ -413,6 +554,7 @@ function AIPage({
                   <StarIcon className="w-4 h-4 text-yellow-500" />
                   <span className="text-left flex-1">What is your Favorite project?</span>
                 </button>
+
                 <button
                   onClick={() => handleButtonClick("What tech stack do you know?")}
                   onMouseEnter={() => handleLocalClickableHover(true)}
@@ -426,20 +568,8 @@ function AIPage({
                   <CodeBracketIcon className="w-4 h-4 text-blue-500" />
                   <span className="text-left flex-1">What tech stack do you know?</span>
                 </button>
-                <button
-                  onClick={() => handleButtonClick("What did you study?")}
-                  onMouseEnter={() => handleLocalClickableHover(true)}
-                  onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
-                    themeTransition
-                      ? "bg-[#2F2F2F] text-gray-300"
-                      : "bg-white text-gray-700"
-                  } w-full md:w-auto`}
-                >
-                  <AcademicCapIcon className="w-4 h-4 text-green-500" />
-                  <span className="text-left flex-1">What did you study?</span>
-                </button>
               </div>
+
               <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
                 <button
                   onClick={() => handleButtonClick("What work interests you?")}
@@ -454,6 +584,7 @@ function AIPage({
                   <BriefcaseIcon className="w-4 h-4 text-purple-500" />
                   <span className="text-left flex-1">What work interests you?</span>
                 </button>
+
                 <button
                   onClick={() => handleButtonClick("How do I get in touch with you?")}
                   onMouseEnter={() => handleLocalClickableHover(true)}
