@@ -84,7 +84,6 @@ function AIPage({
           x: rect.left,
           y: rect.top,
         });
-        console.log(`Button position updated: x=${rect.left}, y=${rect.top}`);
       }
     };
 
@@ -205,9 +204,7 @@ function AIPage({
   useEffect(() => {
     const prefetchHome = async () => {
       try {
-        console.log("Prefetching Home component.");
         const module = await import('./Home');
-        console.log("Home component prefetched successfully.");
       } catch (error) {
         console.error('❌ Home prefetch failed:', error);
       }
@@ -216,7 +213,7 @@ function AIPage({
   }, []);
 
   const handleHomeClick = () => {
-    console.log("Home button clicked");
+    
     updateButtonPosition();
     setIsNavigatingBack(true);
     setShouldNavigate(true);
@@ -229,12 +226,9 @@ function AIPage({
         setIsNavigating(true);
 
         try {
-          // Wait for circle expansion animation - increased by 1000ms
-          await new Promise(resolve => setTimeout(resolve, 3000)); // Changed from 2000 to 3000
-          
-          // Navigate after animation completes
+          // Wait for complete animation sequence
+          await new Promise(resolve => setTimeout(resolve, 4000));
           navigate('/');
-          
         } catch (error) {
           console.error('❌ [Home Transition] Error:', error);
           setIsNavigating(false);
@@ -350,14 +344,16 @@ function AIPage({
               bottom: 0,
               clipPath: `circle(0px at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
               zIndex: 9999,
-              backgroundColor: isDarkMode ? '#F2F0E9' : '#000000', // Opposite theme color
+              backgroundColor: '#F2F0E9',
             }}
             animate={{
               clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
             }}
             transition={{
-              duration: 3, // Increased from 2 to 3 seconds to match the navigation timing
+              duration: 2,
               ease: [0.22, 1, 0.36, 1],
+            }}
+            onAnimationStart={() => {
             }}
             className="w-screen h-screen overflow-hidden"
           >
@@ -367,19 +363,23 @@ function AIPage({
               </div>
             }>
               <motion.div
-                initial={{ backgroundColor: isDarkMode ? '#F2F0E9' : '#000000' }}
+                initial={{ 
+                  opacity: 1,
+                  backgroundColor: '#F2F0E9'
+                }}
                 animate={{ 
-                  backgroundColor: isDarkMode ? '#000000' : '#F2F0E9'
+                  backgroundColor: ['#F2F0E9', '#F2F0E9', '#000000']
                 }}
                 transition={{
-                  delay: 3.5, // Start fade after circle animation
-                  duration: 1.5, // Smooth fade duration
+                  duration: 4,
+                  times: [0, 0.5, 1],
                   ease: "easeInOut"
                 }}
                 className="w-full h-full"
               >
                 <Home 
-                  isDarkMode={!isDarkMode} // Pass opposite theme
+                  isDarkMode={true}
+                  initialTransitionTheme={false}
                   isMobile={isMobile}
                   toggleDarkMode={toggleDarkMode}
                   handleClickableHover={handleClickableHover}

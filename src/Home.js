@@ -22,8 +22,11 @@ import { useNavigate } from "react-router-dom";
 // Add this near the top of the file, outside the component
 const AIPage = React.lazy(() => import('./AIPage'));
 
+
+
 function Home({
   isDarkMode,
+  initialTransitionTheme,
   isMobile,
   mousePosition,
   isHoveredClickable,
@@ -66,7 +69,9 @@ function Home({
     navigationStatus: 'idle'
   });
   // Initialize themeTransition based on isDarkMode prop
-  const [transitionTheme, setTransitionTheme] = useState(isDarkMode);
+  const [transitionTheme, setTransitionTheme] = useState(
+    initialTransitionTheme !== undefined ? initialTransitionTheme : isDarkMode
+  );
 
   const updateButtonPosition = () => {
     if (aiButtonRef.current) {
@@ -79,11 +84,9 @@ function Home({
   };
 
   useEffect(() => {
-    console.log("Home component mounted.");
     updateButtonPosition();
     window.addEventListener('resize', updateButtonPosition);
     return () => {
-      console.log("Home component unmounted.");
       window.removeEventListener('resize', updateButtonPosition);
     };
   }, []);
@@ -94,9 +97,7 @@ function Home({
     const prefetchAIPage = async () => {
       setDebugInfo(prev => ({ ...prev, prefetchStatus: 'starting' }));
       try {
-        console.log("Prefetching AIPage component.");
         const module = await import('./AIPage');
-        console.log("AIPage component prefetched successfully.");
         setDebugInfo(prev => ({ ...prev, prefetchStatus: 'success' }));
         setIsPrefetched(true);
       } catch (error) {
@@ -157,16 +158,10 @@ function Home({
 
   // Enhanced debug effect
   useEffect(() => {
-    console.log("Debug Info Updated:", debugInfo);
-    console.log("Button Position:", buttonPosition);
-    console.log("isNavigating:", isNavigating);
-    console.log("showAIPage:", showAIPage);
-    console.log("transitionTheme:", transitionTheme);
   }, [debugInfo, buttonPosition, isNavigating, showAIPage, transitionTheme]);
 
   // Add transition state tracking
   useEffect(() => {
-    console.log("isNavigating changed to:", isNavigating);
     if (isNavigating) {
       const transitionSteps = {
         start: Date.now(),
@@ -203,28 +198,18 @@ function Home({
     }
   }, [isNavigating]);
 
-  // Add effect to smoothly transition the theme
+  // Remove duplicate useEffects and combine them into one comprehensive effect:
   useEffect(() => {
-    console.log(`isDarkMode changed to: ${isDarkMode}`);
+
+    // Delay the theme transition
     const timeout = setTimeout(() => {
       setTransitionTheme(isDarkMode);
-    }, 3000); // Match the delay in AIPage.js
+    }, 3000); // Transition to dark mode after circle expansion
 
-    return () => clearTimeout(timeout);
-  }, [isDarkMode]);
-
-  // Add this useEffect to synchronize transitionTheme with isDarkMode prop
-  useEffect(() => {
-    console.log(`isDarkMode prop changed to: ${isDarkMode}`);
-    setTransitionTheme(isDarkMode);
-    console.log(`transitionTheme set to: ${isDarkMode}`);
-  }, [isDarkMode]);
-
-  // Modify the useEffect that handles theme transitions
-  useEffect(() => {
-    console.log(`isDarkMode prop changed to: ${isDarkMode}`);
-    setTransitionTheme(isDarkMode);
-  }, [isDarkMode]);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [isDarkMode, initialTransitionTheme]);
 
   // Define animation variants
   const textVariants = {
@@ -238,13 +223,16 @@ function Home({
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
+      onAnimationStart={() => {
+      }}
       className={`min-h-screen flex flex-col items-center p-4 md:p-8 theme-transition custom-cursor ${
         transitionTheme ? "bg-black text-white" : "bg-[#F2F0E9] text-gray-900"
       }`}
       style={{
-        transition: 'background-color 0.5s ease-in-out, color 0.5s ease-in-out'
+        transition: 'background-color 1.5s ease-in-out, color 1.5s ease-in-out'
       }}
     >
+      
       {!isMobile && (
         <>
           <div
