@@ -15,6 +15,11 @@ import {
 import AnimatedGreeting from "./AnimatedGreeting";
 const Home = React.lazy(() => import('./Home')); // Add this import
 
+// Add these constants at the top of the file with other constants
+const email = "hey@aeden.me";
+const linkedinUrl = "https://www.linkedin.com/in/aedenthomas/";
+const githubUrl = "https://github.com/AedenThomas/";
+
 function AIPage({
   isDarkMode,
   toggleDarkMode,
@@ -394,9 +399,9 @@ function AIPage({
                   hoveredLanguage={null}
                   handleReachOutMouseEnter={() => {}}
                   handleReachOutMouseLeave={() => {}}
-                  email=""
-                  linkedinUrl=""
-                  githubUrl=""
+                  email={email}
+                  linkedinUrl={linkedinUrl}
+                  githubUrl={githubUrl}
                   isLiveVisible={false}
                   handleProjectHover={() => {}}
                   skillsRef={null}
