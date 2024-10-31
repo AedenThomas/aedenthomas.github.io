@@ -134,10 +134,6 @@ body {
 }
 
 .theme-transition {
-    transition: all 0.5s ease-in-out;
-}
-
-.theme-transition {
     transition: 
         background-color 0.5s ease-in-out,
         color 0.5s ease-in-out,

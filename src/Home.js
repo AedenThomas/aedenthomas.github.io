@@ -128,11 +128,14 @@ function Home({
       // Wait additional 500ms with opposite theme
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Fade to device theme
+      // Smoothly fade to device theme
       setTransitionTheme(false);
       
-      // Navigate after all animations
-      navigate('/ai');
+      // Navigate after transition completes
+      setTimeout(() => {
+        navigate('/ai');
+      }, 500); // Wait for fade transition to complete
+      
     } catch (error) {
       console.error('❌ Navigation error:', error);
       setTransitionTheme(false);
