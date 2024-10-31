@@ -108,44 +108,118 @@ function Home({
   }, [buttonPosition]);
 
   const handleAIClick = async () => {
-    console.log('🎯 AI Button clicked');
-    setDebugInfo(prev => ({ ...prev, animationStatus: 'starting' }));
+    console.log('🤖 [AI Transition] Button clicked');
+    setDebugInfo(prev => ({ 
+      ...prev, 
+      animationStatus: 'starting',
+      timestamp: new Date().toISOString()
+    }));
     
     updateButtonPosition();
-    console.log('🔄 Starting transition sequence');
+    console.log('📍 [AI Transition] Button position:', buttonPosition);
+    console.log('🎬 [AI Transition] Starting transition sequence');
+    
+    // Log initial theme state
+    console.log('🎨 [AI Transition] Current theme:', isDarkMode ? 'dark' : 'light');
     
     // Set initial opposite theme
     setTransitionTheme(true);
+    console.log('🔄 [AI Transition] Setting temporary theme');
     
     // Start animation
     setIsNavigating(true);
+    console.log('🏃 [AI Transition] Navigation started');
     setShowAIPage(true);
+    console.log('📄 [AI Transition] AIPage show triggered');
     
     try {
-      // Wait for circle animation
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Wait for circle animation to complete expansion
+      console.log('⭕ [AI Transition] Starting circle animation');
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Increased from 800 to 1500
+      console.log('✅ [AI Transition] Circle animation complete');
       
-      // Wait additional 500ms with opposite theme
+      // Wait additional time with opposite theme
+      console.log('⏳ [AI Transition] Starting theme transition delay');
       await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('✅ [AI Transition] Theme transition delay complete');
       
       // Smoothly fade to device theme
+      console.log('🎨 [AI Transition] Fading to final theme');
       setTransitionTheme(false);
       
-      // Navigate after transition completes
+      // Add a delay before navigation to ensure animations complete
+      console.log('🔄 [AI Transition] Preparing for navigation');
       setTimeout(() => {
+        console.log('🚀 [AI Transition] Executing navigation to /ai');
         navigate('/ai');
-      }, 500); // Wait for fade transition to complete
+      }, 2000); // Increased from 800 to 1500 to match new animation duration
       
     } catch (error) {
-      console.error('❌ Navigation error:', error);
+      console.error('❌ [AI Transition] Error during transition:', error);
       setTransitionTheme(false);
+      setDebugInfo(prev => ({
+        ...prev,
+        error: error.message,
+        animationStatus: 'error'
+      }));
     }
   };
 
-  // Debug effect
+  // Enhanced debug effect
   useEffect(() => {
-    console.log('🔍 Current Debug State:', debugInfo);
-  }, [debugInfo]);
+    console.log('🔍 [AI Transition] Debug State Update:', {
+      ...debugInfo,
+      buttonPosition,
+      isNavigating,
+      showAIPage,
+      transitionTheme,
+      timestamp: new Date().toISOString()
+    });
+  }, [debugInfo, buttonPosition, isNavigating, showAIPage, transitionTheme]);
+
+  // Add transition state tracking
+  useEffect(() => {
+    if (isNavigating) {
+      const transitionSteps = {
+        start: Date.now(),
+        circleAnimation: null,
+        themeTransition: null,
+        navigation: null,
+        complete: null
+      };
+
+      console.log('📊 [AI Transition] Transition timeline started:', transitionSteps);
+
+      const circleTimer = setTimeout(() => {
+        transitionSteps.circleAnimation = Date.now();
+        console.log('📊 [AI Transition] Circle animation complete:', transitionSteps);
+      }, 2000); // Increased from 800 to 1500
+
+      const themeTimer = setTimeout(() => {
+        transitionSteps.themeTransition = Date.now();
+        console.log('📊 [AI Transition] Theme transition complete:', transitionSteps);
+      }, 2500); // Increased from 1300 to 2000
+
+      const navigationTimer = setTimeout(() => {
+        transitionSteps.navigation = Date.now();
+        transitionSteps.complete = Date.now();
+        console.log('📊 [AI Transition] Transition complete:', transitionSteps);
+        
+        // Calculate durations
+        const durations = {
+          totalDuration: transitionSteps.complete - transitionSteps.start,
+          circleAnimation: transitionSteps.circleAnimation - transitionSteps.start,
+          themeTransition: transitionSteps.themeTransition - transitionSteps.circleAnimation,
+          navigation: transitionSteps.navigation - transitionSteps.themeTransition
+        };
+        console.log('⏱️ [AI Transition] Transition durations (ms):', durations);
+      }, 4000); // Increased from 1800 to 3500
+
+      return () => {
+        [circleTimer, themeTimer, navigationTimer].forEach(clearTimeout);
+      };
+    }
+  }, [isNavigating]);
 
   // Define animation variants
   const textVariants = {
@@ -250,18 +324,16 @@ function Home({
               bottom: 0,
               clipPath: `circle(0px at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
               zIndex: 9999,
+              backgroundColor: isDarkMode ? '#F2F0E9' : '#000000', // Add background color
             }}
             animate={{
-              clipPath: `circle(200vh at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
+              clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`, // Increased from 200vh to 300vh
             }}
             transition={{
-              duration: 0.8,
-              ease: "easeInOut",
+              duration: 2, // Increased from 0.8 to 1.5
+              ease: [0.22, 1, 0.36, 1], // Custom easing function for smoother animation
             }}
-            exit={{
-              clipPath: `circle(0px at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
-              transition: { duration: 1 }
-            }}
+            className={`w-screen h-screen overflow-hidden`} // Add these classes
           >
             <Suspense fallback={
               <div className="w-full h-full flex items-center justify-center">

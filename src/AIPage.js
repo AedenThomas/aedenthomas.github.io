@@ -20,6 +20,54 @@ function AIPage({
   handleClickableHover,
   isMobile,
 }) {
+  // Add debug mount tracking
+  useEffect(() => {
+    console.log('🎭 [AIPage] Component mounted', {
+      initialTheme: isDarkMode ? 'dark' : 'light',
+      isMobile,
+      timestamp: new Date().toISOString()
+    });
+
+    return () => {
+      console.log('🎭 [AIPage] Component unmounting', {
+        timestamp: new Date().toISOString()
+      });
+    };
+  }, []);
+
+  // Track theme transitions
+  useEffect(() => {
+    console.log('🎨 [AIPage] Theme transition effect triggered', {
+      isDarkMode,
+      themeTransition,
+      timestamp: new Date().toISOString()
+    });
+
+    const timeout = setTimeout(() => {
+      setThemeTransition(isDarkMode);
+      console.log('🎨 [AIPage] Theme transition completed', {
+        newTheme: isDarkMode ? 'dark' : 'light',
+        timestamp: new Date().toISOString()
+      });
+    }, 50);
+
+    return () => clearTimeout(timeout);
+  }, [isDarkMode]);
+
+  // Track animation states
+  const [animationState, setAnimationState] = useState({
+    mounting: true,
+    contentFade: false,
+    themeTransition: false
+  });
+
+  useEffect(() => {
+    console.log('🎬 [AIPage] Animation state updated:', {
+      ...animationState,
+      timestamp: new Date().toISOString()
+    });
+  }, [animationState]);
+
   const navigate = useNavigate();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [currentGreeting, setCurrentGreeting] = useState(0);
@@ -137,7 +185,13 @@ function AIPage({
     }
   };
 
+  // Enhanced navigation tracking
   const handleHomeClick = () => {
+    console.log('🏠 [AIPage] Home navigation triggered');
+    setAnimationState(prev => ({
+      ...prev,
+      navigating: true
+    }));
     navigate('/');
   };
 
