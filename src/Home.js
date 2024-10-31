@@ -65,6 +65,7 @@ function Home({
     aiPageStatus: 'hidden',
     navigationStatus: 'idle'
   });
+  const [transitionTheme, setTransitionTheme] = useState(false);
 
   const updateButtonPosition = () => {
     if (aiButtonRef.current) {
@@ -113,31 +114,28 @@ function Home({
     updateButtonPosition();
     console.log('🔄 Starting transition sequence');
     
+    // Set initial opposite theme
+    setTransitionTheme(true);
+    
     // Start animation
     setIsNavigating(true);
-    
-    // Show AI page content immediately
-    console.log('👁️ Attempting to show AI Page');
     setShowAIPage(true);
-    setDebugInfo(prev => ({ 
-      ...prev, 
-      aiPageStatus: 'showing',
-      animationStatus: 'in-progress' 
-    }));
-
+    
     try {
-      // Reduced delay for smoother transition
+      // Wait for circle animation
       await new Promise(resolve => setTimeout(resolve, 800));
-      console.log('✨ Animation sequence complete');
-      setDebugInfo(prev => ({ ...prev, animationStatus: 'complete' }));
       
-      // Navigate after animation
-      console.log('🚀 Navigating to AI page');
-      setDebugInfo(prev => ({ ...prev, navigationStatus: 'navigating' }));
+      // Wait additional 500ms with opposite theme
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Fade to device theme
+      setTransitionTheme(false);
+      
+      // Navigate after all animations
       navigate('/ai');
     } catch (error) {
       console.error('❌ Navigation error:', error);
-      setDebugInfo(prev => ({ ...prev, navigationStatus: 'error' }));
+      setTransitionTheme(false);
     }
   };
 
@@ -238,7 +236,7 @@ function Home({
         <span className="flex-shrink-0 text-sm">🤖</span>
       </button>
 
-      <AnimatePresence mode="wait" onExitComplete={() => console.log('4. Exit animation completed')}>
+      <AnimatePresence mode="wait">
         {isNavigating && (
           <motion.div
             initial={{
@@ -248,7 +246,6 @@ function Home({
               right: 0,
               bottom: 0,
               clipPath: `circle(0px at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
-              backgroundColor: isDarkMode ? '#ffffff' : '#000000',
               zIndex: 9999,
             }}
             animate={{
@@ -258,19 +255,31 @@ function Home({
               duration: 0.8,
               ease: "easeInOut",
             }}
-            onAnimationStart={() => {
-              console.log('🎬 Circle animation started');
-              setDebugInfo(prev => ({ ...prev, animationStatus: 'animating' }));
-            }}
-            onAnimationComplete={() => {
-              console.log('🏁 Circle animation completed');
-              setDebugInfo(prev => ({ ...prev, animationStatus: 'completed' }));
-            }}
             exit={{
               clipPath: `circle(0px at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
               transition: { duration: 1 }
             }}
-          />
+          >
+            <Suspense fallback={
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent" />
+              </div>
+            }>
+              <motion.div
+                animate={{
+                  transition: { duration: 0.5 }
+                }}
+                className="w-full h-full"
+              >
+                <AIPage 
+                  isDarkMode={transitionTheme ? !isDarkMode : isDarkMode}
+                  isMobile={isMobile}
+                  toggleDarkMode={toggleDarkMode}
+                  handleClickableHover={handleClickableHover}
+                />
+              </motion.div>
+            </Suspense>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -637,39 +646,6 @@ function Home({
           </div>
         </div>
       </div>
-
-      {/* Add the preloaded AIPage */}
-      <AnimatePresence mode="wait">
-        {showAIPage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            style={{ 
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              zIndex: 9998,
-              pointerEvents: isNavigating ? 'all' : 'none'
-            }}
-          >
-            <Suspense fallback={
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent" />
-              </div>
-            }>
-              <AIPage 
-                isDarkMode={isDarkMode}
-                isMobile={isMobile}
-                toggleDarkMode={toggleDarkMode}
-                handleClickableHover={handleClickableHover}
-              />
-            </Suspense>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

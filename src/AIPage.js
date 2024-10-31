@@ -29,6 +29,16 @@ function AIPage({
   const [chatStarted, setChatStarted] = useState(false);
   const [isHoveredClickable, setIsHoveredClickable] = useState(false); // Add this line
   const [isHomeButtonHovered, setIsHomeButtonHovered] = useState(false);
+  const [themeTransition, setThemeTransition] = useState(isDarkMode);
+
+  // Add effect to smoothly transition the theme
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setThemeTransition(isDarkMode);
+    }, 50); // Small delay to ensure the animation starts properly
+
+    return () => clearTimeout(timeout);
+  }, [isDarkMode]);
 
   // Update handleClickableHover to also update local state
   const handleLocalClickableHover = (isHovered) => {
@@ -133,12 +143,15 @@ function AIPage({
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
+      initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className={`min-h-screen flex flex-col items-center p-4 md:p-8 transition-colors duration-1000 custom-cursor ${
-        isDarkMode ? "bg-black text-white" : "bg-[#F2F0E9] text-gray-900"
+      transition={{ duration: 0.5 }}
+      className={`min-h-screen flex flex-col items-center p-4 md:p-8 theme-transition custom-cursor ${
+        themeTransition ? "bg-black text-white" : "bg-[#F2F0E9] text-gray-900"
       }`}
+      style={{
+        transition: 'background-color 0.5s ease-in-out, color 0.5s ease-in-out'
+      }}
     >
       {!isMobile && (
         <>
@@ -147,10 +160,10 @@ function AIPage({
             style={{
               left: mousePosition.x,
               top: mousePosition.y,
-              backgroundColor: isDarkMode
+              backgroundColor: themeTransition
                 ? "rgba(255, 255, 255, 0.5)"
                 : "rgba(0, 0, 0, 0.5)",
-              boxShadow: isDarkMode
+              boxShadow: themeTransition
                 ? "0 0 10px rgba(255, 255, 255, 0.5)"
                 : "0 0 10px rgba(0, 0, 0, 0.5)",
             }}
@@ -177,11 +190,11 @@ function AIPage({
         onClick={toggleDarkMode}
         onMouseEnter={() => handleLocalClickableHover(true)}
         onMouseLeave={() => handleLocalClickableHover(false)}
-        className={`fixed top-2 right-2 md:top-4 md:right-4 p-2 rounded-full custom-cursor-clickable ${
-          isDarkMode ? "bg-white text-black" : "bg-black text-white"
+        className={`fixed top-2 right-2 md:top-4 md:right-4 p-2 rounded-full custom-cursor-clickable theme-transition ${
+          themeTransition ? "bg-white text-black" : "bg-black text-white"
         }`}
       >
-        {isDarkMode ? "☀️" : "🌙"}
+        {themeTransition ? "☀️" : "🌙"}
       </button>
 
       {/* Add Home button */}
@@ -190,7 +203,7 @@ function AIPage({
         onMouseEnter={() => setIsHomeButtonHovered(true)}
         onMouseLeave={() => setIsHomeButtonHovered(false)}
         className={`fixed top-16 right-4 p-2 rounded-full custom-cursor-clickable flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out h-10 ${
-          isDarkMode ? "bg-white text-black" : "bg-black text-white"
+          themeTransition ? "bg-white text-black" : "bg-black text-white"
         }`}
         style={{
           width: isHomeButtonHovered ? '110px' : '33px',
@@ -256,10 +269,10 @@ function AIPage({
                   <div
                     className={`max-w-[90%] md:max-w-[80%] p-2 md:p-3 rounded-lg text-sm md:text-base ${
                       message.role === "user"
-                        ? isDarkMode
+                        ? themeTransition
                           ? "bg-blue-600 text-white"
                           : "bg-blue-500 text-white"
-                        : isDarkMode
+                        : themeTransition
                         ? "bg-[#2F2F2F] text-white"
                         : "bg-white text-gray-900"
                     } markdown-content`} // Added markdown-content class
@@ -274,7 +287,7 @@ function AIPage({
                 <div className="flex justify-start">
                   <div
                     className={`p-3 rounded-lg ${
-                      isDarkMode ? "bg-[#2F2F2F]" : "bg-white"
+                      themeTransition ? "bg-[#2F2F2F]" : "bg-white"
                     }`}
                   >
                     <div className="animate-pulse flex space-x-2">
@@ -304,7 +317,7 @@ function AIPage({
               onMouseEnter={() => handleLocalClickableHover(true)}
               onMouseLeave={() => handleLocalClickableHover(false)}
               className={`w-full h-12 md:h-13 p-2 md:p-3 pl-4 md:pl-6 pr-10 md:pr-12 rounded-full text-sm md:text-base custom-cursor-clickable ${
-                isDarkMode ? "bg-[#2F2F2F] text-white" : "bg-white text-gray-900"
+                themeTransition ? "bg-[#2F2F2F] text-white" : "bg-white text-gray-900"
               } placeholder-gray-400 focus:outline-none`}
             />
             <button
@@ -338,7 +351,7 @@ function AIPage({
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
                   className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
-                    isDarkMode
+                    themeTransition
                       ? "bg-[#2F2F2F] text-gray-300"
                       : "bg-white text-gray-700"
                   } w-full md:w-auto`}
@@ -351,7 +364,7 @@ function AIPage({
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
                   className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
-                    isDarkMode
+                    themeTransition
                       ? "bg-[#2F2F2F] text-gray-300"
                       : "bg-white text-gray-700"
                   } w-full md:w-auto`}
@@ -364,7 +377,7 @@ function AIPage({
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
                   className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
-                    isDarkMode
+                    themeTransition
                       ? "bg-[#2F2F2F] text-gray-300"
                       : "bg-white text-gray-700"
                   } w-full md:w-auto`}
@@ -379,7 +392,7 @@ function AIPage({
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
                   className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
-                    isDarkMode
+                    themeTransition
                       ? "bg-[#2F2F2F] text-gray-300"
                       : "bg-white text-gray-700"
                   } w-full md:w-auto`}
@@ -392,7 +405,7 @@ function AIPage({
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
                   className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
-                    isDarkMode
+                    themeTransition
                       ? "bg-[#2F2F2F] text-gray-300"
                       : "bg-white text-gray-700"
                   } w-full md:w-auto`}

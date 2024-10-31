@@ -7,9 +7,7 @@ body {
 }
 
 .transition-colors {
-    transition:
-        background-color 1s ease,
-        color 1s ease;
+    transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 .blur-xs,
@@ -116,4 +114,41 @@ body {
     body input[type="button"] {
         cursor: auto !important;
     }
+}
+
+/* Add these new styles */
+.page-transition {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.page-transition-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.theme-transition {
+    transition: all 0.5s ease-in-out;
+}
+
+.theme-transition {
+    transition: 
+        background-color 0.5s ease-in-out,
+        color 0.5s ease-in-out,
+        border-color 0.5s ease-in-out,
+        box-shadow 0.5s ease-in-out !important;
+}
+
+.theme-transition * {
+    transition: 
+        background-color 0.5s ease-in-out,
+        color 0.5s ease-in-out,
+        border-color 0.5s ease-in-out,
+        box-shadow 0.5s ease-in-out !important;
 }
