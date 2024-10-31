@@ -1,5 +1,6 @@
 .App {
     text-align: center;
+    overflow: hidden; /* Prevents the entire page from scrolling */
 }
 
 body {
@@ -147,4 +148,10 @@ body {
         color 0.5s ease-in-out,
         border-color 0.5s ease-in-out,
         box-shadow 0.5s ease-in-out !important;
+}
+
+/* Ensure the chat area handles its own scrolling */
+.chat-container {
+    overflow-y: auto;
+    max-height: 100vh; /* Adjust as needed */
 }

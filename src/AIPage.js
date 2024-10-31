@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, Suspense } from "react";
-import ReactMarkdown from 'react-markdown'; // Add this import
+import ReactMarkdown from "react-markdown"; // Add this import
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom"; // Add this import
 import {
@@ -13,7 +13,7 @@ import {
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 import AnimatedGreeting from "./AnimatedGreeting";
-const Home = React.lazy(() => import('./Home')); // Add this import
+const Home = React.lazy(() => import("./Home")); // Add this import
 
 // Add these constants at the top of the file with other constants
 const email = "hey@aeden.me";
@@ -28,14 +28,11 @@ function AIPage({
 }) {
   // Add debug mount tracking
   useEffect(() => {
-
-    return () => {
-    };
+    return () => {};
   }, []);
 
   // Track theme transitions
   useEffect(() => {
-
     const timeout = setTimeout(() => {
       setThemeTransition(isDarkMode);
     }, 50);
@@ -47,11 +44,10 @@ function AIPage({
   const [animationState, setAnimationState] = useState({
     mounting: true,
     contentFade: false,
-    themeTransition: false
+    themeTransition: false,
   });
 
-  useEffect(() => {
-  }, [animationState]);
+  useEffect(() => {}, [animationState]);
 
   const navigate = useNavigate();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -66,7 +62,8 @@ function AIPage({
   const [isNavigating, setIsNavigating] = useState(false);
   const homeButtonRef = useRef(null);
   const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
-  const [themeTransitionDirection, setThemeTransitionDirection] = useState(null);
+  const [themeTransitionDirection, setThemeTransitionDirection] =
+    useState(null);
   const [shouldNavigate, setShouldNavigate] = useState(false);
   const [isNavigatingBack, setIsNavigatingBack] = useState(false); // Add this state
   const oppositeTheme = !isDarkMode; // Add this line
@@ -93,8 +90,8 @@ function AIPage({
     };
 
     updateButtonPosition();
-    window.addEventListener('resize', updateButtonPosition);
-    return () => window.removeEventListener('resize', updateButtonPosition);
+    window.addEventListener("resize", updateButtonPosition);
+    return () => window.removeEventListener("resize", updateButtonPosition);
   }, []);
 
   // Add this function before handleHomeClick
@@ -158,47 +155,82 @@ function AIPage({
     setIsLoading(true);
 
     // Add user message to history immediately
-    setMessageHistory(prev => [...prev, { role: 'user', text: messageToSend }]);
-    
+    setMessageHistory((prev) => [
+      ...prev,
+      { role: "user", text: messageToSend },
+    ]);
+
     try {
-      const response = await fetch("https://aeden-portfolio-backend.azurewebsites.net/api/chat", {
+      const response = await fetch(
+        "https://aeden-portfolio-backend.azurewebsites.net/api/chat",
+        {
           method: "POST",
           headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json"
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
-          mode: 'cors', // Add this
-          credentials: 'omit', // Add this
+          mode: "cors", // Add this
+          credentials: "omit", // Add this
           body: JSON.stringify({
-              message: messageToSend,
-              history: messageHistory
+            message: messageToSend,
+            history: messageHistory,
           }),
-      });
+        }
+      );
+      console.log(response);
 
       if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+           const data = await response.json();
+      console.log("Raw response data:", data);
       
-      // Handle the response with proper type checking
-      if (data && Array.isArray(data.history)) {
+      // Check for data.response instead of data.message
+      if (data && typeof data.response === "string") {
+        console.log("Raw response text:", data.response);
+      
+        // Split response into paragraphs on double newlines
+        const messages = data.response
+          .split(/\n\n+/) 
+          .filter(msg => msg.trim())
+          .map(msg => msg.trim());
+      
+        console.log("Split messages:", messages);
+        console.log("Number of messages:", messages.length);
+      
+        // Add messages sequentially with delay
+        messages.forEach((message, index) => {
+          console.log(`Scheduling message ${index + 1}/${messages.length}`);
+      
+          setTimeout(() => {
+            console.log(`Adding message ${index + 1} to history:`, message);
+            setMessageHistory(prev => {
+              const newHistory = [
+                ...prev,
+                {
+                  role: "assistant",
+                  text: message,
+                },
+              ];
+              console.log("Updated history length:", newHistory.length);
+              return newHistory;
+            });
+          }, index * 1000);
+        });
+      } else if (data && Array.isArray(data.history)) {
         setMessageHistory(data.history);
-      } else if (data && typeof data.message === 'string') {
-        // Fallback for old response format
-        setMessageHistory(prev => [...prev, { role: 'assistant', text: data.message }]);
-      } else {
-        throw new Error('Invalid response format');
+      }  else {
+        throw new Error("Invalid response format");
       }
-      
     } catch (error) {
       console.error("Error:", error);
       setMessageHistory((prev) => [
         ...prev,
         {
           role: "assistant",
-          text: "Sorry, there was an error processing your request."
-        }
+          text: "Sorry, there was an error processing your request.",
+        },
       ]);
     } finally {
       setIsLoading(false);
@@ -209,16 +241,15 @@ function AIPage({
   useEffect(() => {
     const prefetchHome = async () => {
       try {
-        const module = await import('./Home');
+        const module = await import("./Home");
       } catch (error) {
-        console.error('❌ Home prefetch failed:', error);
+        console.error("❌ Home prefetch failed:", error);
       }
     };
     prefetchHome();
   }, []);
 
   const handleHomeClick = () => {
-    
     updateButtonPosition();
     setIsNavigatingBack(true);
     setShouldNavigate(true);
@@ -232,10 +263,10 @@ function AIPage({
 
         try {
           // Wait for complete animation sequence
-          await new Promise(resolve => setTimeout(resolve, 4000));
-          navigate('/');
+          await new Promise((resolve) => setTimeout(resolve, 4000));
+          navigate("/");
         } catch (error) {
-          console.error('❌ [Home Transition] Error:', error);
+          console.error("❌ [Home Transition] Error:", error);
           setIsNavigating(false);
           setShouldNavigate(false);
         }
@@ -254,7 +285,9 @@ function AIPage({
         themeTransition ? "bg-black text-white" : "bg-[#F2F0E9] text-gray-900"
       }`}
       style={{
-        transition: 'background-color 0.5s ease-in-out, color 0.5s ease-in-out'
+        transition: "background-color 0.5s ease-in-out, color 0.5s ease-in-out",
+        height: '100vh', // Ensures the container fits the viewport
+        overflow: 'hidden', // Prevents page-level scrolling
       }}
     >
       {!isMobile && (
@@ -311,7 +344,7 @@ function AIPage({
           themeTransition ? "bg-white text-black" : "bg-black text-white"
         }`}
         style={{
-          width: isHomeButtonHovered ? '110px' : '33px',
+          width: isHomeButtonHovered ? "110px" : "33px",
         }}
       >
         <AnimatePresence mode="wait">
@@ -320,13 +353,13 @@ function AIPage({
               className="whitespace-nowrap overflow-hidden text-sm"
               variants={{
                 hidden: { width: 0, opacity: 0 },
-                visible: { width: 'auto', opacity: 1 },
-                exit: { width: 0, opacity: 0 }
+                visible: { width: "auto", opacity: 1 },
+                exit: { width: 0, opacity: 0 },
               }}
               initial="hidden"
               animate="visible"
               exit="hidden"
-              transition={{ 
+              transition={{
                 duration: 0.5,
                 ease: "easeInOut",
               }}
@@ -342,47 +375,52 @@ function AIPage({
         {isNavigating && (
           <motion.div
             initial={{
-              position: 'fixed',
+              position: "fixed",
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              clipPath: `circle(0px at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
+              clipPath: `circle(0px at ${buttonPosition.x + 16}px ${
+                buttonPosition.y + 16
+              }px)`,
               zIndex: 9999,
-              backgroundColor: '#F2F0E9',
+              backgroundColor: "#F2F0E9",
             }}
             animate={{
-              clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
+              clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${
+                buttonPosition.y + 16
+              }px)`,
             }}
             transition={{
               duration: 2,
               ease: [0.22, 1, 0.36, 1],
             }}
-            onAnimationStart={() => {
-            }}
+            onAnimationStart={() => {}}
             className="w-screen h-screen overflow-hidden"
           >
-            <Suspense fallback={
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent" />
-              </div>
-            }>
+            <Suspense
+              fallback={
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent" />
+                </div>
+              }
+            >
               <motion.div
-                initial={{ 
+                initial={{
                   opacity: 1,
-                  backgroundColor: '#F2F0E9'
+                  backgroundColor: "#F2F0E9",
                 }}
-                animate={{ 
-                  backgroundColor: ['#F2F0E9', '#F2F0E9', '#000000']
+                animate={{
+                  backgroundColor: ["#F2F0E9", "#F2F0E9", "#000000"],
                 }}
                 transition={{
                   duration: 4,
                   times: [0, 0.5, 1],
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
                 className="w-full h-full"
               >
-                <Home 
+                <Home
                   isDarkMode={true}
                   initialTransitionTheme={false}
                   isMobile={isMobile}
@@ -435,9 +473,9 @@ function AIPage({
       )}
 
       <div
-        className={`w-full max-w-4xl px-2 md:px-4 ${
-          chatStarted 
-            ? "flex flex-col h-[calc(100vh-2rem)]" 
+        className={`w-full max-w-4xl px-2 md:px-4 flex-1 overflow-hidden ${
+          chatStarted
+            ? "flex flex-col h-[calc(100vh-2rem)]"
             : "flex-[0.6] md:flex-none flex flex-col justify-center md:block md:h-auto mt-4 md:mt-20"
         }`}
       >
@@ -463,9 +501,7 @@ function AIPage({
                         : "bg-white text-gray-900"
                     } markdown-content`} // Added markdown-content class
                   >
-                    <ReactMarkdown>
-                      {message.text}
-                    </ReactMarkdown>
+                    <ReactMarkdown>{message.text}</ReactMarkdown>
                   </div>
                 </div>
               ))}
@@ -491,8 +527,8 @@ function AIPage({
         {/* Reorder elements using absolute positioning on mobile */}
         <div className="relative flex flex-col-reverse md:flex-col">
           {/* Input form */}
-          <form 
-            onSubmit={handleSubmit} 
+          <form
+            onSubmit={handleSubmit}
             className="fixed md:relative bottom-0 left-0 right-0 md:bottom-auto px-2 md:px-0 bg-inherit pb-4 pt-2 md:py-0 md:mb-8"
           >
             <input
@@ -503,7 +539,9 @@ function AIPage({
               onMouseEnter={() => handleLocalClickableHover(true)}
               onMouseLeave={() => handleLocalClickableHover(false)}
               className={`w-full h-12 md:h-13 p-2 md:p-3 pl-4 md:pl-6 pr-10 md:pr-12 rounded-full text-sm md:text-base custom-cursor-clickable ${
-                themeTransition ? "bg-[#2F2F2F] text-white" : "bg-white text-gray-900"
+                themeTransition
+                  ? "bg-[#2F2F2F] text-white"
+                  : "bg-white text-gray-900"
               } placeholder-gray-400 focus:outline-none`}
             />
             <button
@@ -533,7 +571,9 @@ function AIPage({
             <div className="flex flex-col gap-2 mb-24 md:mb-0">
               <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
                 <button
-                  onClick={() => handleButtonClick("What is your Favorite project?")}
+                  onClick={() =>
+                    handleButtonClick("What is your Favorite project?")
+                  }
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
                   className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
@@ -543,11 +583,15 @@ function AIPage({
                   } w-full md:w-auto`}
                 >
                   <StarIcon className="w-4 h-4 text-yellow-500" />
-                  <span className="text-left flex-1">What is your Favorite project?</span>
+                  <span className="text-left flex-1">
+                    What is your Favorite project?
+                  </span>
                 </button>
 
                 <button
-                  onClick={() => handleButtonClick("What tech stack do you know?")}
+                  onClick={() =>
+                    handleButtonClick("What tech stack do you know?")
+                  }
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
                   className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
@@ -557,7 +601,9 @@ function AIPage({
                   } w-full md:w-auto`}
                 >
                   <CodeBracketIcon className="w-4 h-4 text-blue-500" />
-                  <span className="text-left flex-1">What tech stack do you know?</span>
+                  <span className="text-left flex-1">
+                    What tech stack do you know?
+                  </span>
                 </button>
               </div>
 
@@ -573,11 +619,15 @@ function AIPage({
                   } w-full md:w-auto`}
                 >
                   <BriefcaseIcon className="w-4 h-4 text-purple-500" />
-                  <span className="text-left flex-1">What work interests you?</span>
+                  <span className="text-left flex-1">
+                    What work interests you?
+                  </span>
                 </button>
 
                 <button
-                  onClick={() => handleButtonClick("How do I get in touch with you?")}
+                  onClick={() =>
+                    handleButtonClick("How do I get in touch with you?")
+                  }
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
                   className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
@@ -587,7 +637,9 @@ function AIPage({
                   } w-full md:w-auto`}
                 >
                   <ChatBubbleLeftRightIcon className="w-4 h-4 text-red-500" />
-                  <span className="text-left flex-1">How do I get in touch with you?</span>
+                  <span className="text-left flex-1">
+                    How do I get in touch with you?
+                  </span>
                 </button>
               </div>
             </div>
