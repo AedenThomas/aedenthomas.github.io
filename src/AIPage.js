@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import ReactMarkdown from 'react-markdown'; // Add this import
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom"; // Add this import
 import {
   DocumentTextIcon,
   LightBulbIcon,
@@ -18,6 +20,7 @@ function AIPage({
   handleClickableHover,
   isMobile,
 }) {
+  const navigate = useNavigate();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [currentGreeting, setCurrentGreeting] = useState(0);
   const [inputMessage, setInputMessage] = useState("");
@@ -25,6 +28,7 @@ function AIPage({
   const [messageHistory, setMessageHistory] = useState([]);
   const [chatStarted, setChatStarted] = useState(false);
   const [isHoveredClickable, setIsHoveredClickable] = useState(false); // Add this line
+  const [isHomeButtonHovered, setIsHomeButtonHovered] = useState(false);
 
   // Update handleClickableHover to also update local state
   const handleLocalClickableHover = (isHovered) => {
@@ -79,19 +83,22 @@ function AIPage({
     setMessageHistory(prev => [...prev, { role: 'user', text: messageToSend }]);
     
     try {
-      const response = await fetch("http://localhost:7071/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: messageToSend,
-          history: Array.isArray(messageHistory) ? messageHistory : [] // Add null check
-        }),
+      const response = await fetch("https://aeden-portfolio-backend.azurewebsites.net/api/chat", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+          },
+          mode: 'cors', // Add this
+          credentials: 'omit', // Add this
+          body: JSON.stringify({
+              message: messageToSend,
+              history: messageHistory
+          }),
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
@@ -120,6 +127,9 @@ function AIPage({
     }
   };
 
+  const handleHomeClick = () => {
+    navigate('/');
+  };
 
   return (
     <motion.div
@@ -174,6 +184,42 @@ function AIPage({
         {isDarkMode ? "☀️" : "🌙"}
       </button>
 
+      {/* Add Home button */}
+      <button
+        onClick={handleHomeClick}
+        onMouseEnter={() => setIsHomeButtonHovered(true)}
+        onMouseLeave={() => setIsHomeButtonHovered(false)}
+        className={`fixed top-16 right-4 p-2 rounded-full custom-cursor-clickable flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out h-10 ${
+          isDarkMode ? "bg-white text-black" : "bg-black text-white"
+        }`}
+        style={{
+          width: isHomeButtonHovered ? '110px' : '33px',
+        }}
+      >
+        <AnimatePresence mode="wait">
+          {isHomeButtonHovered && (
+            <motion.span
+              className="whitespace-nowrap overflow-hidden text-sm"
+              variants={{
+                hidden: { width: 0, opacity: 0 },
+                visible: { width: 'auto', opacity: 1 },
+                exit: { width: 0, opacity: 0 }
+              }}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              transition={{ 
+                duration: 0.5,
+                ease: "easeInOut",
+              }}
+            >
+              Home&nbsp;
+            </motion.span>
+          )}
+        </AnimatePresence>
+        <span className="flex-shrink-0 text-sm">🏠</span>
+      </button>
+
       {/* Main heading - show only if chat hasn't started */}
       {!chatStarted && (
         <div className="flex-[0.4] md:flex-none md:h-auto md:mt-[30vh] flex items-center justify-center md:block">
@@ -216,9 +262,11 @@ function AIPage({
                         : isDarkMode
                         ? "bg-[#2F2F2F] text-white"
                         : "bg-white text-gray-900"
-                    }`}
+                    } markdown-content`} // Added markdown-content class
                   >
-                    {message.text}
+                    <ReactMarkdown>
+                      {message.text}
+                    </ReactMarkdown>
                   </div>
                 </div>
               ))}

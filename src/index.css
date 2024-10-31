@@ -15,3 +15,41 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.markdown-content {
+  /* Basic markdown styles */
+  & p {
+    margin-bottom: 0.5rem;
+  }
+  
+  & strong {
+    font-weight: 600;
+  }
+  
+  & em {
+    font-style: italic;
+  }
+  
+  & code {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+  }
+  
+  & pre {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+  }
+  
+  & ul, & ol {
+    margin-left: 1.5em;
+    margin-bottom: 0.5rem;
+  }
+  
+  & li {
+    margin-bottom: 0.25rem;
+  }
+}
