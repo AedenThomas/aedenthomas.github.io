@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useEffect,
   useCallback,
+  Suspense,
 } from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +18,9 @@ import LanguageIcon from "./LanguageIcon";
 import { getCalApi } from "@calcom/embed-react";
 import Privacy from "./BillifyPrivacy.js";
 import { useNavigate } from "react-router-dom";
+
+// Add this near the top of the file, outside the component
+const AIPage = React.lazy(() => import('./AIPage'));
 
 function Home({
   isDarkMode,
@@ -50,16 +54,103 @@ function Home({
 }) {
   const navigate = useNavigate();
   const [isAIButtonHovered, setIsAIButtonHovered] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const aiButtonRef = useRef(null);
+  const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
+  const [isPrefetched, setIsPrefetched] = useState(false);
+  const [showAIPage, setShowAIPage] = useState(false);
+  const [debugInfo, setDebugInfo] = useState({
+    prefetchStatus: 'pending',
+    animationStatus: 'idle',
+    aiPageStatus: 'hidden',
+    navigationStatus: 'idle'
+  });
+
+  const updateButtonPosition = () => {
+    if (aiButtonRef.current) {
+      const rect = aiButtonRef.current.getBoundingClientRect();
+      setButtonPosition({
+        x: rect.left,
+        y: rect.top,
+      });
+    }
+  };
+
+  useEffect(() => {
+    updateButtonPosition();
+    window.addEventListener('resize', updateButtonPosition);
+    return () => window.removeEventListener('resize', updateButtonPosition);
+  }, []);
+
+  // Add prefetch logic
+  useEffect(() => {
+    // Prefetch AIPage component
+    const prefetchAIPage = async () => {
+      setDebugInfo(prev => ({ ...prev, prefetchStatus: 'starting' }));
+      try {
+        console.log('🔄 Prefetching AIPage...');
+        const module = await import('./AIPage');
+        console.log('✅ AIPage prefetch successful');
+        setDebugInfo(prev => ({ ...prev, prefetchStatus: 'success' }));
+        setIsPrefetched(true);
+      } catch (error) {
+        console.error('❌ AIPage prefetch failed:', error);
+        setDebugInfo(prev => ({ ...prev, prefetchStatus: 'error' }));
+      }
+    };
+    prefetchAIPage();
+  }, []);
+
+  // Enhanced button position tracking
+  useEffect(() => {
+    console.log('📍 Button position updated:', buttonPosition);
+  }, [buttonPosition]);
+
+  const handleAIClick = async () => {
+    console.log('🎯 AI Button clicked');
+    setDebugInfo(prev => ({ ...prev, animationStatus: 'starting' }));
+    
+    updateButtonPosition();
+    console.log('🔄 Starting transition sequence');
+    
+    // Start animation
+    setIsNavigating(true);
+    
+    // Show AI page content immediately
+    console.log('👁️ Attempting to show AI Page');
+    setShowAIPage(true);
+    setDebugInfo(prev => ({ 
+      ...prev, 
+      aiPageStatus: 'showing',
+      animationStatus: 'in-progress' 
+    }));
+
+    try {
+      // Reduced delay for smoother transition
+      await new Promise(resolve => setTimeout(resolve, 800));
+      console.log('✨ Animation sequence complete');
+      setDebugInfo(prev => ({ ...prev, animationStatus: 'complete' }));
+      
+      // Navigate after animation
+      console.log('🚀 Navigating to AI page');
+      setDebugInfo(prev => ({ ...prev, navigationStatus: 'navigating' }));
+      navigate('/ai');
+    } catch (error) {
+      console.error('❌ Navigation error:', error);
+      setDebugInfo(prev => ({ ...prev, navigationStatus: 'error' }));
+    }
+  };
+
+  // Debug effect
+  useEffect(() => {
+    console.log('🔍 Current Debug State:', debugInfo);
+  }, [debugInfo]);
 
   // Define animation variants
   const textVariants = {
     hidden: { opacity: 0, x: -10 },
     visible: { opacity: 1, x: 0 },
     exit: { opacity: 0, x: -10 },
-  };
-
-  const handleAIClick = () => {
-    navigate('/ai');
   };
 
   return (
@@ -80,7 +171,7 @@ function Home({
                 : "rgba(0, 0, 0, 0.5)",
               boxShadow: isDarkMode
                 ? "0 0 10px rgba(255, 255, 255, 0.5)"
-                : "0 0 10px rgba(0, 0, 0, 0.5)",
+                : "0 0 10px rgba(0, 0, 0, 5)",
             }}
           />
           <div
@@ -112,6 +203,7 @@ function Home({
       </button>
 
       <button
+        ref={aiButtonRef}
         onClick={handleAIClick}
         onMouseEnter={() => setIsAIButtonHovered(true)}
         onMouseLeave={() => setIsAIButtonHovered(false)}
@@ -145,6 +237,42 @@ function Home({
         </AnimatePresence>
         <span className="flex-shrink-0 text-sm">🤖</span>
       </button>
+
+      <AnimatePresence mode="wait" onExitComplete={() => console.log('4. Exit animation completed')}>
+        {isNavigating && (
+          <motion.div
+            initial={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              clipPath: `circle(0px at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
+              backgroundColor: isDarkMode ? '#ffffff' : '#000000',
+              zIndex: 9999,
+            }}
+            animate={{
+              clipPath: `circle(200vh at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
+            }}
+            transition={{
+              duration: 0.8,
+              ease: "easeInOut",
+            }}
+            onAnimationStart={() => {
+              console.log('🎬 Circle animation started');
+              setDebugInfo(prev => ({ ...prev, animationStatus: 'animating' }));
+            }}
+            onAnimationComplete={() => {
+              console.log('🏁 Circle animation completed');
+              setDebugInfo(prev => ({ ...prev, animationStatus: 'completed' }));
+            }}
+            exit={{
+              clipPath: `circle(0px at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
+              transition: { duration: 1 }
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       <div className="max-w-3xl mx-auto">
         <div
@@ -509,6 +637,39 @@ function Home({
           </div>
         </div>
       </div>
+
+      {/* Add the preloaded AIPage */}
+      <AnimatePresence mode="wait">
+        {showAIPage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            style={{ 
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 9998,
+              pointerEvents: isNavigating ? 'all' : 'none'
+            }}
+          >
+            <Suspense fallback={
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent" />
+              </div>
+            }>
+              <AIPage 
+                isDarkMode={isDarkMode}
+                isMobile={isMobile}
+                toggleDarkMode={toggleDarkMode}
+                handleClickableHover={handleClickableHover}
+              />
+            </Suspense>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
