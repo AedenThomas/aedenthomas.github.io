@@ -23,33 +23,16 @@ function AIPage({
 }) {
   // Add debug mount tracking
   useEffect(() => {
-    console.log('🎭 [AIPage] Component mounted', {
-      initialTheme: isDarkMode ? 'dark' : 'light',
-      isMobile,
-      timestamp: new Date().toISOString()
-    });
 
     return () => {
-      console.log('🎭 [AIPage] Component unmounting', {
-        timestamp: new Date().toISOString()
-      });
     };
   }, []);
 
   // Track theme transitions
   useEffect(() => {
-    console.log('🎨 [AIPage] Theme transition effect triggered', {
-      isDarkMode,
-      themeTransition,
-      timestamp: new Date().toISOString()
-    });
 
     const timeout = setTimeout(() => {
       setThemeTransition(isDarkMode);
-      console.log('🎨 [AIPage] Theme transition completed', {
-        newTheme: isDarkMode ? 'dark' : 'light',
-        timestamp: new Date().toISOString()
-      });
     }, 50);
 
     return () => clearTimeout(timeout);
@@ -63,10 +46,6 @@ function AIPage({
   });
 
   useEffect(() => {
-    console.log('🎬 [AIPage] Animation state updated:', {
-      ...animationState,
-      timestamp: new Date().toISOString()
-    });
   }, [animationState]);
 
   const navigate = useNavigate();
@@ -83,6 +62,9 @@ function AIPage({
   const homeButtonRef = useRef(null);
   const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
   const [themeTransitionDirection, setThemeTransitionDirection] = useState(null);
+  const [shouldNavigate, setShouldNavigate] = useState(false);
+  const [isNavigatingBack, setIsNavigatingBack] = useState(false); // Add this state
+  const oppositeTheme = !isDarkMode; // Add this line
 
   // Add effect to smoothly transition the theme
   useEffect(() => {
@@ -102,6 +84,7 @@ function AIPage({
           x: rect.left,
           y: rect.top,
         });
+        console.log(`Button position updated: x=${rect.left}, y=${rect.top}`);
       }
     };
 
@@ -221,10 +204,10 @@ function AIPage({
   // Add prefetch logic for Home component
   useEffect(() => {
     const prefetchHome = async () => {
-      console.log('🔄 Prefetching Home...');
       try {
+        console.log("Prefetching Home component.");
         const module = await import('./Home');
-        console.log('✅ Home prefetch successful');
+        console.log("Home component prefetched successfully.");
       } catch (error) {
         console.error('❌ Home prefetch failed:', error);
       }
@@ -232,39 +215,36 @@ function AIPage({
     prefetchHome();
   }, []);
 
-  // Enhanced navigation tracking with Home page transition
-  const handleHomeClick = async () => {
-    console.log('🏠 [Home Transition] Button clicked');
+  const handleHomeClick = () => {
+    console.log("Home button clicked");
     updateButtonPosition();
-    console.log('📍 [Home Transition] Button position:', buttonPosition);
-    
-    // Set initial opposite theme
-    setThemeTransition(!themeTransition);
-    console.log('🔄 [Home Transition] Setting temporary theme');
-    
-    setIsNavigating(true);
-    
-    try {
-      // Wait for circle animation to start expanding
-      console.log('⭕ [Home Transition] Starting circle animation');
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log('✅ [Home Transition] Circle animation complete');
-      
-      // Wait additional time with opposite theme
-      console.log('⏳ [Home Transition] Starting theme transition delay');
-      await new Promise(resolve => setTimeout(resolve, 500));
-      console.log('✅ [Home Transition] Theme transition delay complete');
-      
-      // Navigate to home
-      console.log('🚀 [Home Transition] Executing navigation to /');
-      navigate('/');
-      
-    } catch (error) {
-      console.error('❌ [Home Transition] Error during transition:', error);
-      setIsNavigating(false);
-      setThemeTransition(isDarkMode);
-    }
+    setIsNavigatingBack(true);
+    setShouldNavigate(true);
   };
+
+  // Modified useEffect to handle navigation
+  useEffect(() => {
+    if (shouldNavigate) {
+      const initiateNavigation = async () => {
+        setIsNavigating(true);
+
+        try {
+          // Wait for circle expansion animation
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          // Navigate after animation completes
+          navigate('/');
+          
+        } catch (error) {
+          console.error('❌ [Home Transition] Error:', error);
+          setIsNavigating(false);
+          setShouldNavigate(false);
+        }
+      };
+
+      initiateNavigation();
+    }
+  }, [shouldNavigate, navigate]);
 
   return (
     <motion.div
@@ -370,7 +350,7 @@ function AIPage({
               bottom: 0,
               clipPath: `circle(0px at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
               zIndex: 9999,
-              backgroundColor: themeTransition ? '#000000' : '#F2F0E9',
+              backgroundColor: isDarkMode ? '#F2F0E9' : '#000000', // Opposite theme color
             }}
             animate={{
               clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
@@ -393,7 +373,7 @@ function AIPage({
                 className="w-full h-full"
               >
                 <Home 
-                  isDarkMode={!themeTransition}
+                  isDarkMode={!isDarkMode} // Pass opposite theme
                   isMobile={isMobile}
                   toggleDarkMode={toggleDarkMode}
                   handleClickableHover={handleClickableHover}

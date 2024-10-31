@@ -65,6 +65,7 @@ function Home({
     aiPageStatus: 'hidden',
     navigationStatus: 'idle'
   });
+  // Initialize themeTransition based on isDarkMode prop
   const [transitionTheme, setTransitionTheme] = useState(isDarkMode);
 
   const updateButtonPosition = () => {
@@ -78,9 +79,13 @@ function Home({
   };
 
   useEffect(() => {
+    console.log("Home component mounted.");
     updateButtonPosition();
     window.addEventListener('resize', updateButtonPosition);
-    return () => window.removeEventListener('resize', updateButtonPosition);
+    return () => {
+      console.log("Home component unmounted.");
+      window.removeEventListener('resize', updateButtonPosition);
+    };
   }, []);
 
   // Add prefetch logic
@@ -89,9 +94,9 @@ function Home({
     const prefetchAIPage = async () => {
       setDebugInfo(prev => ({ ...prev, prefetchStatus: 'starting' }));
       try {
-        console.log('🔄 Prefetching AIPage...');
+        console.log("Prefetching AIPage component.");
         const module = await import('./AIPage');
-        console.log('✅ AIPage prefetch successful');
+        console.log("AIPage component prefetched successfully.");
         setDebugInfo(prev => ({ ...prev, prefetchStatus: 'success' }));
         setIsPrefetched(true);
       } catch (error) {
@@ -104,11 +109,9 @@ function Home({
 
   // Enhanced button position tracking
   useEffect(() => {
-    console.log('📍 Button position updated:', buttonPosition);
   }, [buttonPosition]);
 
   const handleAIClick = async () => {
-    console.log('🤖 [AI Transition] Button clicked');
     setDebugInfo(prev => ({ 
       ...prev, 
       animationStatus: 'starting',
@@ -116,41 +119,28 @@ function Home({
     }));
     
     updateButtonPosition();
-    console.log('📍 [AI Transition] Button position:', buttonPosition);
-    console.log('🎬 [AI Transition] Starting transition sequence');
     
     // Log initial theme state
-    console.log('🎨 [AI Transition] Current theme:', isDarkMode ? 'dark' : 'light');
     
     // Set initial opposite theme
     setTransitionTheme(true);
-    console.log('🔄 [AI Transition] Setting temporary theme');
     
     // Start animation
     setIsNavigating(true);
-    console.log('🏃 [AI Transition] Navigation started');
     setShowAIPage(true);
-    console.log('📄 [AI Transition] AIPage show triggered');
     
     try {
       // Wait for circle animation to complete expansion
-      console.log('⭕ [AI Transition] Starting circle animation');
       await new Promise(resolve => setTimeout(resolve, 2000)); // Increased from 800 to 1500
-      console.log('✅ [AI Transition] Circle animation complete');
       
       // Wait additional time with opposite theme
-      console.log('⏳ [AI Transition] Starting theme transition delay');
       await new Promise(resolve => setTimeout(resolve, 500));
-      console.log('✅ [AI Transition] Theme transition delay complete');
       
       // Smoothly fade to device theme
-      console.log('🎨 [AI Transition] Fading to final theme');
       setTransitionTheme(false);
       
       // Add a delay before navigation to ensure animations complete
-      console.log('🔄 [AI Transition] Preparing for navigation');
       setTimeout(() => {
-        console.log('🚀 [AI Transition] Executing navigation to /ai');
         navigate('/ai');
       }, 2000); // Increased from 800 to 1500 to match new animation duration
       
@@ -167,18 +157,16 @@ function Home({
 
   // Enhanced debug effect
   useEffect(() => {
-    console.log('🔍 [AI Transition] Debug State Update:', {
-      ...debugInfo,
-      buttonPosition,
-      isNavigating,
-      showAIPage,
-      transitionTheme,
-      timestamp: new Date().toISOString()
-    });
+    console.log("Debug Info Updated:", debugInfo);
+    console.log("Button Position:", buttonPosition);
+    console.log("isNavigating:", isNavigating);
+    console.log("showAIPage:", showAIPage);
+    console.log("transitionTheme:", transitionTheme);
   }, [debugInfo, buttonPosition, isNavigating, showAIPage, transitionTheme]);
 
   // Add transition state tracking
   useEffect(() => {
+    console.log("isNavigating changed to:", isNavigating);
     if (isNavigating) {
       const transitionSteps = {
         start: Date.now(),
@@ -188,22 +176,17 @@ function Home({
         complete: null
       };
 
-      console.log('📊 [AI Transition] Transition timeline started:', transitionSteps);
-
       const circleTimer = setTimeout(() => {
         transitionSteps.circleAnimation = Date.now();
-        console.log('📊 [AI Transition] Circle animation complete:', transitionSteps);
       }, 2000); // Increased from 800 to 1500
 
       const themeTimer = setTimeout(() => {
         transitionSteps.themeTransition = Date.now();
-        console.log('📊 [AI Transition] Theme transition complete:', transitionSteps);
       }, 2500); // Increased from 1300 to 2000
 
       const navigationTimer = setTimeout(() => {
         transitionSteps.navigation = Date.now();
         transitionSteps.complete = Date.now();
-        console.log('📊 [AI Transition] Transition complete:', transitionSteps);
         
         // Calculate durations
         const durations = {
@@ -212,7 +195,6 @@ function Home({
           themeTransition: transitionSteps.themeTransition - transitionSteps.circleAnimation,
           navigation: transitionSteps.navigation - transitionSteps.themeTransition
         };
-        console.log('⏱️ [AI Transition] Transition durations (ms):', durations);
       }, 4000); // Increased from 1800 to 3500
 
       return () => {
@@ -223,11 +205,25 @@ function Home({
 
   // Add effect to smoothly transition the theme
   useEffect(() => {
+    console.log(`isDarkMode changed to: ${isDarkMode}`);
     const timeout = setTimeout(() => {
       setTransitionTheme(isDarkMode);
-    }, 50);
+    }, 3000); // Match the delay in AIPage.js
 
     return () => clearTimeout(timeout);
+  }, [isDarkMode]);
+
+  // Add this useEffect to synchronize transitionTheme with isDarkMode prop
+  useEffect(() => {
+    console.log(`isDarkMode prop changed to: ${isDarkMode}`);
+    setTransitionTheme(isDarkMode);
+    console.log(`transitionTheme set to: ${isDarkMode}`);
+  }, [isDarkMode]);
+
+  // Modify the useEffect that handles theme transitions
+  useEffect(() => {
+    console.log(`isDarkMode prop changed to: ${isDarkMode}`);
+    setTransitionTheme(isDarkMode);
   }, [isDarkMode]);
 
   // Define animation variants
@@ -238,10 +234,16 @@ function Home({
   };
 
   return (
-    <div
-      className={`custom-cursor min-h-screen p-8 transition-colors duration-1000 ${
+    <motion.div
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className={`min-h-screen flex flex-col items-center p-4 md:p-8 theme-transition custom-cursor ${
         transitionTheme ? "bg-black text-white" : "bg-[#F2F0E9] text-gray-900"
       }`}
+      style={{
+        transition: 'background-color 0.5s ease-in-out, color 0.5s ease-in-out'
+      }}
     >
       {!isMobile && (
         <>
@@ -730,7 +732,7 @@ function Home({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
