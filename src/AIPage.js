@@ -229,8 +229,8 @@ function AIPage({
         setIsNavigating(true);
 
         try {
-          // Wait for circle expansion animation
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          // Wait for circle expansion animation - increased by 1000ms
+          await new Promise(resolve => setTimeout(resolve, 3000)); // Changed from 2000 to 3000
           
           // Navigate after animation completes
           navigate('/');
@@ -356,7 +356,7 @@ function AIPage({
               clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
             }}
             transition={{
-              duration: 2,
+              duration: 3, // Increased from 2 to 3 seconds to match the navigation timing
               ease: [0.22, 1, 0.36, 1],
             }}
             className="w-screen h-screen overflow-hidden"
@@ -367,8 +367,14 @@ function AIPage({
               </div>
             }>
               <motion.div
-                animate={{
-                  transition: { duration: 0.5 }
+                initial={{ backgroundColor: isDarkMode ? '#F2F0E9' : '#000000' }}
+                animate={{ 
+                  backgroundColor: isDarkMode ? '#000000' : '#F2F0E9'
+                }}
+                transition={{
+                  delay: 3.5, // Start fade after circle animation
+                  duration: 1.5, // Smooth fade duration
+                  ease: "easeInOut"
                 }}
                 className="w-full h-full"
               >
