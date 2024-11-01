@@ -20,12 +20,17 @@ const LanguageIcon = ({ language }) => {
 
   return (
     <motion.span
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0 }}
+      initial={{ opacity: 0, scale: 0, display: 'none' }}
+      animate={{ opacity: 1, scale: 1, display: 'inline-block' }}
+      exit={{ opacity: 0, scale: 0, display: 'none' }}
+      transition={{ duration: 0.2 }}
       className="inline-block ml-1"
     >
-      <IconComponent width="24" height="24" />
+      <IconComponent 
+        width="24" 
+        height="24" 
+        style={{ visibility: 'visible' }}
+      />
     </motion.span>
   );
 };

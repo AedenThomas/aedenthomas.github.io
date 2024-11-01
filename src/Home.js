@@ -577,17 +577,17 @@ function Home({
 
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
               I'm a{" "}
-              <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+              <span className="relative inline-block px-1">
                 full-stack developer
               </span>
               , and I've gotten pretty good with{" "}
               <span
                 onMouseEnter={() => handleLanguageHover("react")}
                 onMouseLeave={handleLanguageLeave}
-                className="relative"
+                className="relative hover:text-green-500 transition-all duration-300"
               >
                 React
-                <AnimatePresence>
+                <AnimatePresence mode="wait">
                   {hoveredLanguage === "react" && (
                     <LanguageIcon language="react" />
                   )}
@@ -645,17 +645,16 @@ function Home({
                   )}
                 </AnimatePresence>
               </span>
-              . You know, I've built all sorts of cool stuff for mobile and web,
-              always trying to find that sweet spot where{" "}
-              <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
+              . You know, I've built all sorts of cool stuff for mobile and web, always trying to find that sweet spot where{" "}
+              <span className="relative">
                 things work great but also look awesome
               </span>
               . I really get excited about bringing{" "}
-              <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
+              <span className="relative">
                 fresh ideas
               </span>{" "}
               to projects, especially in{" "}
-              <span className="relative inline hover:text-green-500 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+              <span className="relative">
                 <span className="whitespace-nowrap">startup environments</span>{" "}
                 where things are always moving
               </span>
@@ -663,23 +662,23 @@ function Home({
             </p>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
               My main thing is using my{" "}
-              <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
+              <span className="relative">
                 tech skills
               </span>{" "}
               to build stuff that actually matters. I'm super interested in{" "}
-              <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+              <span className="relative inline-block px-1">
                 full-stack development
               </span>{" "}
               and{" "}
-              <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
+              <span className="relative inline-block px-1">
                 enterprise solutions
               </span>
               , especially with{" "}
-              <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
+              <span className="relative">
                 cool startups
               </span>
               . I'm pretty good at{" "}
-              <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
+              <span className="relative">
                 picking up new things quickly
               </span>
               , which comes in handy in the startup world.{" "}

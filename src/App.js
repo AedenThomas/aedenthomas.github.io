@@ -70,40 +70,6 @@ function App() {
     []
   );
 
-  useEffect(() => {
-    if (!hasPlayedInitialAnimation) {
-      let delay = 0;
-      animationSequence.forEach((animation, index) => {
-        setTimeout(() => {
-          animation();
-          if (index < 5) {
-            setTimeout(() => setHoveredLanguage(null), 1000);
-          }
-        }, delay);
-        delay += 1500;
-      });
-
-      setTimeout(() => {
-        const afterElement = document.querySelector(".after\\:w-0");
-        if (afterElement) {
-          afterElement.classList.remove("hover:after:w-full");
-        }
-        const hoverElement = document.querySelector(
-          ".hover\\:text-transparent"
-        );
-        if (hoverElement) {
-          hoverElement.classList.remove(
-            "text-transparent",
-            "bg-gradient-to-r",
-            "from-green-400",
-            "to-blue-500"
-          );
-        }
-        setHasPlayedInitialAnimation(true);
-      }, delay);
-    }
-  }, [hasPlayedInitialAnimation, animationSequence]);
-
   const handleProjectHover = useCallback((index) => {
     setHoveredProjectIndex(index);
   }, []);
