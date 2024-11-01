@@ -440,28 +440,12 @@ function Home({
         ref={aiButtonRef}
         onClick={handleAIClick}
         onMouseEnter={() => {
-          console.log('🔍 Button mouse enter', {
-            currentWidth: aiButtonRef.current?.offsetWidth,
-            timestamp: Date.now()
-          });
+          handleClickableHover(true);
           setIsAIButtonHovered(true);
-          setButtonMetrics(prev => ({
-            ...prev,
-            targetWidth: 166,
-            transitionPhase: 'expanding-start'
-          }));
         }}
         onMouseLeave={() => {
-          console.log('🔍 Button mouse leave', {
-            currentWidth: aiButtonRef.current?.offsetWidth,
-            timestamp: Date.now()
-          });
+          handleClickableHover(false);
           setIsAIButtonHovered(false);
-          setButtonMetrics(prev => ({
-            ...prev,
-            targetWidth: 40,
-            transitionPhase: 'shrinking-start'
-          }));
         }}
         className={`fixed top-16 right-4 rounded-full custom-cursor-clickable overflow-hidden h-10 ${
           isDarkMode ? "bg-white text-black" : "bg-black text-white"

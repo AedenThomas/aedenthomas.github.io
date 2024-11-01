@@ -361,17 +361,11 @@ function AIPage({
         ref={homeButtonRef}
         onClick={handleHomeClick}
         onMouseEnter={() => {
-          console.log('🔍 Home button mouse enter', {
-            currentWidth: homeButtonRef.current?.offsetWidth,
-            timestamp: Date.now()
-          });
+          handleLocalClickableHover(true);
           setIsHomeButtonHovered(true);
         }}
         onMouseLeave={() => {
-          console.log('🔍 Home button mouse leave', {
-            currentWidth: homeButtonRef.current?.offsetWidth,
-            timestamp: Date.now()
-          });
+          handleLocalClickableHover(false);
           setIsHomeButtonHovered(false);
         }}
         className={`fixed top-16 right-4 rounded-full custom-cursor-clickable overflow-hidden h-10 ${
@@ -450,7 +444,7 @@ function AIPage({
                     });
                   }}
                 >
-                  Home
+                  Go to Home
                 </motion.span>
               )}
             </AnimatePresence>
