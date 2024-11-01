@@ -20,9 +20,7 @@ import Privacy from "./BillifyPrivacy.js";
 import { useNavigate } from "react-router-dom";
 
 // Add this near the top of the file, outside the component
-const AIPage = React.lazy(() => import('./AIPage'));
-
-
+const AIPage = React.lazy(() => import("./AIPage"));
 
 function Home({
   isDarkMode,
@@ -63,15 +61,15 @@ function Home({
   const [isPrefetched, setIsPrefetched] = useState(false);
   const [showAIPage, setShowAIPage] = useState(false);
   const [debugInfo, setDebugInfo] = useState({
-    prefetchStatus: 'pending',
-    animationStatus: 'idle',
-    aiPageStatus: 'hidden',
-    navigationStatus: 'idle'
+    prefetchStatus: "pending",
+    animationStatus: "idle",
+    aiPageStatus: "hidden",
+    navigationStatus: "idle",
   });
   const [buttonDebug, setButtonDebug] = useState({
     hoverState: true,
     timestamp: Date.now(),
-    animationPhase: 'initial'
+    animationPhase: "initial",
   });
   // Initialize themeTransition based on isDarkMode prop
   const [transitionTheme, setTransitionTheme] = useState(
@@ -82,8 +80,8 @@ function Home({
   const [buttonMetrics, setButtonMetrics] = useState({
     currentWidth: 40,
     targetWidth: 40,
-    transitionPhase: 'idle',
-    timestamp: Date.now()
+    transitionPhase: "idle",
+    timestamp: Date.now(),
   });
 
   const updateButtonPosition = () => {
@@ -98,9 +96,9 @@ function Home({
 
   useEffect(() => {
     updateButtonPosition();
-    window.addEventListener('resize', updateButtonPosition);
+    window.addEventListener("resize", updateButtonPosition);
     return () => {
-      window.removeEventListener('resize', updateButtonPosition);
+      window.removeEventListener("resize", updateButtonPosition);
     };
   }, []);
 
@@ -108,70 +106,73 @@ function Home({
   useEffect(() => {
     // Prefetch AIPage component
     const prefetchAIPage = async () => {
-      setDebugInfo(prev => ({ ...prev, prefetchStatus: 'starting' }));
+      setDebugInfo((prev) => ({ ...prev, prefetchStatus: "starting" }));
       try {
-        const module = await import('./AIPage');
-        setDebugInfo(prev => ({ ...prev, prefetchStatus: 'success' }));
+        const module = await import("./AIPage");
+        setDebugInfo((prev) => ({ ...prev, prefetchStatus: "success" }));
         setIsPrefetched(true);
       } catch (error) {
-        console.error('❌ AIPage prefetch failed:', error);
-        setDebugInfo(prev => ({ ...prev, prefetchStatus: 'error' }));
+        console.error("❌ AIPage prefetch failed:", error);
+        setDebugInfo((prev) => ({ ...prev, prefetchStatus: "error" }));
       }
     };
     prefetchAIPage();
   }, []);
 
   // Enhanced button position tracking
-  useEffect(() => {
-  }, [buttonPosition]);
+  useEffect(() => {}, [buttonPosition]);
 
   const handleAIClick = async () => {
-    setDebugInfo(prev => ({ 
-      ...prev, 
-      animationStatus: 'starting',
-      timestamp: new Date().toISOString()
+    setDebugInfo((prev) => ({
+      ...prev,
+      animationStatus: "starting",
+      timestamp: new Date().toISOString(),
     }));
-    
+
     updateButtonPosition();
-    
+
     // Log initial theme state
-    
+
     // Set initial opposite theme
     setTransitionTheme(true);
-    
+
     // Start animation
     setIsNavigating(true);
     setShowAIPage(true);
-    
+
     try {
       // Wait for circle animation to complete expansion
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Increased from 800 to 1500
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Increased from 800 to 1500
+
       // Wait additional time with opposite theme
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       // Smoothly fade to device theme
       setTransitionTheme(false);
-      
+
       // Add a delay before navigation to ensure animations complete
       setTimeout(() => {
-        navigate('/ai');
+        navigate("/ai");
       }, 2000); // Increased from 800 to 1500 to match new animation duration
-      
     } catch (error) {
-      console.error('❌ [AI Transition] Error during transition:', error);
+      console.error("❌ [AI Transition] Error during transition:", error);
       setTransitionTheme(false);
-      setDebugInfo(prev => ({
+      setDebugInfo((prev) => ({
         ...prev,
         error: error.message,
-        animationStatus: 'error'
+        animationStatus: "error",
       }));
     }
   };
 
   // Enhanced debug effect
-  useEffect(() => {
-  }, [debugInfo, buttonPosition, isNavigating, showAIPage, transitionTheme]);
+  useEffect(() => {}, [
+    debugInfo,
+    buttonPosition,
+    isNavigating,
+    showAIPage,
+    transitionTheme,
+  ]);
 
   // Add transition state tracking
   useEffect(() => {
@@ -181,7 +182,7 @@ function Home({
         circleAnimation: null,
         themeTransition: null,
         navigation: null,
-        complete: null
+        complete: null,
       };
 
       const circleTimer = setTimeout(() => {
@@ -195,13 +196,16 @@ function Home({
       const navigationTimer = setTimeout(() => {
         transitionSteps.navigation = Date.now();
         transitionSteps.complete = Date.now();
-        
+
         // Calculate durations
         const durations = {
           totalDuration: transitionSteps.complete - transitionSteps.start,
-          circleAnimation: transitionSteps.circleAnimation - transitionSteps.start,
-          themeTransition: transitionSteps.themeTransition - transitionSteps.circleAnimation,
-          navigation: transitionSteps.navigation - transitionSteps.themeTransition
+          circleAnimation:
+            transitionSteps.circleAnimation - transitionSteps.start,
+          themeTransition:
+            transitionSteps.themeTransition - transitionSteps.circleAnimation,
+          navigation:
+            transitionSteps.navigation - transitionSteps.themeTransition,
         };
       }, 4000); // Increased from 1800 to 3500
 
@@ -213,7 +217,6 @@ function Home({
 
   // Remove duplicate useEffects and combine them into one comprehensive effect:
   useEffect(() => {
-
     // Delay the theme transition
     const timeout = setTimeout(() => {
       setTransitionTheme(isDarkMode);
@@ -226,16 +229,15 @@ function Home({
 
   // Add this new effect near other useEffects
   useEffect(() => {
-
     const timer = setTimeout(() => {
       setIsAIButtonHovered(false);
-      setButtonDebug(prev => ({
+      setButtonDebug((prev) => ({
         ...prev,
         hoverState: false,
-        animationPhase: 'collapsing',
-        timestamp: Date.now()
+        animationPhase: "collapsing",
+        timestamp: Date.now(),
       }));
-    }, 3000);
+    }, 5000); // Changed from 3000 to 5000 to match the new duration
 
     return () => {
       clearTimeout(timer);
@@ -243,8 +245,7 @@ function Home({
   }, []); // Empty dependency array means this runs once on mount
 
   // Add debug effect to monitor button state
-  useEffect(() => {
-  }, [isAIButtonHovered, buttonDebug]);
+  useEffect(() => {}, [isAIButtonHovered, buttonDebug]);
 
   // Define animation variants
   const textVariants = {
@@ -255,19 +256,19 @@ function Home({
 
   // Add motion variants for the AI text animation
   const aiTextVariants = {
-    expanded: { 
-      width: 'auto',
+    expanded: {
+      width: "auto",
       x: 0,
       opacity: 1,
-      paddingLeft: '16px',
+      paddingLeft: "16px",
       transition: {
         width: { duration: 1, ease: [0.4, 0, 0.2, 1] },
         x: { duration: 1, ease: [0.4, 0, 0.2, 1] },
         opacity: { duration: 0.6, delay: 0.3, ease: "easeOut" },
-        paddingLeft: { duration: 0.6, ease: "easeOut" }
-      }
+        paddingLeft: { duration: 0.6, ease: "easeOut" },
+      },
     },
-    collapsed: { 
+    collapsed: {
       width: 0,
       x: 40,
       opacity: 0,
@@ -276,31 +277,30 @@ function Home({
         opacity: { duration: 0.3, ease: "easeOut" },
         width: { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
         x: { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
-        paddingLeft: { duration: 0.3, ease: "easeOut" }
-      }
-    }
+        paddingLeft: { duration: 0.3, ease: "easeOut" },
+      },
+    },
   };
 
   // Add this modified useEffect for the initial animation
   useEffect(() => {
-    
     // Slightly longer delay before initial expansion
     const expandTimer = setTimeout(() => {
       setIsAIButtonHovered(true);
-      setButtonDebug(prev => ({
+      setButtonDebug((prev) => ({
         ...prev,
-        animationPhase: 'expanding',
-        timestamp: Date.now()
+        animationPhase: "expanding",
+        timestamp: Date.now(),
       }));
     }, 800); // Increased from 500ms for a more deliberate start
 
     // Longer display time before collapse
     const collapseTimer = setTimeout(() => {
       setIsAIButtonHovered(false);
-      setButtonDebug(prev => ({
+      setButtonDebug((prev) => ({
         ...prev,
-        animationPhase: 'collapsing',
-        timestamp: Date.now()
+        animationPhase: "collapsing",
+        timestamp: Date.now(),
       }));
     }, 4000); // Increased from 3500ms for longer visibility
 
@@ -311,26 +311,14 @@ function Home({
   }, []); // Empty dependency array for one-time execution
 
   // Add this debug effect to monitor button state changes
-  useEffect(() => {
-  }, [isAIButtonHovered, buttonDebug]);
+  useEffect(() => {}, [isAIButtonHovered, buttonDebug]);
 
   // Add this debug effect near your other useEffects
-  useEffect(() => {
-    console.log('🔄 Button state changed:', {
-      isHovered: isAIButtonHovered,
-      debug: buttonDebug,
-      timestamp: new Date().toISOString()
-    });
-  }, [isAIButtonHovered, buttonDebug]);
+  useEffect(() => {}, [isAIButtonHovered, buttonDebug]);
 
   // Add this debug effect to monitor width changes
   useEffect(() => {
     if (aiButtonRef.current) {
-      console.log('📏 Button width:', {
-        width: aiButtonRef.current.offsetWidth,
-        state: isAIButtonHovered ? 'expanded' : 'collapsed',
-        timestamp: new Date().toISOString()
-      });
     }
   }, [isAIButtonHovered]);
 
@@ -340,18 +328,21 @@ function Home({
     const trackWidth = () => {
       if (aiButtonRef.current) {
         const currentWidth = aiButtonRef.current.offsetWidth;
-        setButtonMetrics(prev => ({
+        setButtonMetrics((prev) => ({
           ...prev,
           currentWidth,
           timestamp: Date.now(),
-          transitionPhase: 
-            currentWidth === prev.currentWidth ? 'stable' :
-            currentWidth > prev.currentWidth ? 'expanding' : 'shrinking'
+          transitionPhase:
+            currentWidth === prev.currentWidth
+              ? "stable"
+              : currentWidth > prev.currentWidth
+              ? "expanding"
+              : "shrinking",
         }));
         frameId = requestAnimationFrame(trackWidth);
       }
     };
-    
+
     frameId = requestAnimationFrame(trackWidth);
     return () => cancelAnimationFrame(frameId);
   }, [isAIButtonHovered]);
@@ -359,20 +350,20 @@ function Home({
   // First, define button variants for width animation
   const buttonVariants = {
     expanded: {
-      width: 'auto',
-      transition: {
-        duration: 0.8,
-        ease: [0.4, 0, 0.2, 1]
-      }
-    },
-    collapsed: {
-      width: '40px',
+      width: "auto",
       transition: {
         duration: 0.8,
         ease: [0.4, 0, 0.2, 1],
-        delay: 0.2 // Slight delay to let text animation start
-      }
-    }
+      },
+    },
+    collapsed: {
+      width: "40px",
+      transition: {
+        duration: 0.8,
+        ease: [0.4, 0, 0.2, 1],
+        delay: 0.2, // Slight delay to let text animation start
+      },
+    },
   };
 
   return (
@@ -380,16 +371,14 @@ function Home({
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      onAnimationStart={() => {
-      }}
+      onAnimationStart={() => {}}
       className={`min-h-screen flex flex-col items-center p-4 md:p-8 theme-transition custom-cursor ${
         transitionTheme ? "bg-black text-white" : "bg-[#F2F0E9] text-gray-900"
       }`}
       style={{
-        transition: 'background-color 1.5s ease-in-out, color 1.5s ease-in-out'
+        transition: "background-color 1.5s ease-in-out, color 1.5s ease-in-out",
       }}
     >
-      
       {!isMobile && (
         <>
           <div
@@ -430,7 +419,8 @@ function Home({
           transitionTheme ? "bg-white text-black" : "bg-black text-white"
         }`}
         style={{
-          transition: 'background-color 0.5s ease-in-out, color 0.5s ease-in-out'
+          transition:
+            "background-color 0.5s ease-in-out, color 0.5s ease-in-out",
         }}
       >
         {transitionTheme ? "☀️" : "🌙"}
@@ -454,45 +444,35 @@ function Home({
         initial="collapsed"
         animate={isAIButtonHovered ? "expanded" : "collapsed"}
         style={{
-          minWidth: '40px',
-          maxWidth: '200px',
-          willChange: 'width',
-          transform: 'translateZ(0)', // Force GPU acceleration
+          minWidth: "40px",
+          maxWidth: "200px",
+          willChange: "width",
+          transform: "translateZ(0)", // Force GPU acceleration
         }}
-        onAnimationStart={() => {
-          console.log('🎬 Button animation started:', {
-            state: isAIButtonHovered ? 'expanding' : 'collapsing',
-            timestamp: new Date().toISOString(),
-            currentWidth: aiButtonRef.current?.offsetWidth
-          });
-        }}
-        onAnimationComplete={() => {
-          console.log('✅ Button animation completed:', {
-            state: isAIButtonHovered ? 'expanded' : 'collapsed',
-            timestamp: new Date().toISOString(),
-            finalWidth: aiButtonRef.current?.offsetWidth
-          });
-        }}
+        onAnimationStart={() => {}}
+        onAnimationComplete={() => {}}
       >
         {/* Container for animated content */}
         <div className="relative w-full h-full">
           {/* Static emoji container - positioned absolutely */}
-          <div 
+          <div
             className="absolute right-0 top-0 bottom-0 w-[40px] flex items-center justify-center"
-            style={{ 
-              transform: 'none',
-              transition: 'none'
+            style={{
+              transform: "none",
+              transition: "none",
             }}
           >
-            <span className="text-sm" style={{ transition: 'none' }}>🤖</span>
+            <span className="text-sm" style={{ transition: "none" }}>
+              🤖
+            </span>
           </div>
 
           {/* Animated text container */}
-          <div 
-            className="h-full flex items-center" 
-            style={{ 
-              paddingRight: '40px',
-              transition: 'none'
+          <div
+            className="h-full flex items-center"
+            style={{
+              paddingRight: "40px",
+              transition: "none",
             }}
           >
             <AnimatePresence mode="wait">
@@ -504,22 +484,10 @@ function Home({
                   initial="collapsed"
                   animate="expanded"
                   exit="collapsed"
-                  onAnimationStart={() => {
-                    console.log('🎭 Text animation started:', {
-                      state: isAIButtonHovered ? 'expanding' : 'collapsing',
-                      timestamp: new Date().toISOString(),
-                      buttonWidth: aiButtonRef.current?.offsetWidth
-                    });
-                  }}
-                  onAnimationComplete={() => {
-                    console.log('🎭 Text animation completed:', {
-                      state: isAIButtonHovered ? 'expanded' : 'collapsed',
-                      timestamp: new Date().toISOString(),
-                      buttonWidth: aiButtonRef.current?.offsetWidth
-                    });
-                  }}
+                  onAnimationStart={() => {}}
+                  onAnimationComplete={() => {}}
                 >
-                  Talk to AI Me
+                  Talk to AI Aeden
                 </motion.span>
               )}
             </AnimatePresence>
@@ -531,17 +499,21 @@ function Home({
         {isNavigating && (
           <motion.div
             initial={{
-              position: 'fixed',
+              position: "fixed",
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              clipPath: `circle(0px at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`,
+              clipPath: `circle(0px at ${buttonPosition.x + 16}px ${
+                buttonPosition.y + 16
+              }px)`,
               zIndex: 9999,
-              backgroundColor: isDarkMode ? '#F2F0E9' : '#000000', // Add background color
+              backgroundColor: isDarkMode ? "#F2F0E9" : "#000000", // Add background color
             }}
             animate={{
-              clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${buttonPosition.y + 16}px)`, // Increased from 200vh to 300vh
+              clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${
+                buttonPosition.y + 16
+              }px)`, // Increased from 200vh to 300vh
             }}
             transition={{
               duration: 2, // Increased from 0.8 to 1.5
@@ -549,18 +521,20 @@ function Home({
             }}
             className={`w-screen h-screen overflow-hidden`} // Add these classes
           >
-            <Suspense fallback={
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent" />
-              </div>
-            }>
+            <Suspense
+              fallback={
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent" />
+                </div>
+              }
+            >
               <motion.div
                 animate={{
-                  transition: { duration: 0.5 }
+                  transition: { duration: 0.5 },
                 }}
                 className="w-full h-full"
               >
-                <AIPage 
+                <AIPage
                   isDarkMode={transitionTheme ? !isDarkMode : isDarkMode}
                   isMobile={isMobile}
                   toggleDarkMode={toggleDarkMode}
@@ -602,11 +576,11 @@ function Home({
             </h1>
 
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-              As a{" "}
+              I'm a{" "}
               <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
                 full-stack developer
               </span>
-              , I've built a strong foundation in{" "}
+              , and I've gotten pretty good with{" "}
               <span
                 onMouseEnter={() => handleLanguageHover("react")}
                 onMouseLeave={handleLanguageLeave}
@@ -671,29 +645,28 @@ function Home({
                   )}
                 </AnimatePresence>
               </span>
-              . I've created various mobile and web applications, striving for
-              that perfect{" "}
+              . You know, I've built all sorts of cool stuff for mobile and web,
+              always trying to find that sweet spot where{" "}
               <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
-                balance between functionality and design
+                things work great but also look awesome
               </span>
-              . I'm passionate about bringing{" "}
+              . I really get excited about bringing{" "}
               <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
-                innovative solutions
+                fresh ideas
               </span>{" "}
               to projects, especially in{" "}
               <span className="relative inline hover:text-green-500 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
-                <span className="whitespace-nowrap">dynamic startup</span>{" "}
-                environments
+                <span className="whitespace-nowrap">startup environments</span>{" "}
+                where things are always moving
               </span>
               .
             </p>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-              My goal is to apply my{" "}
+              My main thing is using my{" "}
               <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
-                expertise
+                tech skills
               </span>{" "}
-              to meaningful initiatives using cutting-edge technologies. I'm
-              eager to explore opportunities in{" "}
+              to build stuff that actually matters. I'm super interested in{" "}
               <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
                 full-stack development
               </span>{" "}
@@ -701,15 +674,15 @@ function Home({
               <span className="relative inline-block px-1 hover:text-green-500 hover:scale-105 hover:bg-opacity-10 hover:bg-green-300 dark:hover:bg-green-800 transition-all duration-300">
                 enterprise solutions
               </span>
-              , particularly within{" "}
+              , especially with{" "}
               <span className="relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-green-500 after:transition-all after:duration-300">
-                emerging startups
+                cool startups
               </span>
-              . With my{" "}
+              . I'm pretty good at{" "}
               <span className="relative bg-clip-text hover:text-transparent hover:bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-300">
-                adaptability and quick learning skills
+                picking up new things quickly
               </span>
-              , I'm well-suited for the ever-changing startup landscape.{" "}
+              , which comes in handy in the startup world.{" "}
               <span
                 className="reach-out-text relative custom-cursor-clickable"
                 onMouseEnter={() => {
@@ -721,10 +694,9 @@ function Home({
                   handleClickableHover(false);
                 }}
               >
-                Lemme know
+                Hey, drop me a line
               </span>{" "}
-              if you'd like to discuss potential collaborations in these
-              exciting areas.
+              if you wanna chat about working together!
             </p>
           </div>
         </div>

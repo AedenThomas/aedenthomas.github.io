@@ -196,18 +196,15 @@ function AIPage({
           }),
         }
       );
-      console.log(response);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
            const data = await response.json();
-      console.log("Raw response data:", data);
       
       // Check for data.response instead of data.message
       if (data && typeof data.response === "string") {
-        console.log("Raw response text:", data.response);
       
         // Split response into paragraphs on double newlines
         const messages = data.response
@@ -215,15 +212,10 @@ function AIPage({
           .filter(msg => msg.trim())
           .map(msg => msg.trim());
       
-        console.log("Split messages:", messages);
-        console.log("Number of messages:", messages.length);
-      
         // Add messages sequentially with delay
         messages.forEach((message, index) => {
-          console.log(`Scheduling message ${index + 1}/${messages.length}`);
       
           setTimeout(() => {
-            console.log(`Adding message ${index + 1} to history:`, message);
             setMessageHistory(prev => {
               const newHistory = [
                 ...prev,
@@ -232,7 +224,6 @@ function AIPage({
                   text: message,
                 },
               ];
-              console.log("Updated history length:", newHistory.length);
               return newHistory;
             });
           }, index * 1000);
@@ -430,18 +421,8 @@ function AIPage({
                   animate="expanded"
                   exit="collapsed"
                   onAnimationStart={() => {
-                    console.log('🎭 Home text animation started:', {
-                      state: isHomeButtonHovered ? 'expanding' : 'collapsing',
-                      timestamp: new Date().toISOString(),
-                      buttonWidth: homeButtonRef.current?.offsetWidth
-                    });
                   }}
                   onAnimationComplete={() => {
-                    console.log('🎭 Home text animation completed:', {
-                      state: isHomeButtonHovered ? 'expanded' : 'collapsed',
-                      timestamp: new Date().toISOString(),
-                      buttonWidth: homeButtonRef.current?.offsetWidth
-                    });
                   }}
                 >
                   Go to Home
