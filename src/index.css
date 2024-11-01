@@ -53,3 +53,23 @@ code {
     margin-bottom: 0.25rem;
   }
 }
+
+/* Add these styles for markdown content links */
+.markdown-content a {
+  color: #3b82f6; /* Tailwind's blue-500 */
+  text-decoration: underline;
+  transition: color 0.2s ease-in-out;
+}
+
+.markdown-content a:hover {
+  color: #2563eb; /* Tailwind's blue-600 */
+}
+
+/* For dark mode */
+.theme-transition .markdown-content a {
+  color: #60a5fa; /* Tailwind's blue-400 - lighter blue for dark mode */
+}
+
+.theme-transition .markdown-content a:hover {
+  color: #93c5fd; /* Tailwind's blue-300 */
+}
