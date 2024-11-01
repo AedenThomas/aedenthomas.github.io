@@ -129,17 +129,23 @@ function AIPage({
     setIsHoveredClickable(isHovered);
     handleClickableHover(isHovered);
   };
-  const greetings = [
+
+  // Modify the greetings array to be specific to AIPage
+  const aiGreetings = [
     "Hi, I'm Aeden! Ask me anything",
     "Want to know about my projects?",
     "Let's talk tech and coding",
     "What would you like to know about me?",
   ];
+
+  // Rename to aiCurrentGreeting to avoid conflicts
+  const [aiCurrentGreeting, setAiCurrentGreeting] = useState(0);
   
+  // Update the useEffect to use aiCurrentGreeting
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentGreeting((prev) => (prev + 1) % greetings.length);
-    }, 6000); // Increased to 6 seconds to ensure complete animation
+      setAiCurrentGreeting((prev) => (prev + 1) % aiGreetings.length);
+    }, 6000);
 
     return () => clearInterval(interval);
   }, []);
@@ -272,7 +278,7 @@ function AIPage({
 
         try {
           // Wait for complete animation sequence
-          await new Promise((resolve) => setTimeout(resolve, 4000));
+          await new Promise((resolve) => setTimeout(resolve, 3000));
           navigate("/");
         } catch (error) {
           console.error("❌ [Home Transition] Error:", error);
@@ -445,7 +451,7 @@ function AIPage({
                 buttonPosition.y + 16
               }px)`,
               zIndex: 9999,
-              backgroundColor: "#F2F0E9",
+              backgroundColor: "#F2F0E9", // Always start with light mode
             }}
             animate={{
               clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${
@@ -453,10 +459,9 @@ function AIPage({
               }px)`,
             }}
             transition={{
-              duration: 2,
+              duration: 1.5, // Circle expansion takes exactly 1.5 seconds
               ease: [0.22, 1, 0.36, 1],
             }}
-            onAnimationStart={() => {}}
             className="w-screen h-screen overflow-hidden"
           >
             <Suspense
@@ -469,28 +474,26 @@ function AIPage({
               <motion.div
                 initial={{
                   opacity: 1,
-                  backgroundColor: "#F2F0E9",
+                  backgroundColor: "#F2F0E9", // Always start with light mode
                 }}
                 animate={{
                   backgroundColor: ["#F2F0E9", "#F2F0E9", "#000000"],
                 }}
                 transition={{
-                  duration: 4,
-                  times: [0, 0.5, 1],
+                  duration: 3,
+                  times: [0, 0.5, 1], // Hold light mode longer
                   ease: "easeInOut",
                 }}
                 className="w-full h-full"
               >
                 <Home
-                  isDarkMode={true}
-                  initialTransitionTheme={false}
+                  isDarkMode={!themeTransition}
+                  initialTransitionTheme={false} // Always start with light mode
                   isMobile={isMobile}
                   toggleDarkMode={toggleDarkMode}
                   handleClickableHover={handleClickableHover}
                   mousePosition={mousePosition}
                   isHoveredClickable={isHoveredClickable}
-                  greetings={greetings}
-                  currentGreeting={currentGreeting}
                   hoveredProjectIndex={null}
                   isReachOutHovered={false}
                   handleLanguageHover={() => {}}
@@ -524,8 +527,8 @@ function AIPage({
           <h1 className="text-xl md:text-4xl font-semibold h-[1.5em] md:h-[2em] flex items-center">
             <AnimatePresence mode="wait">
               <AnimatedGreeting
-                key={currentGreeting}
-                greeting={greetings[currentGreeting]}
+                key={aiCurrentGreeting}
+                greeting={aiGreetings[aiCurrentGreeting]}
                 className="handwritten-font"
               />
             </AnimatePresence>

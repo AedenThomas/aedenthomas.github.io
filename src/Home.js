@@ -32,8 +32,6 @@ function Home({
   handleClickableHover,
   hoveredProjectIndex,
   isReachOutHovered,
-  greetings,
-  currentGreeting,
   handleLanguageHover,
   handleLanguageLeave,
   hoveredLanguage,
@@ -83,6 +81,17 @@ function Home({
     transitionPhase: "idle",
     timestamp: Date.now(),
   });
+
+  const [currentGreeting, setCurrentGreeting] = useState(0);
+  const greetings = ["Hey!", "Hello!", "Hi there!", "Welcome!"];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentGreeting((prev) => (prev + 1) % greetings.length);
+    }, 6000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const updateButtonPosition = () => {
     if (aiButtonRef.current) {
