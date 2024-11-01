@@ -129,14 +129,13 @@ function AIPage({
     setIsHoveredClickable(isHovered);
     handleClickableHover(isHovered);
   };
-
   const greetings = [
-    "What can I help with?",
-    "Let's build something cool",
-    "Got any interesting ideas?",
-    "Need help with code?",
+    "Hi, I'm Aeden! Ask me anything",
+    "Want to know about my projects?",
+    "Let's talk tech and coding",
+    "What would you like to know about me?",
   ];
-
+  
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentGreeting((prev) => (prev + 1) % greetings.length);
@@ -638,7 +637,7 @@ function AIPage({
                   }
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
+                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
                     themeTransition
                       ? "bg-[#2F2F2F] text-gray-300"
                       : "bg-white text-gray-700"
@@ -656,7 +655,7 @@ function AIPage({
                   }
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
+                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
                     themeTransition
                       ? "bg-[#2F2F2F] text-gray-300"
                       : "bg-white text-gray-700"
@@ -674,7 +673,7 @@ function AIPage({
                   onClick={() => handleButtonClick("What work interests you?")}
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
+                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
                     themeTransition
                       ? "bg-[#2F2F2F] text-gray-300"
                       : "bg-white text-gray-700"
@@ -692,7 +691,7 @@ function AIPage({
                   }
                   onMouseEnter={() => handleLocalClickableHover(true)}
                   onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg custom-cursor-clickable ${
+                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
                     themeTransition
                       ? "bg-[#2F2F2F] text-gray-300"
                       : "bg-white text-gray-700"
