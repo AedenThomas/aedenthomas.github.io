@@ -68,10 +68,23 @@ function Home({
     aiPageStatus: 'hidden',
     navigationStatus: 'idle'
   });
+  const [buttonDebug, setButtonDebug] = useState({
+    hoverState: true,
+    timestamp: Date.now(),
+    animationPhase: 'initial'
+  });
   // Initialize themeTransition based on isDarkMode prop
   const [transitionTheme, setTransitionTheme] = useState(
     initialTransitionTheme !== undefined ? initialTransitionTheme : isDarkMode
   );
+
+  // Add this new debug state to track width transitions
+  const [buttonMetrics, setButtonMetrics] = useState({
+    currentWidth: 40,
+    targetWidth: 40,
+    transitionPhase: 'idle',
+    timestamp: Date.now()
+  });
 
   const updateButtonPosition = () => {
     if (aiButtonRef.current) {
@@ -204,18 +217,162 @@ function Home({
     // Delay the theme transition
     const timeout = setTimeout(() => {
       setTransitionTheme(isDarkMode);
-    }, 3000); // Transition to dark mode after circle expansion
+    }, 50); // Small delay to ensure smooth transition
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [isDarkMode, initialTransitionTheme]);
+  }, [isDarkMode]);
+
+  // Add this new effect near other useEffects
+  useEffect(() => {
+
+    const timer = setTimeout(() => {
+      setIsAIButtonHovered(false);
+      setButtonDebug(prev => ({
+        ...prev,
+        hoverState: false,
+        animationPhase: 'collapsing',
+        timestamp: Date.now()
+      }));
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []); // Empty dependency array means this runs once on mount
+
+  // Add debug effect to monitor button state
+  useEffect(() => {
+  }, [isAIButtonHovered, buttonDebug]);
 
   // Define animation variants
   const textVariants = {
     hidden: { opacity: 0, x: -10 },
     visible: { opacity: 1, x: 0 },
     exit: { opacity: 0, x: -10 },
+  };
+
+  // Add motion variants for the AI text animation
+  const aiTextVariants = {
+    expanded: { 
+      width: 'auto',
+      x: 0,
+      opacity: 1,
+      paddingLeft: '16px',
+      transition: {
+        width: { duration: 1, ease: [0.4, 0, 0.2, 1] },
+        x: { duration: 1, ease: [0.4, 0, 0.2, 1] },
+        opacity: { duration: 0.6, delay: 0.3, ease: "easeOut" },
+        paddingLeft: { duration: 0.6, ease: "easeOut" }
+      }
+    },
+    collapsed: { 
+      width: 0,
+      x: 40,
+      opacity: 0,
+      paddingLeft: 0,
+      transition: {
+        opacity: { duration: 0.3, ease: "easeOut" },
+        width: { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
+        x: { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
+        paddingLeft: { duration: 0.3, ease: "easeOut" }
+      }
+    }
+  };
+
+  // Add this modified useEffect for the initial animation
+  useEffect(() => {
+    
+    // Slightly longer delay before initial expansion
+    const expandTimer = setTimeout(() => {
+      setIsAIButtonHovered(true);
+      setButtonDebug(prev => ({
+        ...prev,
+        animationPhase: 'expanding',
+        timestamp: Date.now()
+      }));
+    }, 800); // Increased from 500ms for a more deliberate start
+
+    // Longer display time before collapse
+    const collapseTimer = setTimeout(() => {
+      setIsAIButtonHovered(false);
+      setButtonDebug(prev => ({
+        ...prev,
+        animationPhase: 'collapsing',
+        timestamp: Date.now()
+      }));
+    }, 4000); // Increased from 3500ms for longer visibility
+
+    return () => {
+      clearTimeout(expandTimer);
+      clearTimeout(collapseTimer);
+    };
+  }, []); // Empty dependency array for one-time execution
+
+  // Add this debug effect to monitor button state changes
+  useEffect(() => {
+  }, [isAIButtonHovered, buttonDebug]);
+
+  // Add this debug effect near your other useEffects
+  useEffect(() => {
+    console.log('🔄 Button state changed:', {
+      isHovered: isAIButtonHovered,
+      debug: buttonDebug,
+      timestamp: new Date().toISOString()
+    });
+  }, [isAIButtonHovered, buttonDebug]);
+
+  // Add this debug effect to monitor width changes
+  useEffect(() => {
+    if (aiButtonRef.current) {
+      console.log('📏 Button width:', {
+        width: aiButtonRef.current.offsetWidth,
+        state: isAIButtonHovered ? 'expanded' : 'collapsed',
+        timestamp: new Date().toISOString()
+      });
+    }
+  }, [isAIButtonHovered]);
+
+  // Add this effect to track width changes in real-time
+  useEffect(() => {
+    let frameId;
+    const trackWidth = () => {
+      if (aiButtonRef.current) {
+        const currentWidth = aiButtonRef.current.offsetWidth;
+        setButtonMetrics(prev => ({
+          ...prev,
+          currentWidth,
+          timestamp: Date.now(),
+          transitionPhase: 
+            currentWidth === prev.currentWidth ? 'stable' :
+            currentWidth > prev.currentWidth ? 'expanding' : 'shrinking'
+        }));
+        frameId = requestAnimationFrame(trackWidth);
+      }
+    };
+    
+    frameId = requestAnimationFrame(trackWidth);
+    return () => cancelAnimationFrame(frameId);
+  }, [isAIButtonHovered]);
+
+  // First, define button variants for width animation
+  const buttonVariants = {
+    expanded: {
+      width: 'auto',
+      transition: {
+        duration: 0.8,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    },
+    collapsed: {
+      width: '40px',
+      transition: {
+        duration: 0.8,
+        ease: [0.4, 0, 0.2, 1],
+        delay: 0.2 // Slight delay to let text animation start
+      }
+    }
   };
 
   return (
@@ -269,48 +426,122 @@ function Home({
         onClick={toggleDarkMode}
         onMouseEnter={() => handleClickableHover(true)}
         onMouseLeave={() => handleClickableHover(false)}
-        className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable ${
-          isDarkMode ? "bg-white text-black" : "bg-black text-white"
-        }`}
-      >
-        {isDarkMode ? "☀️" : "🌙"}
-      </button>
-
-      <button
-        ref={aiButtonRef}
-        onClick={handleAIClick}
-        onMouseEnter={() => setIsAIButtonHovered(true)}
-        onMouseLeave={() => setIsAIButtonHovered(false)}
-        className={`fixed top-16 right-4 p-2 rounded-full custom-cursor-clickable flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out h-10 ${
-          isDarkMode ? "bg-white text-black" : "bg-black text-white"
+        className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 flex items-center justify-center transition-all duration-500 ease-in-out ${
+          transitionTheme ? "bg-white text-black" : "bg-black text-white"
         }`}
         style={{
-          width: isAIButtonHovered ? '110px' : '33px',
+          transition: 'background-color 0.5s ease-in-out, color 0.5s ease-in-out'
         }}
       >
-        <AnimatePresence mode="wait">
-          {isAIButtonHovered && (
-            <motion.span
-              className="whitespace-nowrap overflow-hidden text-sm"
-              variants={{
-                hidden: { width: 0, opacity: 0 },
-                visible: { width: 'auto', opacity: 1 },
-                exit: { width: 0, opacity: 0 }
-              }}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              transition={{ 
-                duration: 0.5,
-                ease: "easeInOut",
-              }}
-            >
-              AI Me&nbsp;
-            </motion.span>
-          )}
-        </AnimatePresence>
-        <span className="flex-shrink-0 text-sm">🤖</span>
+        {transitionTheme ? "☀️" : "🌙"}
       </button>
+
+      <motion.button
+        ref={aiButtonRef}
+        onClick={handleAIClick}
+        onMouseEnter={() => {
+          console.log('🔍 Button mouse enter', {
+            currentWidth: aiButtonRef.current?.offsetWidth,
+            timestamp: Date.now()
+          });
+          setIsAIButtonHovered(true);
+          setButtonMetrics(prev => ({
+            ...prev,
+            targetWidth: 166,
+            transitionPhase: 'expanding-start'
+          }));
+        }}
+        onMouseLeave={() => {
+          console.log('🔍 Button mouse leave', {
+            currentWidth: aiButtonRef.current?.offsetWidth,
+            timestamp: Date.now()
+          });
+          setIsAIButtonHovered(false);
+          setButtonMetrics(prev => ({
+            ...prev,
+            targetWidth: 40,
+            transitionPhase: 'shrinking-start'
+          }));
+        }}
+        className={`fixed top-16 right-4 rounded-full custom-cursor-clickable overflow-hidden h-10 ${
+          isDarkMode ? "bg-white text-black" : "bg-black text-white"
+        }`}
+        variants={buttonVariants}
+        initial="collapsed"
+        animate={isAIButtonHovered ? "expanded" : "collapsed"}
+        style={{
+          minWidth: '40px',
+          maxWidth: '200px',
+          willChange: 'width',
+          transform: 'translateZ(0)', // Force GPU acceleration
+        }}
+        onAnimationStart={() => {
+          console.log('🎬 Button animation started:', {
+            state: isAIButtonHovered ? 'expanding' : 'collapsing',
+            timestamp: new Date().toISOString(),
+            currentWidth: aiButtonRef.current?.offsetWidth
+          });
+        }}
+        onAnimationComplete={() => {
+          console.log('✅ Button animation completed:', {
+            state: isAIButtonHovered ? 'expanded' : 'collapsed',
+            timestamp: new Date().toISOString(),
+            finalWidth: aiButtonRef.current?.offsetWidth
+          });
+        }}
+      >
+        {/* Container for animated content */}
+        <div className="relative w-full h-full">
+          {/* Static emoji container - positioned absolutely */}
+          <div 
+            className="absolute right-0 top-0 bottom-0 w-[40px] flex items-center justify-center"
+            style={{ 
+              transform: 'none',
+              transition: 'none'
+            }}
+          >
+            <span className="text-sm" style={{ transition: 'none' }}>🤖</span>
+          </div>
+
+          {/* Animated text container */}
+          <div 
+            className="h-full flex items-center" 
+            style={{ 
+              paddingRight: '40px',
+              transition: 'none'
+            }}
+          >
+            <AnimatePresence mode="wait">
+              {isAIButtonHovered && (
+                <motion.span
+                  key="ai-text"
+                  className="whitespace-nowrap overflow-hidden pl-4"
+                  variants={aiTextVariants}
+                  initial="collapsed"
+                  animate="expanded"
+                  exit="collapsed"
+                  onAnimationStart={() => {
+                    console.log('🎭 Text animation started:', {
+                      state: isAIButtonHovered ? 'expanding' : 'collapsing',
+                      timestamp: new Date().toISOString(),
+                      buttonWidth: aiButtonRef.current?.offsetWidth
+                    });
+                  }}
+                  onAnimationComplete={() => {
+                    console.log('🎭 Text animation completed:', {
+                      state: isAIButtonHovered ? 'expanded' : 'collapsed',
+                      timestamp: new Date().toISOString(),
+                      buttonWidth: aiButtonRef.current?.offsetWidth
+                    });
+                  }}
+                >
+                  Talk to AI Me
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </motion.button>
 
       <AnimatePresence mode="wait">
         {isNavigating && (

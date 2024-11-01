@@ -20,6 +20,25 @@ const email = "hey@aeden.me";
 const linkedinUrl = "https://www.linkedin.com/in/aedenthomas/";
 const githubUrl = "https://github.com/AedenThomas/";
 
+// First, add these button variants near the top of the component
+const buttonVariants = {
+  expanded: {
+    width: 'auto',
+    transition: {
+      duration: 0.8,
+      ease: [0.4, 0, 0.2, 1]
+    }
+  },
+  collapsed: {
+    width: '40px',
+    transition: {
+      duration: 0.8,
+      ease: [0.4, 0, 0.2, 1],
+      delay: 0.2
+    }
+  }
+};
+
 function AIPage({
   isDarkMode,
   toggleDarkMode,
@@ -327,49 +346,117 @@ function AIPage({
         onClick={toggleDarkMode}
         onMouseEnter={() => handleLocalClickableHover(true)}
         onMouseLeave={() => handleLocalClickableHover(false)}
-        className={`fixed top-2 right-2 md:top-4 md:right-4 p-2 rounded-full custom-cursor-clickable theme-transition ${
+        className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 flex items-center justify-center transition-all duration-500 ease-in-out ${
           themeTransition ? "bg-white text-black" : "bg-black text-white"
         }`}
+        style={{
+          transition: 'background-color 0.5s ease-in-out, color 0.5s ease-in-out'
+        }}
       >
         {themeTransition ? "☀️" : "🌙"}
       </button>
 
       {/* Add Home button */}
-      <button
+      <motion.button
         ref={homeButtonRef}
         onClick={handleHomeClick}
-        onMouseEnter={() => setIsHomeButtonHovered(true)}
-        onMouseLeave={() => setIsHomeButtonHovered(false)}
-        className={`fixed top-16 right-4 p-2 rounded-full custom-cursor-clickable flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out h-10 ${
+        onMouseEnter={() => {
+          console.log('🔍 Home button mouse enter', {
+            currentWidth: homeButtonRef.current?.offsetWidth,
+            timestamp: Date.now()
+          });
+          setIsHomeButtonHovered(true);
+        }}
+        onMouseLeave={() => {
+          console.log('🔍 Home button mouse leave', {
+            currentWidth: homeButtonRef.current?.offsetWidth,
+            timestamp: Date.now()
+          });
+          setIsHomeButtonHovered(false);
+        }}
+        className={`fixed top-16 right-4 rounded-full custom-cursor-clickable overflow-hidden h-10 ${
           themeTransition ? "bg-white text-black" : "bg-black text-white"
         }`}
+        variants={buttonVariants}
+        initial="collapsed"
+        animate={isHomeButtonHovered ? "expanded" : "collapsed"}
         style={{
-          width: isHomeButtonHovered ? "110px" : "33px",
+          minWidth: '40px',
+          maxWidth: '200px',
+          willChange: 'width',
+          transform: 'translateZ(0)', // Force GPU acceleration
         }}
       >
-        <AnimatePresence mode="wait">
-          {isHomeButtonHovered && (
-            <motion.span
-              className="whitespace-nowrap overflow-hidden text-sm"
-              variants={{
-                hidden: { width: 0, opacity: 0 },
-                visible: { width: "auto", opacity: 1 },
-                exit: { width: 0, opacity: 0 },
-              }}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              transition={{
-                duration: 0.5,
-                ease: "easeInOut",
-              }}
-            >
-              Home&nbsp;
-            </motion.span>
-          )}
-        </AnimatePresence>
-        <span className="flex-shrink-0 text-sm">🏠</span>
-      </button>
+        {/* Container for animated content */}
+        <div className="relative w-full h-full">
+          {/* Static home emoji container - positioned absolutely */}
+          <div 
+            className="absolute right-0 top-0 bottom-0 w-[40px] flex items-center justify-center"
+            style={{ 
+              transform: 'none',
+              transition: 'none' // Ensure no transition affects the emoji
+            }}
+          >
+            <span className="text-sm" style={{ transition: 'none' }}>🏠</span>
+          </div>
+
+          {/* Animated text container */}
+          <div 
+            className="h-full flex items-center" 
+            style={{ paddingRight: '40px' }}
+          >
+            <AnimatePresence mode="wait">
+              {isHomeButtonHovered && (
+                <motion.span
+                  key="home-text"
+                  className="whitespace-nowrap overflow-hidden pl-4"
+                  variants={{
+                    expanded: { 
+                      width: 'auto',
+                      x: 0,
+                      opacity: 1,
+                      transition: {
+                        width: { duration: 1, ease: [0.4, 0, 0.2, 1] },
+                        x: { duration: 1, ease: [0.4, 0, 0.2, 1] },
+                        opacity: { duration: 0.6, delay: 0.3, ease: "easeOut" }
+                      }
+                    },
+                    collapsed: { 
+                      width: 0,
+                      x: 40,
+                      opacity: 0,
+                      transition: {
+                        opacity: { duration: 0.3, ease: "easeOut" },
+                        width: { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
+                        x: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+                      }
+                    }
+                  }}
+                  initial="collapsed"
+                  animate="expanded"
+                  exit="collapsed"
+                  onAnimationStart={() => {
+                    console.log('🎭 Home text animation started:', {
+                      state: isHomeButtonHovered ? 'expanding' : 'collapsing',
+                      timestamp: new Date().toISOString(),
+                      buttonWidth: homeButtonRef.current?.offsetWidth
+                    });
+                  }}
+                  onAnimationComplete={() => {
+                    console.log('🎭 Home text animation completed:', {
+                      state: isHomeButtonHovered ? 'expanded' : 'collapsed',
+                      timestamp: new Date().toISOString(),
+                      buttonWidth: homeButtonRef.current?.offsetWidth
+                    });
+                  }}
+                >
+                  Home
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </motion.button>
 
       <AnimatePresence mode="wait">
         {isNavigating && (
