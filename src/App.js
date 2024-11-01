@@ -88,7 +88,15 @@ function App() {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      const isMobileDevice = window.innerWidth <= 768;
+      setIsMobile(isMobileDevice);
+      
+      // Add or remove no-cursor class based on device type
+      if (isMobileDevice) {
+        document.documentElement.classList.remove('no-cursor');
+      } else {
+        document.documentElement.classList.add('no-cursor');
+      }
     };
 
     checkMobile();

@@ -648,7 +648,7 @@ function AIPage({
                 >
                   <StarIcon className="w-4 h-4 text-yellow-500" />
                   <span className="text-left flex-1">
-                    What is your Favorite project?
+                    What is your favorite project?
                   </span>
                 </button>
 

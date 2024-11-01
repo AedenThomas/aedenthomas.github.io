@@ -83,7 +83,15 @@ function Home({
   });
 
   const [currentGreeting, setCurrentGreeting] = useState(0);
-  const greetings = ["Hey!", "Hello!", "Hi there!", "Welcome!"];
+  const greetings = ["Hey!",
+      "Hola!",
+      "नमस्ते!",
+      "Bonjour!",
+      "你好!",
+      "Ciao!",
+      "Olá!",
+      "여보세요!",
+      "Hallo!"];
 
   useEffect(() => {
     const interval = setInterval(() => {
