@@ -383,6 +383,32 @@ function Home({
     },
   };
 
+  // Add this state to track scroll position
+  const [isScrolling, setIsScrolling] = useState(false);
+  
+  // Add scroll handler
+  useEffect(() => {
+    let scrollTimeout;
+    
+    const handleScroll = () => {
+      setIsScrolling(true);
+      // Reset hover states while scrolling
+      handleProjectHover(null);
+      handleReachOutMouseLeave();
+      
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        setIsScrolling(false);
+      }, 150); // Debounce scroll end detection
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
+    };
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 1 }}
@@ -732,6 +758,7 @@ function Home({
 
         <div
           className={`mb-8 transition-all duration-300 ${
+            isScrolling ? '' : // Don't apply blur during scroll
             isReachOutHovered ? "blur-sm" : ""
           }`}
         >
@@ -748,7 +775,9 @@ function Home({
               handleClickableHover={handleClickableHover}
               onProjectHover={handleProjectHover}
               isBlurred={
-                hoveredProjectIndex !== null && hoveredProjectIndex !== index
+                !isScrolling && // Don't apply blur during scroll
+                hoveredProjectIndex !== null && 
+                hoveredProjectIndex !== index
               }
               hoveredProjectIndex={hoveredProjectIndex}
               isReachOutHovered={isReachOutHovered}
