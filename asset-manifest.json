@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.da0261e4.css",
-    "main.js": "/static/js/main.492d679b.js",
+    "main.js": "/static/js/main.cbceb91d.js",
     "static/js/453.a0343227.chunk.js": "/static/js/453.a0343227.chunk.js",
     "static/media/react-native.svg": "/static/media/react-native.be71bed1bce21ae23843e3443f0b1408.svg",
     "index.html": "/index.html",
@@ -11,11 +11,11 @@
     "static/media/default.svg": "/static/media/default.6b9b428864d6f95ada3092145e4be76b.svg",
     "static/media/flutter.svg": "/static/media/flutter.50bb17c0e69f24a17adbcca9bd6e8528.svg",
     "main.da0261e4.css.map": "/static/css/main.da0261e4.css.map",
-    "main.492d679b.js.map": "/static/js/main.492d679b.js.map",
+    "main.cbceb91d.js.map": "/static/js/main.cbceb91d.js.map",
     "453.a0343227.chunk.js.map": "/static/js/453.a0343227.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.da0261e4.css",
-    "static/js/main.492d679b.js"
+    "static/js/main.cbceb91d.js"
   ]
 }
