@@ -148,8 +148,8 @@ function Home({
 
     updateButtonPosition();
 
-    // Immediately update URL without triggering navigation
-    window.history.pushState({}, '', '/ai');
+    // Update URL with hash routing
+    window.history.pushState({}, '', '/#/ai');  // Changed from '/ai' to '/#/ai'
 
     // Set initial opposite theme
     setTransitionTheme(true);

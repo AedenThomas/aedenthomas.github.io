@@ -273,8 +273,8 @@ function AIPage({
   const handleHomeClick = () => {
     updateButtonPosition();
     
-    // Immediately update URL without triggering navigation
-    window.history.pushState({}, '', '/');
+    // Update URL with hash routing
+    window.history.pushState({}, '', '/#/');  // Changed from '/' to '/#/'
     
     setIsNavigatingBack(true);
     setShouldNavigate(true);
