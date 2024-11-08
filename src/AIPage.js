@@ -93,6 +93,9 @@ function AIPage({
   const [isNavigatingBack, setIsNavigatingBack] = useState(false); // Add this state
   const oppositeTheme = !isDarkMode; // Add this line
 
+  // Add new state to track clicked buttons
+  const [clickedButtons, setClickedButtons] = useState(new Set());
+
   // Add effect to smoothly transition the theme
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -169,6 +172,7 @@ function AIPage({
   }, []);
 
   const handleButtonClick = (text) => {
+    setClickedButtons(prev => new Set([...prev, text]));
     handleSubmit(null, text);
   };
 
@@ -313,6 +317,35 @@ function AIPage({
       initiateNavigation();
     }
   }, [shouldNavigate]);
+
+  // Function to get available action buttons
+  const getAvailableActionButtons = () => {
+    const allButtons = [
+      {
+        text: "What is your favorite project?",
+        icon: <StarIcon className="w-4 h-4 text-yellow-500" />,
+      },
+      {
+        text: "What tech stack do you know?",
+        icon: <CodeBracketIcon className="w-4 h-4 text-blue-500" />,
+      },
+      {
+        text: "What are your weaknesses?",
+        icon: <ExclamationTriangleIcon className="w-4 h-4 text-orange-500" />,
+      },
+      {
+        text: "What work interests you?",
+        icon: <BriefcaseIcon className="w-4 h-4 text-purple-500" />,
+      },
+      {
+        text: "How do I get in touch with you?",
+        icon: <ChatBubbleLeftRightIcon className="w-4 h-4 text-red-500" />,
+      },
+    ];
+
+    // Filter out buttons that have been clicked
+    return allButtons.filter(button => !clickedButtons.has(button.text));
+  };
 
   return (
     <motion.div
@@ -613,6 +646,34 @@ function AIPage({
 
         {/* Reorder elements using absolute positioning on mobile */}
         <div className="relative flex flex-col-reverse md:flex-col">
+          {/* Chat action buttons - show when chat has started */}
+          {chatStarted && (
+            <div className="fixed md:relative bottom-[80px] md:bottom-auto left-0 right-0 px-2 md:px-0 z-10 md:mb-4">
+              <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
+                {getAvailableActionButtons()
+                  .slice(0, 2)
+                  .map((button, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleButtonClick(button.text)}
+                      onMouseEnter={() => handleLocalClickableHover(true)}
+                      onMouseLeave={() => handleLocalClickableHover(false)}
+                      className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable w-full md:w-auto ${
+                        themeTransition
+                          ? "bg-[#2F2F2F] text-gray-300"
+                          : "bg-white text-gray-700"
+                      }`}
+                    >
+                      {button.icon}
+                      <span className="text-left flex-1 md:flex-none">
+                        {button.text}
+                      </span>
+                    </button>
+                  ))}
+              </div>
+            </div>
+          )}
+
           {/* Input form */}
           <form
             onSubmit={handleSubmit}
@@ -654,14 +715,14 @@ function AIPage({
 
           </form>
 
-          {/* Action buttons - show only if chat hasn't started */}
+          {/* Initial action buttons */}
           {!chatStarted && (
                         <div className="flex flex-col gap-2 mt-8 mb-24 md:mb-0">
                             <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
                               
                               <button
                                 onClick={() =>
-                                  handleButtonClick("What is your Favorite project?")
+                                  handleButtonClick("What is your favorite project?")
                                 }
                                 onMouseEnter={() => handleLocalClickableHover(true)}
                                 onMouseLeave={() => handleLocalClickableHover(false)}
