@@ -44,12 +44,14 @@ export const education = [
     degree: "Master of Science",
     branch: "Computer Science",
     period: "2024–2025",
+    logo: "/bath.svg",
   },
   {
     university: "B.M.S. College of Engineering",
     degree: "Bachelors of Engineering",
     branch: "Information Science and Engineering",
     period: "2020–2024",
+    logo: "/bms.svg",
   },
 ];
 

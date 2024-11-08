@@ -881,15 +881,26 @@ function Home({
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.01 }}
                 >
-                  <h3 className="font-semibold group-hover:text-white">
-                    {edu.university}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-200">
-                    {edu.degree} in {edu.branch}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300">
-                    {edu.period}
-                  </p>
+                  <div className="flex items-center">
+                    {edu.logo && (
+                      <img 
+                        src={edu.logo} 
+                        alt={`${edu.university} logo`} 
+                        className="w-6 h-6 mr-3"
+                      />
+                    )}
+                    <div>
+                      <h3 className="font-semibold group-hover:text-white">
+                        {edu.university}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-200">
+                        {edu.degree} in {edu.branch}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300">
+                        {edu.period}
+                      </p>
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </motion.div>
