@@ -29,6 +29,7 @@ const Project = ({
   onProjectHover,
   isBlurred,
   hoveredProjectIndex,
+  isReachOutHovered, // Make sure this prop is being passed and used
 }) => {
   const projectRef = useRef(null);
   const isInView = useInView(projectRef, { 
@@ -132,7 +133,7 @@ const Project = ({
         key={index}
         className={`flex items-start mb-1 p-2 rounded-lg 
           hover:bg-navy-800 dark:hover:bg-navy-900 cursor-pointer
-          custom-cursor-clickable ${isBlurred ? "blur-xs" : ""} 
+          custom-cursor-clickable ${isBlurred || isReachOutHovered ? "blur-xs" : ""} 
           ${hoveredProjectIndex === index ? "z-10 relative" : ""}`}
         initial={{ opacity: 0, y: 30 }}  // Increased from 20 to 30 for more noticeable movement
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}

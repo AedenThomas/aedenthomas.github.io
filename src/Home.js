@@ -792,7 +792,9 @@ function Home({
           />
         </div>
 
-        <div className="mb-8 transition-all duration-300">
+        <div className={`mb-8 transition-all duration-300 ${
+          isReachOutHovered ? "blur-xs" : ""
+        }`}>
           <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
             ~/side projects
           </h2>
