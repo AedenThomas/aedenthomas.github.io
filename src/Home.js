@@ -766,10 +766,12 @@ function Home({
                 onMouseEnter={() => {
                   handleReachOutMouseEnter();
                   handleClickableHover(true);
+                  setIsAIButtonHovered(true); // Trigger AI button hover
                 }}
                 onMouseLeave={() => {
                   handleReachOutMouseLeave();
                   handleClickableHover(false);
+                  setIsAIButtonHovered(false); // Reset AI button hover
                 }}
               >
                 Hey, drop me a line

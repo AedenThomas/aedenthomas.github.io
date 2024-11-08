@@ -33,7 +33,7 @@ const Project = ({
 }) => {
   const projectRef = useRef(null);
   const isInView = useInView(projectRef, { 
-    threshold: 0.3,  // Changed from 0.1 to 0.6 (60% visibility required)
+    threshold: 0.1,  // Changed from 0.1 to 0.6 (60% visibility required)
     triggerOnce: false,
     rootMargin: '0px'  // Changed from 150px to 0px to make animation more precise
   });
