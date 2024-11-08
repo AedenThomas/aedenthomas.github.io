@@ -271,6 +271,9 @@ function AIPage({
   }, []);
 
   const handleHomeClick = () => {
+    // Remove immediate theme transition
+    // setThemeTransition(!isDarkMode);
+
     updateButtonPosition();
     
     // Update URL with hash routing
@@ -278,6 +281,11 @@ function AIPage({
     
     setIsNavigatingBack(true);
     setShouldNavigate(true);
+    
+    // Delay theme transition by 1.9 seconds (1900ms)
+    setTimeout(() => {
+      setThemeTransition(!isDarkMode);
+    }, 1900);
     
     // Use setTimeout to allow animations to complete
     setTimeout(() => {

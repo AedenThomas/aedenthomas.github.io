@@ -115,10 +115,10 @@ const ContactLinks = ({
   return (
     <div className="mb-8">
       <div className="flex flex-wrap items-center justify-between mb-4">
-        <div className="flex flex-wrap items-center space-x-4">
+        <div className="flex flex-wrap items-center">
           <a
             href={`mailto:${email}`}
-            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
             onMouseEnter={() => handleClickableHover(true)}
             onMouseLeave={() => handleClickableHover(false)}
           >
@@ -137,7 +137,7 @@ const ContactLinks = ({
             href={linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
             onMouseEnter={() => handleClickableHover(true)}
             onMouseLeave={() => handleClickableHover(false)}
           >
@@ -159,7 +159,7 @@ const ContactLinks = ({
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
             onMouseEnter={() => handleClickableHover(true)}
             onMouseLeave={() => handleClickableHover(false)}
             data-tooltip-id="github-tooltip"
@@ -215,7 +215,7 @@ const ContactLinks = ({
             Book a call
           </button>
         </div>
-        <a
+        {/* <a
           href="/Resume.pdf"
           download
           className="text-sm bg-transparent border border-gray-300 text-gray-500 px-4 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200 mt-2 md:mt-0 mr-2 custom-cursor-clickable"
@@ -225,7 +225,7 @@ const ContactLinks = ({
           onMouseLeave={() => handleClickableHover(false)}
         >
           Résumé
-        </a>
+        </a> */}
       </div>
     </div>
   );
