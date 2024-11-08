@@ -431,8 +431,8 @@ function Home({
       },
       {
         root: null,
-        rootMargin: '0px', // Changed from '100px' to '0px' for precise triggering
-        threshold: [0.2, 0.5, 0.8] // Added multiple thresholds for better detection
+        rootMargin: '200px 0px', // Changed from '0px' to '200px 0px' to trigger earlier
+        threshold: [0.1, 0.3, 0.5, 0.7, 0.9] // Modified thresholds for finer detection
       }
     );
 

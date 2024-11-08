@@ -129,6 +129,7 @@ const Project = ({
   return (
     <>
       <motion.div
+        data-project-id={`project-${index}`} // Added data-project-id
         ref={projectRef}
         key={index}
         className={`flex items-start mb-1 p-2 rounded-lg 
@@ -148,7 +149,7 @@ const Project = ({
         onClick={openModal}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        data-project-id={index}
+        
       >
         <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
         <div className="flex-grow min-w-0">
