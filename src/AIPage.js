@@ -13,7 +13,13 @@ import {
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 import AnimatedGreeting from "./AnimatedGreeting";
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import { ArrowUpIcon } from "@heroicons/react/24/solid";
+
+
 const Home = React.lazy(() => import("./Home")); // Add this import
+
 
 // Add these constants at the top of the file with other constants
 const email = "hey@aeden.me";
@@ -266,22 +272,31 @@ function AIPage({
 
   const handleHomeClick = () => {
     updateButtonPosition();
+    
+    // Immediately update URL without triggering navigation
+    window.history.pushState({}, '', '/');
+    
     setIsNavigatingBack(true);
     setShouldNavigate(true);
+    
+    // Use setTimeout to allow animations to complete
+    setTimeout(() => {
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }, 3000);
   };
 
-  // Modified useEffect to handle navigation
+  // Remove or modify the useEffect that was handling navigation
   useEffect(() => {
     if (shouldNavigate) {
       const initiateNavigation = async () => {
         setIsNavigating(true);
 
         try {
-          // Wait for complete animation sequence
+          // Just wait for animations, no navigation needed
           await new Promise((resolve) => setTimeout(resolve, 3000));
-          navigate("/");
         } catch (error) {
           console.error("❌ [Home Transition] Error:", error);
+        } finally {
           setIsNavigating(false);
           setShouldNavigate(false);
         }
@@ -289,7 +304,7 @@ function AIPage({
 
       initiateNavigation();
     }
-  }, [shouldNavigate, navigate]);
+  }, [shouldNavigate]);
 
   return (
     <motion.div
@@ -608,68 +623,89 @@ function AIPage({
                   : "bg-white text-gray-900"
               } placeholder-gray-400 focus:outline-none`}
             />
-            <button
-              type="submit"
-              disabled={isLoading}
-              onMouseEnter={() => handleLocalClickableHover(true)}
-              onMouseLeave={() => handleLocalClickableHover(false)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 custom-cursor-clickable"
-            >
-              {isLoading ? (
-                <div className="animate-spin h-4 w-4 border-2 border-gray-400 rounded-full border-t-transparent" />
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-4 h-4 rotate-90"
-                >
-                  <path d="M12 2L19 8.5V22H5V8.5L12 2Z" />
-                </svg>
-              )}
-            </button>
+<button
+  type="submit"
+  disabled={isLoading}
+  onMouseEnter={() => handleLocalClickableHover(true)}
+  onMouseLeave={() => handleLocalClickableHover(false)}
+  className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 custom-cursor-clickable"
+>
+  {isLoading ? (
+    <div className="animate-spin h-4 w-4 border-2 border-gray-400 rounded-full border-t-transparent" />
+  ) : (
+    <div className={`rounded-full p-2 h-8 w-8 flex items-center justify-center ${
+      themeTransition 
+        ? "bg-[#2F2F2F] text-gray-300" 
+        : "bg-white text-gray-700"
+    }`}>
+      <ArrowUpIcon className="w-4 h-4" />
+    </div>
+  )}
+</button>
+
+
           </form>
 
           {/* Action buttons - show only if chat hasn't started */}
           {!chatStarted && (
             <div className="flex flex-col gap-2 mb-24 md:mb-0">
-              <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
-                <button
-                  onClick={() =>
-                    handleButtonClick("What is your Favorite project?")
-                  }
-                  onMouseEnter={() => handleLocalClickableHover(true)}
-                  onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
-                    themeTransition
-                      ? "bg-[#2F2F2F] text-gray-300"
-                      : "bg-white text-gray-700"
-                  } w-full md:w-auto`}
-                >
-                  <StarIcon className="w-4 h-4 text-yellow-500" />
-                  <span className="text-left flex-1">
-                    What is your favorite project?
-                  </span>
-                </button>
+                            <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
+                              
+                              <button
+                                onClick={() =>
+                                  handleButtonClick("What is your Favorite project?")
+                                }
+                                onMouseEnter={() => handleLocalClickableHover(true)}
+                                onMouseLeave={() => handleLocalClickableHover(false)}
+                                className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
+                                  themeTransition
+                                    ? "bg-[#2F2F2F] text-gray-300"
+                                    : "bg-white text-gray-700"
+                                } w-full md:w-auto`}
+                              >
+                                <StarIcon className="w-4 h-4 text-yellow-500" />
+                                <span className="text-left flex-1">
+                                  What is your favorite project?
+                                </span>
+                              </button>
+              
+                              <button
+                                onClick={() =>
+                                  handleButtonClick("What tech stack do you know?")
+                                }
+                                onMouseEnter={() => handleLocalClickableHover(true)}
+                                onMouseLeave={() => handleLocalClickableHover(false)}
+                                className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
+                                  themeTransition
+                                    ? "bg-[#2F2F2F] text-gray-300"
+                                    : "bg-white text-gray-700"
+                                } w-full md:w-auto`}
+                              >
+                                <CodeBracketIcon className="w-4 h-4 text-blue-500" />
+                                <span className="text-left flex-1">
+                                  What tech stack do you know?
+                                </span>
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleButtonClick("What are your weaknesses?")
+                                }
+                                onMouseEnter={() => handleLocalClickableHover(true)}
+                                onMouseLeave={() => handleLocalClickableHover(false)}
+                                className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
+                                  themeTransition
+                                    ? "bg-[#2F2F2F] text-gray-300"
+                                    : "bg-white text-gray-700"
+                                } w-full md:w-auto`}
+                              >
+                                <ExclamationTriangleIcon className="w-4 h-4 text-orange-500" />
+                                <span className="text-left flex-1">
+                                  What are your weaknesses?
+                                </span>
+                              </button>
+              
 
-                <button
-                  onClick={() =>
-                    handleButtonClick("What tech stack do you know?")
-                  }
-                  onMouseEnter={() => handleLocalClickableHover(true)}
-                  onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
-                    themeTransition
-                      ? "bg-[#2F2F2F] text-gray-300"
-                      : "bg-white text-gray-700"
-                  } w-full md:w-auto`}
-                >
-                  <CodeBracketIcon className="w-4 h-4 text-blue-500" />
-                  <span className="text-left flex-1">
-                    What tech stack do you know?
-                  </span>
-                </button>
-              </div>
+                            </div>
 
               <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
                 <button

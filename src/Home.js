@@ -148,7 +148,8 @@ function Home({
 
     updateButtonPosition();
 
-    // Log initial theme state
+    // Immediately update URL without triggering navigation
+    window.history.pushState({}, '', '/ai');
 
     // Set initial opposite theme
     setTransitionTheme(true);
@@ -159,7 +160,7 @@ function Home({
 
     try {
       // Wait for circle animation to complete expansion
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Increased from 800 to 1500
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Wait additional time with opposite theme
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -167,10 +168,12 @@ function Home({
       // Smoothly fade to device theme
       setTransitionTheme(false);
 
-      // Add a delay before navigation to ensure animations complete
+      // Instead of navigating, we'll reload the app state
       setTimeout(() => {
-        navigate("/ai");
-      }, 2000); // Increased from 800 to 1500 to match new animation duration
+        // This will trigger a re-render to show the AI page
+        // without a full navigation
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }, 2000);
     } catch (error) {
       console.error("❌ [AI Transition] Error during transition:", error);
       setTransitionTheme(false);
