@@ -13,13 +13,11 @@ import {
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 import AnimatedGreeting from "./AnimatedGreeting";
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { ArrowUpIcon } from "@heroicons/react/24/solid";
 
-
 const Home = React.lazy(() => import("./Home")); // Add this import
-
 
 // Add these constants at the top of the file with other constants
 const email = "hey@aeden.me";
@@ -29,20 +27,20 @@ const githubUrl = "https://github.com/AedenThomas/";
 // First, add these button variants near the top of the component
 const buttonVariants = {
   expanded: {
-    width: 'auto',
-    transition: {
-      duration: 0.8,
-      ease: [0.4, 0, 0.2, 1]
-    }
-  },
-  collapsed: {
-    width: '40px',
+    width: "auto",
     transition: {
       duration: 0.8,
       ease: [0.4, 0, 0.2, 1],
-      delay: 0.2
-    }
-  }
+    },
+  },
+  collapsed: {
+    width: "40px",
+    transition: {
+      duration: 0.8,
+      ease: [0.4, 0, 0.2, 1],
+      delay: 0.2,
+    },
+  },
 };
 
 function AIPage({
@@ -149,7 +147,7 @@ function AIPage({
 
   // Rename to aiCurrentGreeting to avoid conflicts
   const [aiCurrentGreeting, setAiCurrentGreeting] = useState(0);
-  
+
   // Update the useEffect to use aiCurrentGreeting
   useEffect(() => {
     const interval = setInterval(() => {
@@ -172,7 +170,7 @@ function AIPage({
   }, []);
 
   const handleButtonClick = (text) => {
-    setClickedButtons(prev => new Set([...prev, text]));
+    setClickedButtons((prev) => new Set([...prev, text]));
     handleSubmit(null, text);
   };
 
@@ -216,22 +214,20 @@ function AIPage({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-           const data = await response.json();
-      
+      const data = await response.json();
+
       // Check for data.response instead of data.message
       if (data && typeof data.response === "string") {
-      
         // Split response into paragraphs on double newlines
         const messages = data.response
-          .split(/\n\n+/) 
-          .filter(msg => msg.trim())
-          .map(msg => msg.trim());
-      
+          .split(/\n\n+/)
+          .filter((msg) => msg.trim())
+          .map((msg) => msg.trim());
+
         // Add messages sequentially with delay
         messages.forEach((message, index) => {
-      
           setTimeout(() => {
-            setMessageHistory(prev => {
+            setMessageHistory((prev) => {
               const newHistory = [
                 ...prev,
                 {
@@ -245,7 +241,7 @@ function AIPage({
         });
       } else if (data && Array.isArray(data.history)) {
         setMessageHistory(data.history);
-      }  else {
+      } else {
         throw new Error("Invalid response format");
       }
     } catch (error) {
@@ -279,21 +275,21 @@ function AIPage({
     // setThemeTransition(!isDarkMode);
 
     updateButtonPosition();
-    
+
     // Update URL with hash routing
-    window.history.pushState({}, '', '/#/');  // Changed from '/' to '/#/'
-    
+    window.history.pushState({}, "", "/#/"); // Changed from '/' to '/#/'
+
     setIsNavigatingBack(true);
     setShouldNavigate(true);
-    
+
     // Delay theme transition by 1.9 seconds (1900ms)
     setTimeout(() => {
       setThemeTransition(!isDarkMode);
     }, 1900);
-    
+
     // Use setTimeout to allow animations to complete
     setTimeout(() => {
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      window.dispatchEvent(new PopStateEvent("popstate"));
     }, 3000);
   };
 
@@ -344,7 +340,7 @@ function AIPage({
     ];
 
     // Filter out buttons that have been clicked
-    return allButtons.filter(button => !clickedButtons.has(button.text));
+    return allButtons.filter((button) => !clickedButtons.has(button.text));
   };
 
   return (
@@ -357,8 +353,8 @@ function AIPage({
       }`}
       style={{
         transition: "background-color 0.5s ease-in-out, color 0.5s ease-in-out",
-        height: '100vh', // Ensures the container fits the viewport
-        overflow: 'hidden', // Prevents page-level scrolling
+        height: "100vh", // Ensures the container fits the viewport
+        overflow: "hidden", // Prevents page-level scrolling
       }}
     >
       {!isMobile && (
@@ -402,7 +398,8 @@ function AIPage({
           themeTransition ? "bg-white text-black" : "bg-black text-white"
         }`}
         style={{
-          transition: 'background-color 0.5s ease-in-out, color 0.5s ease-in-out'
+          transition:
+            "background-color 0.5s ease-in-out, color 0.5s ease-in-out",
         }}
       >
         {themeTransition ? "☀️" : "🌙"}
@@ -427,29 +424,31 @@ function AIPage({
         initial="collapsed"
         animate={isHomeButtonHovered ? "expanded" : "collapsed"}
         style={{
-          minWidth: '40px',
-          maxWidth: '200px',
-          willChange: 'width',
-          transform: 'translateZ(0)', // Force GPU acceleration
+          minWidth: "40px",
+          maxWidth: "200px",
+          willChange: "width",
+          transform: "translateZ(0)", // Force GPU acceleration
         }}
       >
         {/* Container for animated content */}
         <div className="relative w-full h-full">
           {/* Static home emoji container - positioned absolutely */}
-          <div 
+          <div
             className="absolute right-0 top-0 bottom-0 w-[40px] flex items-center justify-center"
-            style={{ 
-              transform: 'none',
-              transition: 'none' // Ensure no transition affects the emoji
+            style={{
+              transform: "none",
+              transition: "none", // Ensure no transition affects the emoji
             }}
           >
-            <span className="text-sm" style={{ transition: 'none' }}>🏠</span>
+            <span className="text-sm" style={{ transition: "none" }}>
+              🏠
+            </span>
           </div>
 
           {/* Animated text container */}
-          <div 
-            className="h-full flex items-center" 
-            style={{ paddingRight: '40px' }}
+          <div
+            className="h-full flex items-center"
+            style={{ paddingRight: "40px" }}
           >
             <AnimatePresence mode="wait">
               {isHomeButtonHovered && (
@@ -457,34 +456,32 @@ function AIPage({
                   key="home-text"
                   className="whitespace-nowrap overflow-hidden pl-4"
                   variants={{
-                    expanded: { 
-                      width: 'auto',
+                    expanded: {
+                      width: "auto",
                       x: 0,
                       opacity: 1,
                       transition: {
                         width: { duration: 1, ease: [0.4, 0, 0.2, 1] },
                         x: { duration: 1, ease: [0.4, 0, 0.2, 1] },
-                        opacity: { duration: 0.6, delay: 0.3, ease: "easeOut" }
-                      }
+                        opacity: { duration: 0.6, delay: 0.3, ease: "easeOut" },
+                      },
                     },
-                    collapsed: { 
+                    collapsed: {
                       width: 0,
                       x: 40,
                       opacity: 0,
                       transition: {
                         opacity: { duration: 0.3, ease: "easeOut" },
                         width: { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
-                        x: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
-                      }
-                    }
+                        x: { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
+                      },
+                    },
                   }}
                   initial="collapsed"
                   animate="expanded"
                   exit="collapsed"
-                  onAnimationStart={() => {
-                  }}
-                  onAnimationComplete={() => {
-                  }}
+                  onAnimationStart={() => {}}
+                  onAnimationComplete={() => {}}
                 >
                   Go to Home
                 </motion.span>
@@ -515,7 +512,7 @@ function AIPage({
               }px)`,
             }}
             transition={{
-              duration: 1.5, // Circle expansion takes exactly 1.5 seconds
+              duration: 2.5, 
               ease: [0.22, 1, 0.36, 1],
             }}
             className="w-screen h-screen overflow-hidden"
@@ -692,89 +689,84 @@ function AIPage({
                   : "bg-white text-gray-900"
               } placeholder-gray-400 focus:outline-none`}
             />
-<button
-  type="submit"
-  disabled={isLoading}
-  onMouseEnter={() => handleLocalClickableHover(true)}
-  onMouseLeave={() => handleLocalClickableHover(false)}
-  className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 custom-cursor-clickable"
->
-  {isLoading ? (
-    <div className="animate-spin h-4 w-4 border-2 border-gray-400 rounded-full border-t-transparent" />
-  ) : (
-    <div className={`rounded-full p-2 h-8 w-8 flex items-center justify-center ${
-      themeTransition 
-        ? "bg-[#2F2F2F] text-gray-300" 
-        : "bg-white text-gray-700"
-    }`}>
-      <ArrowUpIcon className="w-4 h-4" />
-    </div>
-  )}
-</button>
-
-
+            <button
+              type="submit"
+              disabled={isLoading}
+              onMouseEnter={() => handleLocalClickableHover(true)}
+              onMouseLeave={() => handleLocalClickableHover(false)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 custom-cursor-clickable"
+            >
+              {isLoading ? (
+                <div className="animate-spin h-4 w-4 border-2 border-gray-400 rounded-full border-t-transparent" />
+              ) : (
+                <div
+                  className={`rounded-full p-2 h-8 w-8 flex items-center justify-center ${
+                    themeTransition
+                      ? "bg-[#2F2F2F] text-gray-300"
+                      : "bg-white text-gray-700"
+                  }`}
+                >
+                  <ArrowUpIcon className="w-4 h-4" />
+                </div>
+              )}
+            </button>
           </form>
 
           {/* Initial action buttons */}
           {!chatStarted && (
-                        <div className="flex flex-col gap-2 mt-8 mb-24 md:mb-0">
-                            <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
-                              
-                              <button
-                                onClick={() =>
-                                  handleButtonClick("What is your favorite project?")
-                                }
-                                onMouseEnter={() => handleLocalClickableHover(true)}
-                                onMouseLeave={() => handleLocalClickableHover(false)}
-                                className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
-                                  themeTransition
-                                    ? "bg-[#2F2F2F] text-gray-300"
-                                    : "bg-white text-gray-700"
-                                } w-full md:w-auto`}
-                              >
-                                <StarIcon className="w-4 h-4 text-yellow-500" />
-                                <span className="text-left flex-1">
-                                  What is your favorite project?
-                                </span>
-                              </button>
-              
-                              <button
-                                onClick={() =>
-                                  handleButtonClick("What tech stack do you know?")
-                                }
-                                onMouseEnter={() => handleLocalClickableHover(true)}
-                                onMouseLeave={() => handleLocalClickableHover(false)}
-                                className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
-                                  themeTransition
-                                    ? "bg-[#2F2F2F] text-gray-300"
-                                    : "bg-white text-gray-700"
-                                } w-full md:w-auto`}
-                              >
-                                <CodeBracketIcon className="w-4 h-4 text-blue-500" />
-                                <span className="text-left flex-1">
-                                  What tech stack do you know?
-                                </span>
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleButtonClick("What are your weaknesses?")
-                                }
-                                onMouseEnter={() => handleLocalClickableHover(true)}
-                                onMouseLeave={() => handleLocalClickableHover(false)}
-                                className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
-                                  themeTransition
-                                    ? "bg-[#2F2F2F] text-gray-300"
-                                    : "bg-white text-gray-700"
-                                } w-full md:w-auto`}
-                              >
-                                <ExclamationTriangleIcon className="w-4 h-4 text-orange-500" />
-                                <span className="text-left flex-1">
-                                  What are your weaknesses?
-                                </span>
-                              </button>
-              
+            <div className="flex flex-col gap-2 mt-8 mb-24 md:mb-0">
+              <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
+                <button
+                  onClick={() =>
+                    handleButtonClick("What is your favorite project?")
+                  }
+                  onMouseEnter={() => handleLocalClickableHover(true)}
+                  onMouseLeave={() => handleLocalClickableHover(false)}
+                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
+                    themeTransition
+                      ? "bg-[#2F2F2F] text-gray-300"
+                      : "bg-white text-gray-700"
+                  } w-full md:w-auto`}
+                >
+                  <StarIcon className="w-4 h-4 text-yellow-500" />
+                  <span className="text-left flex-1">
+                    What is your favorite project?
+                  </span>
+                </button>
 
-                            </div>
+                <button
+                  onClick={() =>
+                    handleButtonClick("What tech stack do you know?")
+                  }
+                  onMouseEnter={() => handleLocalClickableHover(true)}
+                  onMouseLeave={() => handleLocalClickableHover(false)}
+                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
+                    themeTransition
+                      ? "bg-[#2F2F2F] text-gray-300"
+                      : "bg-white text-gray-700"
+                  } w-full md:w-auto`}
+                >
+                  <CodeBracketIcon className="w-4 h-4 text-blue-500" />
+                  <span className="text-left flex-1">
+                    What tech stack do you know?
+                  </span>
+                </button>
+                <button
+                  onClick={() => handleButtonClick("What are your weaknesses?")}
+                  onMouseEnter={() => handleLocalClickableHover(true)}
+                  onMouseLeave={() => handleLocalClickableHover(false)}
+                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
+                    themeTransition
+                      ? "bg-[#2F2F2F] text-gray-300"
+                      : "bg-white text-gray-700"
+                  } w-full md:w-auto`}
+                >
+                  <ExclamationTriangleIcon className="w-4 h-4 text-orange-500" />
+                  <span className="text-left flex-1">
+                    What are your weaknesses?
+                  </span>
+                </button>
+              </div>
 
               <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
                 <button

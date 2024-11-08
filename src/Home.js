@@ -157,7 +157,7 @@ function Home({
   
       try {
         // Wait for circle animation to complete expansion
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Changed from 2000 to 1000
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // Changed from 2000 to 1000
   
         // Wait additional time with opposite theme
         await new Promise((resolve) => setTimeout(resolve, 500));
