@@ -386,20 +386,19 @@ function Home({
   // Add this state to track scroll position
   const [isScrolling, setIsScrolling] = useState(false);
   
-  // Add scroll handler
+  // Remove or modify the scroll handler to not interfere with project visibility
   useEffect(() => {
     let scrollTimeout;
     
     const handleScroll = () => {
-      setIsScrolling(true);
-      // Reset hover states while scrolling
+      // Only reset hover states, don't affect project visibility
       handleProjectHover(null);
       handleReachOutMouseLeave();
       
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
-        setIsScrolling(false);
-      }, 150); // Debounce scroll end detection
+        // Reset scroll state after scrolling stops
+      }, 50);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -407,6 +406,40 @@ function Home({
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeout);
     };
+  }, [handleProjectHover, handleReachOutMouseLeave]);
+
+  // Add this new state and effect to handle visibility updates
+  const [visibleProjects, setVisibleProjects] = useState(new Set());
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          const projectId = entry.target.getAttribute('data-project-id');
+          setVisibleProjects(prev => {
+            const newSet = new Set(prev);
+            if (entry.isIntersecting) {
+              newSet.add(projectId);
+            } else {
+              newSet.delete(projectId);
+            }
+            return newSet;
+          });
+        });
+      },
+      {
+        root: null,
+        rootMargin: '50px', // Start loading slightly before they come into view
+        threshold: 0.1
+      }
+    );
+
+    // Observe all project elements
+    document.querySelectorAll('[data-project-id]').forEach(el => {
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -756,12 +789,7 @@ function Home({
           />
         </div>
 
-        <div
-          className={`mb-8 transition-all duration-300 ${
-            isScrolling ? '' : // Don't apply blur during scroll
-            isReachOutHovered ? "blur-sm" : ""
-          }`}
-        >
+        <div className="mb-8 transition-all duration-300">
           <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
             ~/side projects
           </h2>
@@ -775,7 +803,6 @@ function Home({
               handleClickableHover={handleClickableHover}
               onProjectHover={handleProjectHover}
               isBlurred={
-                !isScrolling && // Don't apply blur during scroll
                 hoveredProjectIndex !== null && 
                 hoveredProjectIndex !== index
               }

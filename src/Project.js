@@ -31,8 +31,12 @@ const Project = ({
   hoveredProjectIndex,
 }) => {
   const projectRef = useRef(null);
+  const isInView = useInView(projectRef, { 
+    threshold: 0.3,  // Changed from 0.1 to 0.6 (60% visibility required)
+    triggerOnce: false,
+    rootMargin: '0px'  // Changed from 150px to 0px to make animation more precise
+  });
   const contentRef = useRef(null);
-  const isInView = useInView(projectRef, { threshold: 0.1 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
@@ -130,12 +134,20 @@ const Project = ({
           hover:bg-navy-800 dark:hover:bg-navy-900 cursor-pointer
           custom-cursor-clickable ${isBlurred ? "blur-xs" : ""} 
           ${hoveredProjectIndex === index ? "z-10 relative" : ""}`}
-        initial={{ opacity: 0, y: 20 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0, y: 30 }}  // Increased from 20 to 30 for more noticeable movement
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        transition={{ 
+          type: "spring",  // Changed to spring animation
+          stiffness: 50,   // Lower stiffness for smoother motion
+          mass: 0.5,       // Lower mass for quicker response
+          damping: 8,      // Adjusted damping for natural feel
+          duration: 0.8,   // Increased duration
+          opacity: { duration: 0.5 }  // Separate opacity duration
+        }}
         onClick={openModal}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        data-project-id={index}
       >
         <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
         <div className="flex-grow min-w-0">
