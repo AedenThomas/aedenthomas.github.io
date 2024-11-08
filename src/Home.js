@@ -139,52 +139,51 @@ function Home({
   // Enhanced button position tracking
   useEffect(() => {}, [buttonPosition]);
 
-  const handleAIClick = async () => {
-    setDebugInfo((prev) => ({
-      ...prev,
-      animationStatus: "starting",
-      timestamp: new Date().toISOString(),
-    }));
-
-    updateButtonPosition();
-
-    // Update URL with hash routing
-    window.history.pushState({}, '', '/#/ai');  // Changed from '/ai' to '/#/ai'
-
-    // Set initial opposite theme
-    setTransitionTheme(true);
-
-    // Start animation
-    setIsNavigating(true);
-    setShowAIPage(true);
-
-    try {
-      // Wait for circle animation to complete expansion
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Wait additional time with opposite theme
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Smoothly fade to device theme
-      setTransitionTheme(false);
-
-      // Instead of navigating, we'll reload the app state
-      setTimeout(() => {
-        // This will trigger a re-render to show the AI page
-        // without a full navigation
-        window.dispatchEvent(new PopStateEvent('popstate'));
-      }, 2000);
-    } catch (error) {
-      console.error("❌ [AI Transition] Error during transition:", error);
-      setTransitionTheme(false);
+    const handleAIClick = async () => {
       setDebugInfo((prev) => ({
         ...prev,
-        error: error.message,
-        animationStatus: "error",
+        animationStatus: "starting",
+        timestamp: new Date().toISOString(),
       }));
-    }
-  };
-
+  
+      updateButtonPosition();
+  
+      // Update URL with hash routing
+      window.history.pushState({}, '', '/#/ai');  // Changed from '/ai' to '/#/ai'
+  
+      // Set initial opposite theme
+      setTransitionTheme(true);
+  
+      // Start animation
+      setIsNavigating(true);
+      setShowAIPage(true);
+  
+      try {
+        // Wait for circle animation to complete expansion
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Changed from 2000 to 1000
+  
+        // Wait additional time with opposite theme
+        await new Promise((resolve) => setTimeout(resolve, 500));
+  
+        // Smoothly fade to device theme
+        setTransitionTheme(false);
+  
+        // Instead of navigating, we'll reload the app state
+        setTimeout(() => {
+          // This will trigger a re-render to show the AI page
+          // without a full navigation
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }, 2000);
+      } catch (error) {
+        console.error("❌ [AI Transition] Error during transition:", error);
+        setTransitionTheme(false);
+        setDebugInfo((prev) => ({
+          ...prev,
+          error: error.message,
+          animationStatus: "error",
+        }));
+      }
+    };
   // Enhanced debug effect
   useEffect(() => {}, [
     debugInfo,
