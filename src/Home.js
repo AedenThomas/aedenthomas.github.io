@@ -724,7 +724,7 @@ function Home({
                   )}
                 </AnimatePresence>
               </span>
-              . You know, I've built all sorts of cool stuff for mobile and web, always trying to find that sweet spot where{" "}
+              . I've built all sorts of cool stuff for mobile and web, always trying to find that sweet spot where{" "}
               <span className="relative">
                 things work great but also look awesome
               </span>
