@@ -8,15 +8,12 @@ import React, {
 } from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
-import useInView from "./useInView.js";
 import AnimatedGreeting from "./AnimatedGreeting.js";
 import "./App.css";
 import Project from "./Project.js";
 import { education, projects, skills, research, coursework } from "./data";
 import ContactLinks from "./ContactLinks";
 import LanguageIcon from "./LanguageIcon";
-import { getCalApi } from "@calcom/embed-react";
-import Privacy from "./BillifyPrivacy.js";
 import { useNavigate } from "react-router-dom";
 
 // Add this near the top of the file, outside the component
@@ -793,9 +790,11 @@ function Home({
           />
         </div>
 
-        <div className={`mb-8 transition-all duration-300 ${
-          isReachOutHovered ? "blur-xs" : ""
-        }`}>
+        <div
+          className={`mb-8 transition-all duration-300 ${
+            isReachOutHovered ? "blur-sm" : ""
+          }`}
+        >
           <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
             ~/side projects
           </h2>
@@ -809,8 +808,7 @@ function Home({
               handleClickableHover={handleClickableHover}
               onProjectHover={handleProjectHover}
               isBlurred={
-                hoveredProjectIndex !== null && 
-                hoveredProjectIndex !== index
+                hoveredProjectIndex !== null && hoveredProjectIndex !== index
               }
               hoveredProjectIndex={hoveredProjectIndex}
               isReachOutHovered={isReachOutHovered}
