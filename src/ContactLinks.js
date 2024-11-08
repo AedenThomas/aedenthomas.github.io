@@ -59,11 +59,13 @@ const ContactLinks = ({
   const getContributionsSummary = useCallback(() => {
     if (error) return [error];
     if (!contributionData) return ["Loading contributions..."];
-
+  
     const currentStreak = calculateCurrentStreak(pastYearContributions);
     const longestStreak = calculateLongestStreak(pastYearContributions);
-
+    const todayCount = getTodayContributions(pastYearContributions);
+  
     return [
+      `Today: ${todayCount} contributions`,
       `Past year: ${totalPastYearContributions} contributions`,
       `Current streak: ${currentStreak} days`,
       `Longest streak: ${longestStreak} days`,
@@ -75,9 +77,23 @@ const ContactLinks = ({
     totalPastYearContributions,
   ]);
 
-  const calculateCurrentStreak = (contributions) => {
+    const calculateCurrentStreak = (contributions) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
     let streak = 0;
-    for (let i = contributions.length - 1; i >= 0; i--) {
+    // Find today's index or the most recent day
+    let currentIndex = contributions.findIndex(day => 
+      new Date(day.date) > today
+    ) - 1;
+    
+    // If not found, start from the last day
+    if (currentIndex === -2) {
+      currentIndex = contributions.length - 1;
+    }
+  
+    // Count streak backwards from current day
+    for (let i = currentIndex; i >= 0; i--) {
       if (contributions[i].contributionCount > 0) {
         streak++;
       } else {
@@ -85,6 +101,18 @@ const ContactLinks = ({
       }
     }
     return streak;
+  };
+
+  const getTodayContributions = (contributions) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const todayContribution = contributions.find(day => {
+      const contribDate = new Date(day.date);
+      return contribDate.getTime() === today.getTime();
+    });
+    
+    return todayContribution ? todayContribution.contributionCount : 0;
   };
 
   const calculateLongestStreak = (contributions) => {
