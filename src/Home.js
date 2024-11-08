@@ -432,8 +432,8 @@ function Home({
       },
       {
         root: null,
-        rootMargin: '50px', // Start loading slightly before they come into view
-        threshold: 0.1
+        rootMargin: '0px', // Changed from '100px' to '0px' for precise triggering
+        threshold: [0.2, 0.5, 0.8] // Added multiple thresholds for better detection
       }
     );
 
