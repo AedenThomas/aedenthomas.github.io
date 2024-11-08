@@ -599,7 +599,7 @@ function AIPage({
         {chatStarted ? (
           <>
             {/* Chat history area */}
-            <div className="flex-1 overflow-y-auto mb-4 space-y-3 md:space-y-4 pb-20 md:pb-0">
+            <div className="flex-1 overflow-y-auto mb-4 space-y-3 md:space-y-4 pb-32 md:pb-0">
               {messageHistory.map((message, index) => (
                 <div
                   key={index}
@@ -645,9 +645,9 @@ function AIPage({
         <div className="relative flex flex-col-reverse md:flex-col">
           {/* Chat action buttons - show when chat has started */}
           {chatStarted && (
-            <div className="fixed md:relative bottom-[80px] md:bottom-auto left-0 right-0 px-2 md:px-0 z-10 md:mb-4">
-              <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
-                {getAvailableActionButtons()
+  <div className="fixed md:relative bottom-[80px] md:bottom-auto left-0 right-0 px-2 md:px-0 z-10 md:z-auto md:mb-4 bg-inherit">
+    <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
+      {getAvailableActionButtons()
                   .slice(0, 2)
                   .map((button, index) => (
                     <button
