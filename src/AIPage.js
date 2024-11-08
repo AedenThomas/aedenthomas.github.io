@@ -608,7 +608,7 @@ function AIPage({
           {/* Input form */}
           <form
             onSubmit={handleSubmit}
-            className="fixed md:relative bottom-0 left-0 right-0 md:bottom-auto px-2 md:px-0 bg-inherit pb-4 pt-2 md:py-0 md:mb-8"
+            className="fixed md:relative bottom-0 left-0 right-0 md:bottom-auto px-2 md:px-0 bg-inherit pb-4 pt-2 md:py-0 md:mb-0"
           >
             <input
               type="text"
@@ -648,7 +648,7 @@ function AIPage({
 
           {/* Action buttons - show only if chat hasn't started */}
           {!chatStarted && (
-            <div className="flex flex-col gap-2 mb-24 md:mb-0">
+                        <div className="flex flex-col gap-2 mt-8 mb-24 md:mb-0">
                             <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
                               
                               <button
