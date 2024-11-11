@@ -80,15 +80,17 @@ function Home({
   });
 
   const [currentGreeting, setCurrentGreeting] = useState(0);
-  const greetings = ["Hey!",
-      "Hola!",
-      "नमस्ते!",
-      "Bonjour!",
-      "你好!",
-      "Ciao!",
-      "Olá!",
-      "여보세요!",
-      "Hallo!"];
+  const greetings = [
+    "Hey!",
+    "Hola!",
+    "नमस्ते!",
+    "Bonjour!",
+    "你好!",
+    "Ciao!",
+    "Olá!",
+    "여보세요!",
+    "Hallo!",
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -136,51 +138,51 @@ function Home({
   // Enhanced button position tracking
   useEffect(() => {}, [buttonPosition]);
 
-    const handleAIClick = async () => {
+  const handleAIClick = async () => {
+    setDebugInfo((prev) => ({
+      ...prev,
+      animationStatus: "starting",
+      timestamp: new Date().toISOString(),
+    }));
+
+    updateButtonPosition();
+
+    // Update URL with hash routing
+    window.history.pushState({}, "", "/#/ai"); // Changed from '/ai' to '/#/ai'
+
+    // Set initial opposite theme
+    setTransitionTheme(true);
+
+    // Start animation
+    setIsNavigating(true);
+    setShowAIPage(true);
+
+    try {
+      // Wait for circle animation to complete expansion
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Changed from 2000 to 1000
+
+      // Wait additional time with opposite theme
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Smoothly fade to device theme
+      setTransitionTheme(false);
+
+      // Instead of navigating, we'll reload the app state
+      setTimeout(() => {
+        // This will trigger a re-render to show the AI page
+        // without a full navigation
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      }, 2000);
+    } catch (error) {
+      console.error("❌ [AI Transition] Error during transition:", error);
+      setTransitionTheme(false);
       setDebugInfo((prev) => ({
         ...prev,
-        animationStatus: "starting",
-        timestamp: new Date().toISOString(),
+        error: error.message,
+        animationStatus: "error",
       }));
-  
-      updateButtonPosition();
-  
-      // Update URL with hash routing
-      window.history.pushState({}, '', '/#/ai');  // Changed from '/ai' to '/#/ai'
-  
-      // Set initial opposite theme
-      setTransitionTheme(true);
-  
-      // Start animation
-      setIsNavigating(true);
-      setShowAIPage(true);
-  
-      try {
-        // Wait for circle animation to complete expansion
-        await new Promise((resolve) => setTimeout(resolve, 2000)); // Changed from 2000 to 1000
-  
-        // Wait additional time with opposite theme
-        await new Promise((resolve) => setTimeout(resolve, 500));
-  
-        // Smoothly fade to device theme
-        setTransitionTheme(false);
-  
-        // Instead of navigating, we'll reload the app state
-        setTimeout(() => {
-          // This will trigger a re-render to show the AI page
-          // without a full navigation
-          window.dispatchEvent(new PopStateEvent('popstate'));
-        }, 2000);
-      } catch (error) {
-        console.error("❌ [AI Transition] Error during transition:", error);
-        setTransitionTheme(false);
-        setDebugInfo((prev) => ({
-          ...prev,
-          error: error.message,
-          animationStatus: "error",
-        }));
-      }
-    };
+    }
+  };
   // Enhanced debug effect
   useEffect(() => {}, [
     debugInfo,
@@ -382,27 +384,30 @@ function Home({
     },
   };
 
+
+  
+
   // Add this state to track scroll position
   const [isScrolling, setIsScrolling] = useState(false);
-  
+
   // Remove or modify the scroll handler to not interfere with project visibility
   useEffect(() => {
     let scrollTimeout;
-    
+
     const handleScroll = () => {
       // Only reset hover states, don't affect project visibility
       handleProjectHover(null);
       handleReachOutMouseLeave();
-      
+
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         // Reset scroll state after scrolling stops
       }, 50);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
       clearTimeout(scrollTimeout);
     };
   }, [handleProjectHover, handleReachOutMouseLeave]);
@@ -413,9 +418,9 @@ function Home({
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach(entry => {
-          const projectId = entry.target.getAttribute('data-project-id');
-          setVisibleProjects(prev => {
+        entries.forEach((entry) => {
+          const projectId = entry.target.getAttribute("data-project-id");
+          setVisibleProjects((prev) => {
             const newSet = new Set(prev);
             if (entry.isIntersecting) {
               newSet.add(projectId);
@@ -428,18 +433,35 @@ function Home({
       },
       {
         root: null,
-        rootMargin: '200px 0px', // Changed from '0px' to '200px 0px' to trigger earlier
-        threshold: [0.1, 0.3, 0.5, 0.7, 0.9] // Modified thresholds for finer detection
+        rootMargin: "200px 0px", // Changed from '0px' to '200px 0px' to trigger earlier
+        threshold: [0.1, 0.3, 0.5, 0.7, 0.9], // Modified thresholds for finer detection
       }
     );
 
     // Observe all project elements
-    document.querySelectorAll('[data-project-id]').forEach(el => {
+    document.querySelectorAll("[data-project-id]").forEach((el) => {
       observer.observe(el);
     });
 
     return () => observer.disconnect();
   }, []);
+
+  // Add this inside the Home component, after the existing state declarations
+  const [showThemeTooltip, setShowThemeTooltip] = useState(false);
+
+  // Add this useEffect for keyboard shortcut
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      // Check for Command+Shift+L (Mac) or Control+Shift+L (Windows)
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "l") {
+        e.preventDefault();
+        toggleDarkMode();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [toggleDarkMode]);
 
   return (
     <motion.div
@@ -486,20 +508,63 @@ function Home({
         </>
       )}
 
-      <button
-        onClick={toggleDarkMode}
-        onMouseEnter={() => handleClickableHover(true)}
-        onMouseLeave={() => handleClickableHover(false)}
-        className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 flex items-center justify-center transition-all duration-500 ease-in-out ${
-          transitionTheme ? "bg-white text-black" : "bg-black text-white"
-        }`}
-        style={{
-          transition:
-            "background-color 0.5s ease-in-out, color 0.5s ease-in-out",
-        }}
-      >
-        {transitionTheme ? "☀️" : "🌙"}
-      </button>
+      <div className="relative">
+        <button
+          onClick={toggleDarkMode}
+          onMouseEnter={() => {
+            handleClickableHover(true);
+            setShowThemeTooltip(true);
+          }}
+          onMouseLeave={() => {
+            handleClickableHover(false);
+            setShowThemeTooltip(false);
+          }}
+          className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 flex items-center justify-center transition-all duration-500 ease-in-out ${
+            transitionTheme ? "bg-white text-black" : "bg-black text-white"
+          }`}
+          style={{
+            transition:
+              "background-color 0.5s ease-in-out, color 0.5s ease-in-out",
+          }}
+        >
+          {transitionTheme ? "☀️" : "🌙"}
+        </button>
+
+        <AnimatePresence>
+          {showThemeTooltip && (
+            <motion.div
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.2 }}
+              className={`fixed top-4 px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
+                isDarkMode
+                  ? "bg-white text-black shadow-light"
+                  : "bg-black text-white shadow-dark"
+              }`}
+              style={{
+                boxShadow: isDarkMode
+                  ? "0 2px 8px rgba(255, 255, 255, 0.1)"
+                  : "0 2px 8px rgba(0, 0, 0, 0.1)",
+                zIndex: 1000,
+                right: "4.5rem",
+              }}
+            >
+              Press{" "}
+              <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                ⌘
+              </kbd>
+              <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                ⇧
+              </kbd>
+              <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                L
+              </kbd>
+              to toggle theme
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <motion.button
         ref={aiButtonRef}
@@ -720,15 +785,14 @@ function Home({
                   )}
                 </AnimatePresence>
               </span>
-              . I've built all sorts of cool stuff for mobile and web, always trying to find that sweet spot where{" "}
+              . I've built all sorts of cool stuff for mobile and web, always
+              trying to find that sweet spot where{" "}
               <span className="relative">
                 things work great but also look awesome
               </span>
               . I really get excited about bringing{" "}
-              <span className="relative">
-                fresh ideas
-              </span>{" "}
-              to projects, especially in{" "}
+              <span className="relative">fresh ideas</span> to projects,
+              especially in{" "}
               <span className="relative">
                 <span className="whitespace-nowrap">startup environments</span>{" "}
                 where things are always moving
@@ -737,10 +801,8 @@ function Home({
             </p>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
               My main thing is using my{" "}
-              <span className="relative">
-                tech skills
-              </span>{" "}
-              to build stuff that actually matters. I'm super interested in{" "}
+              <span className="relative">tech skills</span> to build stuff that
+              actually matters. I'm super interested in{" "}
               <span className="relative inline-block px-1">
                 full-stack development
               </span>{" "}
@@ -748,15 +810,10 @@ function Home({
               <span className="relative inline-block px-1">
                 enterprise solutions
               </span>
-              , especially with{" "}
-              <span className="relative">
-                cool startups
-              </span>
-              . I'm pretty good at{" "}
-              <span className="relative">
-                picking up new things quickly
-              </span>
-              , which comes in handy in the startup world.{" "}
+              , especially with <span className="relative">cool startups</span>.
+              I'm pretty good at{" "}
+              <span className="relative">picking up new things quickly</span>,
+              which comes in handy in the startup world.{" "}
               <span
                 className="reach-out-text relative custom-cursor-clickable"
                 onMouseEnter={() => {
@@ -770,7 +827,7 @@ function Home({
                   setIsAIButtonHovered(false); // Reset AI button hover
                 }}
               >
-                Hey, drop me a line
+                Drop me a line
               </span>{" "}
               if you wanna chat about working together!
             </p>
@@ -881,9 +938,9 @@ function Home({
                 >
                   <div className="flex items-center">
                     {edu.logo && (
-                      <img 
-                        src={edu.logo} 
-                        alt={`${edu.university} logo`} 
+                      <img
+                        src={edu.logo}
+                        alt={`${edu.university} logo`}
                         className="w-6 h-6 mr-3"
                       />
                     )}
