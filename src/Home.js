@@ -385,7 +385,24 @@ function Home({
   };
 
 
+   const getOperatingSystem = () => {
+    // Try modern navigator.userAgentData first
+    if (navigator.userAgentData) {
+      const platform = navigator.userAgentData.platform.toLowerCase();
+      if (platform.includes('mac')) return 'mac';
+      if (platform.includes('windows')) return 'windows';
+      if (platform.includes('linux')) return 'linux';
+    }
   
+    // Fallback to userAgent string
+    const userAgent = navigator.userAgent.toLowerCase();
+    if (userAgent.includes('mac')) return 'mac';
+    if (userAgent.includes('win')) return 'windows';
+    if (userAgent.includes('linux')) return 'linux';
+    
+    return 'other';
+  };
+
 
   // Add this state to track scroll position
   const [isScrolling, setIsScrolling] = useState(false);
@@ -452,13 +469,17 @@ function Home({
   // Add this useEffect for keyboard shortcut
   useEffect(() => {
     const handleKeyPress = (e) => {
-      // Check for Command+Shift+L (Mac) or Control+Shift+L (Windows)
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "l") {
+      if (
+        ((getOperatingSystem() === 'mac' && e.metaKey) || 
+         (getOperatingSystem() !== 'mac' && e.ctrlKey)) && 
+        e.shiftKey && 
+        e.key.toLowerCase() === 'l'
+      ) {
         e.preventDefault();
         toggleDarkMode();
       }
     };
-
+  
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [toggleDarkMode]);
@@ -530,40 +551,43 @@ function Home({
           {transitionTheme ? "☀️" : "🌙"}
         </button>
 
-        <AnimatePresence>
-          {showThemeTooltip && (
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              transition={{ duration: 0.2 }}
-              className={`fixed top-4 px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
-                isDarkMode
-                  ? "bg-white text-black shadow-light"
-                  : "bg-black text-white shadow-dark"
-              }`}
-              style={{
-                boxShadow: isDarkMode
-                  ? "0 2px 8px rgba(255, 255, 255, 0.1)"
-                  : "0 2px 8px rgba(0, 0, 0, 0.1)",
-                zIndex: 1000,
-                right: "4.5rem",
-              }}
-            >
-              Press{" "}
-              <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
-                ⌘
-              </kbd>
-              <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
-                ⇧
-              </kbd>
-              <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
-                L
-              </kbd>
-              to toggle theme
-            </motion.div>
-          )}
-        </AnimatePresence>
+       <AnimatePresence>
+  {showThemeTooltip && (
+    <motion.div
+      initial={{ opacity: 0, x: 10 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 10 }}
+      transition={{ duration: 0.2 }}
+      className={`fixed top-4 px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
+        isDarkMode
+          ? "bg-white text-black shadow-light"
+          : "bg-black text-white shadow-dark"
+      }`}
+      style={{
+        boxShadow: isDarkMode
+          ? "0 2px 8px rgba(255, 255, 255, 0.1)"
+          : "0 2px 8px rgba(0, 0, 0, 0.1)",
+        zIndex: 1000,
+        right: "4.5rem",
+      }}
+    >
+      Press{" "}
+      {getOperatingSystem() === 'mac' ? (
+        <>
+          <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">⌘</kbd>
+          <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">⇧</kbd>
+        </>
+      ) : (
+        <>
+          <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">Ctrl</kbd>
+          <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">Shift</kbd>
+        </>
+      )}
+      <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">L</kbd>
+      to toggle theme
+    </motion.div>
+  )}
+</AnimatePresence>
       </div>
 
       <motion.button

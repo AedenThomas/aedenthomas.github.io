@@ -43,6 +43,25 @@ const buttonVariants = {
   },
 };
 
+// Add near the top of the file after other imports
+const getOperatingSystem = () => {
+  // Try modern navigator.userAgentData first
+  if (navigator.userAgentData) {
+    const platform = navigator.userAgentData.platform.toLowerCase();
+    if (platform.includes("mac")) return "mac";
+    if (platform.includes("windows")) return "windows";
+    if (platform.includes("linux")) return "linux";
+  }
+
+  // Fallback to userAgent string
+  const userAgent = navigator.userAgent.toLowerCase();
+  if (userAgent.includes("mac")) return "mac";
+  if (userAgent.includes("win")) return "windows";
+  if (userAgent.includes("linux")) return "linux";
+
+  return "other";
+};
+
 function AIPage({
   isDarkMode,
   toggleDarkMode,
@@ -343,6 +362,26 @@ function AIPage({
     return allButtons.filter((button) => !clickedButtons.has(button.text));
   };
 
+  const [showThemeTooltip, setShowThemeTooltip] = useState(false);
+
+  // Add keyboard shortcut effect
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (
+        ((getOperatingSystem() === "mac" && e.metaKey) ||
+          (getOperatingSystem() !== "mac" && e.ctrlKey)) &&
+        e.shiftKey &&
+        e.key.toLowerCase() === "l"
+      ) {
+        e.preventDefault();
+        toggleDarkMode();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [toggleDarkMode]);
+
   return (
     <motion.div
       initial={{ opacity: 1 }}
@@ -390,20 +429,76 @@ function AIPage({
       )}
 
       {/* Theme toggle button */}
-      <button
-        onClick={toggleDarkMode}
-        onMouseEnter={() => handleLocalClickableHover(true)}
-        onMouseLeave={() => handleLocalClickableHover(false)}
-        className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 flex items-center justify-center transition-all duration-500 ease-in-out ${
-          themeTransition ? "bg-white text-black" : "bg-black text-white"
-        }`}
-        style={{
-          transition:
-            "background-color 0.5s ease-in-out, color 0.5s ease-in-out",
-        }}
-      >
-        {themeTransition ? "☀️" : "🌙"}
-      </button>
+      <div className="relative">
+        <button
+          onClick={toggleDarkMode}
+          onMouseEnter={() => {
+            handleClickableHover(true);
+            setShowThemeTooltip(true);
+          }}
+          onMouseLeave={() => {
+            handleClickableHover(false);
+            setShowThemeTooltip(false);
+          }}
+          className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 flex items-center justify-center transition-all duration-500 ease-in-out ${
+            themeTransition ? "bg-white text-black" : "bg-black text-white"
+          }`}
+          style={{
+            transition:
+              "background-color 0.5s ease-in-out, color 0.5s ease-in-out",
+          }}
+        >
+          {themeTransition ? "☀️" : "🌙"}
+        </button>
+
+        <AnimatePresence>
+          {showThemeTooltip && (
+            <motion.div
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.2 }}
+              className={`fixed top-4 px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
+                isDarkMode
+                  ? "bg-white text-black shadow-light"
+                  : "bg-black text-white shadow-dark"
+              }`}
+              style={{
+                boxShadow: isDarkMode
+                  ? "0 2px 8px rgba(255, 255, 255, 0.1)"
+                  : "0 2px 8px rgba(0, 0, 0, 0.1)",
+                zIndex: 1000,
+                right: "4.5rem",
+              }}
+            >
+              Press{" "}
+              {getOperatingSystem() === "mac" ? (
+                <>
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                    ⌘
+                  </kbd>
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                    ⇧
+                  </kbd>
+                </>
+              ) : (
+                <>
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                    Ctrl
+                  </kbd>
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                    Shift
+                  </kbd>
+                </>
+              )}
+              <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                L
+              </kbd>
+              to toggle theme
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Add Home button */}
       <motion.button
@@ -512,7 +607,7 @@ function AIPage({
               }px)`,
             }}
             transition={{
-              duration: 2.5, 
+              duration: 2.5,
               ease: [0.22, 1, 0.36, 1],
             }}
             className="w-screen h-screen overflow-hidden"
@@ -645,9 +740,9 @@ function AIPage({
         <div className="relative flex flex-col-reverse md:flex-col">
           {/* Chat action buttons - show when chat has started */}
           {chatStarted && (
-  <div className="fixed md:relative bottom-[80px] md:bottom-auto left-0 right-0 px-2 md:px-0 z-10 md:z-auto md:mb-4 bg-inherit">
-    <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
-      {getAvailableActionButtons()
+            <div className="fixed md:relative bottom-[80px] md:bottom-auto left-0 right-0 px-2 md:px-0 z-10 md:z-auto md:mb-4 bg-inherit">
+              <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
+                {getAvailableActionButtons()
                   .slice(0, 2)
                   .map((button, index) => (
                     <button
@@ -751,6 +846,7 @@ function AIPage({
                     What tech stack do you know?
                   </span>
                 </button>
+
                 <button
                   onClick={() => handleButtonClick("What are your weaknesses?")}
                   onMouseEnter={() => handleLocalClickableHover(true)}
