@@ -10,18 +10,18 @@ const ContactLinks = ({
   handleClickableHover,
 }) => {
   const [contributionData, setContributionData] = useState(null);
+  const [intrycContributionData, setIntrycContributionData] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchContributions = async () => {
+    const fetchContributions = async (url, setter) => {
       try {
-        if (!githubUrl) {
+        if (!url) {
           throw new Error("GitHub URL is missing");
         }
 
-        const urlParts = githubUrl.split("/");
-        const username =
-          urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2];
+        const urlParts = url.split("/");
+        const username = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2];
 
         if (!username) {
           throw new Error("Invalid GitHub URL");
@@ -29,55 +29,51 @@ const ContactLinks = ({
 
         const apiUrl = `https://github-contributions-api.deno.dev/${username}.json`;
         const response = await axios.get(apiUrl);
-        setContributionData(response.data);
-        setError(null);
+        setter(response.data);
       } catch (error) {
         console.error("Error in fetchContributions:", error);
         setError(error.message || "Failed to fetch contributions");
       }
     };
 
-    if (githubUrl) {
-      fetchContributions();
-    }
+    fetchContributions(githubUrl, setContributionData);
+    fetchContributions("https://github.com/AedenThomasIntryc", setIntrycContributionData);
   }, [githubUrl]);
 
-  const pastYearContributions = useMemo(() => {
-    if (!contributionData) return null;
-    // Flatten the contributions array and take the last 365 days
-    return contributionData.contributions.flat().slice(-365);
-  }, [contributionData]);
+  const combinedPastYearContributions = useMemo(() => {
+    if (!contributionData && !intrycContributionData) return null;
+    
+    const mainContributions = contributionData?.contributions.flat().slice(-365) || [];
+    const intrycContributions = intrycContributionData?.contributions.flat().slice(-365) || [];
+    
+    // Create a map to combine contributions by date
+    const contributionsByDate = new Map();
+    
+    mainContributions.forEach(day => {
+      contributionsByDate.set(day.date, day.contributionCount);
+    });
+    
+    intrycContributions.forEach(day => {
+      const existing = contributionsByDate.get(day.date) || 0;
+      contributionsByDate.set(day.date, existing + day.contributionCount);
+    });
+    
+    // Convert back to array format
+    return Array.from(contributionsByDate.entries()).map(([date, count]) => ({
+      date,
+      contributionCount: count
+    })).sort((a, b) => new Date(a.date) - new Date(b.date));
+  }, [contributionData, intrycContributionData]);
 
   const totalPastYearContributions = useMemo(() => {
-    if (!pastYearContributions) return 0;
-    return pastYearContributions.reduce(
+    if (!combinedPastYearContributions) return 0;
+    return combinedPastYearContributions.reduce(
       (sum, day) => sum + day.contributionCount,
       0
     );
-  }, [pastYearContributions]);
+  }, [combinedPastYearContributions]);
 
-  const getContributionsSummary = useCallback(() => {
-    if (error) return [error];
-    if (!contributionData) return ["Loading contributions..."];
-  
-    const currentStreak = calculateCurrentStreak(pastYearContributions);
-    const longestStreak = calculateLongestStreak(pastYearContributions);
-    const todayCount = getTodayContributions(pastYearContributions);
-  
-    return [
-      `Today: ${todayCount} contributions`,
-      `Past year: ${totalPastYearContributions} contributions`,
-      `Current streak: ${currentStreak} days`,
-      `Longest streak: ${longestStreak} days`,
-    ];
-  }, [
-    error,
-    contributionData,
-    pastYearContributions,
-    totalPastYearContributions,
-  ]);
-
-    const calculateCurrentStreak = (contributions) => {
+  const calculateCurrentStreak = (contributions) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
@@ -128,6 +124,26 @@ const ContactLinks = ({
     }
     return longestStreak;
   };
+
+  const getContributionsSummary = useCallback(() => {
+    if (error) return [error];
+    if (!combinedPastYearContributions) return ["Loading contributions..."];
+  
+    const currentStreak = calculateCurrentStreak(combinedPastYearContributions);
+    const longestStreak = calculateLongestStreak(combinedPastYearContributions);
+    const todayCount = getTodayContributions(combinedPastYearContributions);
+  
+    return [
+      `Today: ${todayCount} contributions`,
+      `Past year: ${totalPastYearContributions} contributions`,
+      `Current streak: ${currentStreak} days`,
+      `Longest streak: ${longestStreak} days`,
+    ];
+  }, [
+    error,
+    combinedPastYearContributions,
+    totalPastYearContributions,
+  ]);
 
   useEffect(() => {
     (async function () {
