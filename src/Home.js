@@ -100,6 +100,20 @@ function Home({
 
   const [expandedExperiences, setExpandedExperiences] = useState(new Set());
 
+  const [expandedItems, setExpandedItems] = useState(new Set());
+
+// Add a click handler
+const handleExperienceClick = (index) => {
+  setExpandedItems(prev => {
+    const newSet = new Set(prev);
+    if (newSet.has(index)) {
+      newSet.delete(index);
+    } else {
+      newSet.add(index);
+    }
+    return newSet;
+  });
+};
   const toggleExperience = (index) => {
     setExpandedExperiences((prev) => {
       const newSet = new Set(prev);
@@ -877,8 +891,7 @@ function Home({
             </p>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
               My main thing is using my tech skills to build stuff that actually
-              matters. I'm super interested in enterprise solutions, especially
-              with cool startups. , especially with{" "}
+              matters. I'm super interested in enterprise solutions, especially with{" "}
               <span className="relative">cool startups</span>. I'm pretty good
               at <span className="relative">picking up new things quickly</span>
               , which comes in handy in the startup world.{" "}
@@ -916,19 +929,29 @@ function Home({
           />
         </div>
 
-        <div className="mb-8">
+        <div
+          className={`mb-8 transition-all duration-300 ${
+            isReachOutHovered ? "blur-sm" : ""
+          }`}
+        >
           <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
             ~/experience
           </h2>
           {experience.map((exp, index) => (
             <motion.div
               key={index}
-              className="mb-8 relative bg-transparent hover:bg-gray-50 dark:hover:bg-gray-900/20 rounded-lg p-4 transition-colors duration-300"
+              className="mb-2 relative bg-transparent rounded-lg p-4 transition-colors duration-300"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              onMouseEnter={() => handleCardHover(index)}
-              onMouseLeave={() => handleCardLeave(index)}
+              onMouseEnter={() => {
+                handleCardHover(index);
+                handleClickableHover(true); // Add this
+              }}
+              onMouseLeave={() => {
+                handleCardLeave(index);
+                handleClickableHover(false); // Add this
+              }}
             >
               <div className="flex items-start gap-3">
                 {exp.logo && (
@@ -996,30 +1019,6 @@ function Home({
                       {hoveredCard !== index && (
                         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#F2F0E9] dark:from-black to-transparent pointer-events-none" />
                       )}
-                    </motion.div>
-
-                    <motion.div
-                      className="absolute bottom-1 right-2 z-10"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <div className="text-gray-400 text-[0.9em] italic flex items-center gap-1">
-                        Read more
-                        <svg
-                          className="w-4 h-4"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </div>
                     </motion.div>
                   </div>
                 </div>
