@@ -102,18 +102,18 @@ function Home({
 
   const [expandedItems, setExpandedItems] = useState(new Set());
 
-// Add a click handler
-const handleExperienceClick = (index) => {
-  setExpandedItems(prev => {
-    const newSet = new Set(prev);
-    if (newSet.has(index)) {
-      newSet.delete(index);
-    } else {
-      newSet.add(index);
-    }
-    return newSet;
-  });
-};
+  // Add a click handler
+  const handleExperienceClick = (index) => {
+    setExpandedItems((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
   const toggleExperience = (index) => {
     setExpandedExperiences((prev) => {
       const newSet = new Set(prev);
@@ -600,7 +600,7 @@ const handleExperienceClick = (index) => {
             handleClickableHover(false);
             setShowThemeTooltip(false);
           }}
-          className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 flex items-center justify-center transition-all duration-500 ease-in-out ${
+          className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 z-50 flex items-center justify-center transition-all duration-500 ease-in-out ${
             transitionTheme ? "bg-white text-black" : "bg-black text-white"
           }`}
           style={{
@@ -671,7 +671,8 @@ const handleExperienceClick = (index) => {
           handleClickableHover(false);
           setIsAIButtonHovered(false);
         }}
-        className={`fixed top-16 right-4 rounded-full custom-cursor-clickable overflow-hidden h-10 ${
+        className={`fixed top-16 right-4 rounded-full custom-cursor-clickable overflow-hidden h-10 z-50 ${
+          // Add z-50 here
           isDarkMode ? "bg-white text-black" : "bg-black text-white"
         }`}
         variants={buttonVariants}
@@ -891,10 +892,11 @@ const handleExperienceClick = (index) => {
             </p>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
               My main thing is using my tech skills to build stuff that actually
-              matters. I'm super interested in enterprise solutions, especially with{" "}
-              <span className="relative">cool startups</span>. I'm pretty good
-              at <span className="relative">picking up new things quickly</span>
-              , which comes in handy in the startup world.{" "}
+              matters. I'm super interested in enterprise solutions, especially
+              with <span className="relative">cool startups</span>. I'm pretty
+              good at{" "}
+              <span className="relative">picking up new things quickly</span>,
+              which comes in handy in the startup world.{" "}
               <span
                 className="reach-out-text relative custom-cursor-clickable"
                 onMouseEnter={() => {
@@ -946,12 +948,13 @@ const handleExperienceClick = (index) => {
               transition={{ delay: index * 0.1 }}
               onMouseEnter={() => {
                 handleCardHover(index);
-                handleClickableHover(true); // Add this
+                handleClickableHover(true);
               }}
               onMouseLeave={() => {
                 handleCardLeave(index);
-                handleClickableHover(false); // Add this
+                handleClickableHover(false);
               }}
+              onClick={() => toggleExperience(index)}
             >
               <div className="flex items-start gap-3">
                 {exp.logo && (
@@ -1004,7 +1007,11 @@ const handleExperienceClick = (index) => {
                       className="relative overflow-hidden"
                       initial={{ height: 80 }}
                       animate={{
-                        height: hoveredCard === index ? "auto" : 80,
+                        height: expandedExperiences.has(index)
+                          ? "auto"
+                          : hoveredCard === index
+                          ? "auto"
+                          : 80,
                         transition: { duration: 0.3, ease: "easeInOut" },
                       }}
                     >
@@ -1016,9 +1023,10 @@ const handleExperienceClick = (index) => {
                         ))}
                       </ul>
 
-                      {hoveredCard !== index && (
-                        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#F2F0E9] dark:from-black to-transparent pointer-events-none" />
-                      )}
+                      {!expandedExperiences.has(index) &&
+                        hoveredCard !== index && (
+                          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#F2F0E9] dark:from-black to-transparent pointer-events-none z-0" />
+                        )}
                     </motion.div>
                   </div>
                 </div>

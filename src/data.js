@@ -105,6 +105,7 @@ export const experience = [
     logo: "/hertel.png",
     url: "https://www.intryc.com",
   },
+  
 ];
 export const coursework = [
   "Engineering Mathematics",
