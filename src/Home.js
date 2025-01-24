@@ -6,12 +6,21 @@ import React, {
   useCallback,
   Suspense,
 } from "react";
+import ReactMarkdown from "react-markdown";
 
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedGreeting from "./AnimatedGreeting.js";
 import "./App.css";
 import Project from "./Project.js";
-import { education, projects, skills, research, coursework } from "./data";
+import {
+  education,
+  projects,
+  skills,
+  research,
+  coursework,
+  experience,
+  notableInteractions,
+} from "./data";
 import ContactLinks from "./ContactLinks";
 import LanguageIcon from "./LanguageIcon";
 import { useNavigate } from "react-router-dom";
@@ -71,6 +80,16 @@ function Home({
     initialTransitionTheme !== undefined ? initialTransitionTheme : isDarkMode
   );
 
+  const [hoveredCard, setHoveredCard] = useState(null);
+
+  const handleCardHover = (index) => {
+    setHoveredCard(index);
+  };
+
+  const handleCardLeave = (index) => {
+    setHoveredCard(null);
+  };
+
   // Add this new debug state to track width transitions
   const [buttonMetrics, setButtonMetrics] = useState({
     currentWidth: 40,
@@ -78,6 +97,20 @@ function Home({
     transitionPhase: "idle",
     timestamp: Date.now(),
   });
+
+  const [expandedExperiences, setExpandedExperiences] = useState(new Set());
+
+  const toggleExperience = (index) => {
+    setExpandedExperiences((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
 
   const [currentGreeting, setCurrentGreeting] = useState(0);
   const greetings = [
@@ -384,25 +417,23 @@ function Home({
     },
   };
 
-
-   const getOperatingSystem = () => {
+  const getOperatingSystem = () => {
     // Try modern navigator.userAgentData first
     if (navigator.userAgentData) {
       const platform = navigator.userAgentData.platform.toLowerCase();
-      if (platform.includes('mac')) return 'mac';
-      if (platform.includes('windows')) return 'windows';
-      if (platform.includes('linux')) return 'linux';
+      if (platform.includes("mac")) return "mac";
+      if (platform.includes("windows")) return "windows";
+      if (platform.includes("linux")) return "linux";
     }
-  
+
     // Fallback to userAgent string
     const userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.includes('mac')) return 'mac';
-    if (userAgent.includes('win')) return 'windows';
-    if (userAgent.includes('linux')) return 'linux';
-    
-    return 'other';
-  };
+    if (userAgent.includes("mac")) return "mac";
+    if (userAgent.includes("win")) return "windows";
+    if (userAgent.includes("linux")) return "linux";
 
+    return "other";
+  };
 
   // Add this state to track scroll position
   const [isScrolling, setIsScrolling] = useState(false);
@@ -470,19 +501,34 @@ function Home({
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (
-        ((getOperatingSystem() === 'mac' && e.metaKey) || 
-         (getOperatingSystem() !== 'mac' && e.ctrlKey)) && 
-        e.shiftKey && 
-        e.key.toLowerCase() === 'l'
+        ((getOperatingSystem() === "mac" && e.metaKey) ||
+          (getOperatingSystem() !== "mac" && e.ctrlKey)) &&
+        e.shiftKey &&
+        e.key.toLowerCase() === "l"
       ) {
         e.preventDefault();
         toggleDarkMode();
       }
     };
-  
+
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [toggleDarkMode]);
+
+  // Add these new state variables at the top with other state declarations
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
+  // Add these handlers with other function declarations
+  const openImageModal = (image) => {
+    setSelectedImage(image);
+    setIsImageModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setIsImageModalOpen(false);
+    setSelectedImage(null);
+  };
 
   return (
     <motion.div
@@ -551,43 +597,53 @@ function Home({
           {transitionTheme ? "☀️" : "🌙"}
         </button>
 
-       <AnimatePresence>
-  {showThemeTooltip && (
-    <motion.div
-      initial={{ opacity: 0, x: 10 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 10 }}
-      transition={{ duration: 0.2 }}
-      className={`fixed top-4 px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
-        isDarkMode
-          ? "bg-white text-black shadow-light"
-          : "bg-black text-white shadow-dark"
-      }`}
-      style={{
-        boxShadow: isDarkMode
-          ? "0 2px 8px rgba(255, 255, 255, 0.1)"
-          : "0 2px 8px rgba(0, 0, 0, 0.1)",
-        zIndex: 1000,
-        right: "4.5rem",
-      }}
-    >
-      Press{" "}
-      {getOperatingSystem() === 'mac' ? (
-        <>
-          <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">⌘</kbd>
-          <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">⇧</kbd>
-        </>
-      ) : (
-        <>
-          <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">Ctrl</kbd>
-          <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">Shift</kbd>
-        </>
-      )}
-      <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">L</kbd>
-      to toggle theme
-    </motion.div>
-  )}
-</AnimatePresence>
+        <AnimatePresence>
+          {showThemeTooltip && (
+            <motion.div
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.2 }}
+              className={`fixed top-4 px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
+                isDarkMode
+                  ? "bg-white text-black shadow-light"
+                  : "bg-black text-white shadow-dark"
+              }`}
+              style={{
+                boxShadow: isDarkMode
+                  ? "0 2px 8px rgba(255, 255, 255, 0.1)"
+                  : "0 2px 8px rgba(0, 0, 0, 0.1)",
+                zIndex: 1000,
+                right: "4.5rem",
+              }}
+            >
+              Press{" "}
+              {getOperatingSystem() === "mac" ? (
+                <>
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                    ⌘
+                  </kbd>
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                    ⇧
+                  </kbd>
+                </>
+              ) : (
+                <>
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                    Ctrl
+                  </kbd>
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                    Shift
+                  </kbd>
+                </>
+              )}
+              <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                L
+              </kbd>
+              to toggle theme
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <motion.button
@@ -740,11 +796,7 @@ function Home({
             </h1>
 
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-              I'm a{" "}
-              <span className="relative inline-block px-1">
-                full-stack developer
-              </span>
-              , and I've gotten pretty good with{" "}
+              I'm a full-stack developer, and I've gotten pretty good with{" "}
               <span
                 onMouseEnter={() => handleLanguageHover("react")}
                 onMouseLeave={handleLanguageLeave}
@@ -824,20 +876,12 @@ function Home({
               .
             </p>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-              My main thing is using my{" "}
-              <span className="relative">tech skills</span> to build stuff that
-              actually matters. I'm super interested in{" "}
-              <span className="relative inline-block px-1">
-                full-stack development
-              </span>{" "}
-              and{" "}
-              <span className="relative inline-block px-1">
-                enterprise solutions
-              </span>
-              , especially with <span className="relative">cool startups</span>.
-              I'm pretty good at{" "}
-              <span className="relative">picking up new things quickly</span>,
-              which comes in handy in the startup world.{" "}
+              My main thing is using my tech skills to build stuff that actually
+              matters. I'm super interested in enterprise solutions, especially
+              with cool startups. , especially with{" "}
+              <span className="relative">cool startups</span>. I'm pretty good
+              at <span className="relative">picking up new things quickly</span>
+              , which comes in handy in the startup world.{" "}
               <span
                 className="reach-out-text relative custom-cursor-clickable"
                 onMouseEnter={() => {
@@ -868,8 +912,242 @@ function Home({
             linkedinUrl={linkedinUrl}
             githubUrl={githubUrl}
             handleClickableHover={handleClickableHover}
+            isDarkMode={isDarkMode}
           />
         </div>
+
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            ~/experience
+          </h2>
+          {experience.map((exp, index) => (
+            <motion.div
+              key={index}
+              className="mb-8 relative bg-transparent hover:bg-gray-50 dark:hover:bg-gray-900/20 rounded-lg p-4 transition-colors duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              onMouseEnter={() => handleCardHover(index)}
+              onMouseLeave={() => handleCardLeave(index)}
+            >
+              <div className="flex items-start gap-3">
+                {exp.logo && (
+                  <img
+                    src={exp.logo}
+                    alt={`${exp.company} logo`}
+                    className="w-8 h-8 mt-1 shrink-0"
+                  />
+                )}
+                <div className="w-full">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                      {exp.company}
+                    </h3>
+                    {exp.url && (
+                      <a
+                        href={exp.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:text-blue-600"
+                      >
+                        <svg
+                          className="w-4 h-4 inline"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                          />
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {exp.position}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {exp.location} • {exp.period}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 italic">
+                    {exp.description}
+                  </p>
+
+                  <div className="relative">
+                    <motion.div
+                      className="relative overflow-hidden"
+                      initial={{ height: 80 }}
+                      animate={{
+                        height: hoveredCard === index ? "auto" : 80,
+                        transition: { duration: 0.3, ease: "easeInOut" },
+                      }}
+                    >
+                      <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        {exp.highlights.map((highlight, i) => (
+                          <li key={i} className="ml-4 mb-2">
+                            {highlight}
+                          </li>
+                        ))}
+                      </ul>
+
+                      {hoveredCard !== index && (
+                        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#F2F0E9] dark:from-black to-transparent pointer-events-none" />
+                      )}
+                    </motion.div>
+
+                    <motion.div
+                      className="absolute bottom-1 right-2 z-10"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      <div className="text-gray-400 text-[0.9em] italic flex items-center gap-1">
+                        Read more
+                        <svg
+                          className="w-4 h-4"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <div
+          className={`mb-8 transition-all duration-300 ${
+            isReachOutHovered ? "blur-sm" : ""
+          }`}
+        >
+          <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            ~/notable interactions
+          </h2>
+          {notableInteractions.map((interaction, index) => (
+            <motion.div
+              key={index}
+              className={`mb-4 p-4 rounded-lg hover:bg-navy-800 dark:hover:bg-navy-900 transition-transform duration-200 ease-in-out 
+      ${interaction.image ? "custom-cursor-clickable" : ""}`} // Add custom cursor only if image exists
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.01 }}
+              onMouseEnter={() =>
+                interaction.image && handleClickableHover(true)
+              }
+              onMouseLeave={() =>
+                interaction.image && handleClickableHover(false)
+              }
+              onClick={() =>
+                interaction.image && openImageModal(interaction.image)
+              }
+            >
+              <div className="flex items-start">
+                {interaction.logo && (
+                  <img
+                    src={
+                      typeof interaction.logo === "string"
+                        ? interaction.logo
+                        : isDarkMode
+                        ? interaction.logo.dark
+                        : interaction.logo.light
+                    }
+                    alt={`${interaction.company} logo`}
+                    className="w-8 h-8 mr-3 mt-1"
+                  />
+                )}
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold group-hover:text-white">
+                      {interaction.company}
+                    </h3>
+                    {interaction.url && (
+                      <a
+                        href={interaction.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                      >
+                        <svg
+                          className="w-4 h-4 inline"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                          />
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                    {interaction.period}
+                  </p>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 prose prose-sm dark:prose-invert max-w-none">
+                    <ReactMarkdown>{interaction.description}</ReactMarkdown>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <AnimatePresence>
+          {isImageModalOpen && selectedImage && (
+            <motion.div
+              className={`fixed inset-0 ${
+                isDarkMode
+                  ? "dark-mode-backdrop"
+                  : "bg-black bg-opacity-30 backdrop-blur"
+              } flex items-center justify-center z-[9998]`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              onClick={closeImageModal}
+            >
+              <motion.div
+                className={`${
+                  isDarkMode ? "bg-black" : "bg-white"
+                } rounded-2xl overflow-hidden max-w-[90vw] max-h-[90vh]`}
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img
+                  src={selectedImage}
+                  alt="Interaction preview"
+                  className="w-full h-auto object-contain max-h-[80vh]"
+                  loading="lazy"
+                  style={{
+                    maxWidth: "800px",
+                    width: "100%",
+                    height: "auto",
+                  }}
+                />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div
           className={`mb-8 transition-all duration-300 ${
@@ -1021,18 +1299,18 @@ function Home({
                     {pub.journal}, {pub.year}
                   </p>
                   {pub.doi && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300">
-                      DOI: {pub.doi}
+                    <p className="text-sm text-blue-500 group-hover:text-gray-300">
+                      DOI:{" "}
+                      <a
+                        href={`https://doi.org/${pub.doi}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:text-blue-600"
+                      >
+                        {pub.doi}
+                      </a>
                     </p>
                   )}
-                  <a
-                    href="https://link.springer.com/book/9789819766802"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-                  >
-                    Releasing on 23 Dec 2024
-                  </a>
                 </motion.div>
               ))}
             </motion.div>

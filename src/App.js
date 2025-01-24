@@ -167,36 +167,25 @@ function App() {
   }, []);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    return !window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
   useEffect(() => {
-    const prefersDarkMode = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
+    const prefersDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setIsDarkMode(prefersDarkMode);
 
-    setIsDarkMode(!prefersDarkMode);
-
-    const timer = setTimeout(() => {
-      setIsDarkMode(prefersDarkMode);
-      setInitialAnimationComplete(true);
-    }, 1000);
-
-    return () => clearTimeout(timer);
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e) => {
+      setIsDarkMode(e.matches);
+    };
+    
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = (e) => {
-      setIsDarkMode(e.matches);
-    };
-    mediaQuery.addListener(handleChange);
-    return () => mediaQuery.removeListener(handleChange);
-  }, []);
 
   useEffect(() => {
     document.body.classList.add("custom-cursor");

@@ -2,16 +2,21 @@ import { getCalApi } from "@calcom/embed-react";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
+import EmailPopup from './EmailPopup';
 
 const ContactLinks = ({
   email,
   linkedinUrl,
   githubUrl,
   handleClickableHover,
+  isDarkMode, // Add this prop
 }) => {
   const [contributionData, setContributionData] = useState(null);
   const [intrycContributionData, setIntrycContributionData] = useState(null);
   const [error, setError] = useState(null);
+  const [showCopy, setShowCopy] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
 
   useEffect(() => {
     const fetchContributions = async (url, setter) => {
@@ -145,6 +150,22 @@ const ContactLinks = ({
     totalPastYearContributions,
   ]);
 
+  const handleCopyEmail = async (e) => {
+    e.preventDefault();
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  const handleEmailClick = (e) => {
+    e.preventDefault();
+    setIsEmailPopupOpen(true);
+  };
+
   useEffect(() => {
     (async function () {
       const cal = await getCalApi({ namespace: "15min" });
@@ -160,23 +181,70 @@ const ContactLinks = ({
     <div className="mb-8">
       <div className="flex flex-wrap items-center justify-between mb-4">
         <div className="flex flex-wrap items-center">
-          <a
-            href={`mailto:${email}`}
-            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
-            onMouseEnter={() => handleClickableHover(true)}
-            onMouseLeave={() => handleClickableHover(false)}
+          <div 
+            className="relative group"
+            onMouseEnter={() => {
+              handleClickableHover(true);
+              setShowCopy(true);
+            }}
+            onMouseLeave={() => {
+              handleClickableHover(false);
+              // Don't hide immediately, add a delay
+              setTimeout(() => {
+                // Only hide if we're not hovering over the button
+                if (!document.querySelector('.copy-button:hover')) {
+                  setShowCopy(false);
+                }
+              }, 100);
+            }}
           >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
+            {showCopy && (
+              <button
+                onClick={handleCopyEmail}
+                onMouseEnter={() => {
+                  handleClickableHover(true);
+                  setShowCopy(true);
+                }}
+                className={`copy-button absolute transform -translate-x-1/2 -top-8 left-1/2 text-xs px-2 py-1 rounded-md transition-all duration-200 whitespace-nowrap ${
+                  copied 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                {copied ? (
+                  <span className="flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Copied!
+                  </span>
+                ) : (
+                  <span className="flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                    Copy email
+                  </span>
+                )}
+              </button>
+            )}
+            <a
+              href={`mailto:${email}`}
+              onClick={handleEmailClick}
+              className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
             >
-              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-            </svg>
-            {email}
-          </a>
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+              </svg>
+              {email}
+            </a>
+          </div>
           <a
             href={linkedinUrl}
             target="_blank"
@@ -259,18 +327,15 @@ const ContactLinks = ({
             Book a call
           </button>
         </div>
-        {/* <a
-          href="/Resume.pdf"
-          download
-          className="text-sm bg-transparent border border-gray-300 text-gray-500 px-4 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200 mt-2 md:mt-0 mr-2 custom-cursor-clickable"
-          onClick={() => {
-          }}
-          onMouseEnter={() => handleClickableHover(true)}
-          onMouseLeave={() => handleClickableHover(false)}
-        >
-          Résumé
-        </a> */}
       </div>
+
+      <EmailPopup
+        email={email}
+        isOpen={isEmailPopupOpen}
+        onClose={() => setIsEmailPopupOpen(false)}
+        handleClickableHover={handleClickableHover}
+        isDarkMode={isDarkMode}
+      />
     </div>
   );
 };

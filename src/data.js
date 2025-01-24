@@ -9,6 +9,103 @@ export const research = [
   },
 ];
 
+export const notableInteractions = [
+  {
+    company: "Invisibility Inc.",
+    description:
+      "• Collaborated with **Sulaiman Khan Ghori** (CEO) and the engineering team to diagnose and resolve critical performance issues in their SwiftUI-based messaging application\n\n• Identified key bottlenecks through advanced profiling using Instruments, including SwiftUI update cycles, memory allocation issues, and UI thread stalls\n\n• Led to a major codebase refactor that significantly improved the app's chat history panel and message sending functionality",
+    period: "Jun 2024",
+    logo: "https://framerusercontent.com/images/tYGb5cME2Fsep50igI5HcnEw.png",
+    url: "https://i.inc",
+    image: "/invisibility-interaction.webp"
+  },
+  {
+    company: "GitHub",
+    description:
+      "• Engaged in direct communication with **Thomas Dohmke** (CEO) to provide strategic feedback on GitHub Copilot's development\n\n• Successfully advocated for multimodal capabilities and proposed an enhanced branch-based code analysis feature for detecting potential bugs before merging\n\n• Influenced GitHub Copilot's product roadmap, particularly around improving code review capabilities and making AI tools more accessible to developers globally",
+    period: "Oct 2024 - Dec 2024",
+    logo: {
+      light:
+        "https://cdn.brandfetch.io/idZAyF9rlg/theme/dark/symbol.svg?c=1dxbfHSJFAPEGdCLU4o5B",
+      dark: "https://cdn.brandfetch.io/idZAyF9rlg/theme/light/symbol.svg?c=1dxbfHSJFAPEGdCLU4o5B",
+    },
+    url: "https://github.com",
+    image: "/github-interaction.png"
+  },
+  {
+    company: "The Browser Company",
+    description:
+      "• Collaborated with **Josh Miller** (CEO) and the engineering team to diagnose and resolve critical video playback issues in the Arc browser\n\n• Identified hardware acceleration as the root cause affecting multiple users\n\n• Influenced the development roadmap for enhanced video player features, including Picture-in-Picture functionality improvements",
+    period: "Apr 2024",
+    logo: "https://cdn.brandfetch.io/idwAFJ6S5L/theme/dark/logo.svg?c=1bfwsmEH20zzEfSNTed",
+    url: "https://thebrowser.company",
+    image: "/tbc-interaction.png"
+  },
+  {
+    company: "Texts.com (Automattic)",
+    description:
+      "• Collaborated with **Kishan Bagaria** (Founder) and the engineering team to resolve a critical 6-month-long WhatsApp integration issue\n\n• Implemented an innovative solution involving system directory cleanup, which was subsequently incorporated into the app's troubleshooting documentation\n\n• Significantly enhanced Texts.com's WhatsApp integration reliability and installation process",
+    period: "Dec 2023 - Apr 2024",
+    logo: "https://texts.com/_next/image?url=%2Ficon.png&w=128&q=75",
+    url: "https://texts.com",
+  },
+  {
+    company: "Apple",
+    description:
+      "• Engaged with **Craig Federighi** (SVP of Software Engineering) to propose innovative iOS features, including a less intrusive call UI, enhanced Face ID functionality, RAW photo capture, and split-screen multitasking\n\n• Several proposed features were later implemented in iOS releases, significantly improving the user experience for millions of iPhone users",
+    period: "Oct 2019",
+    logo: {
+      light:
+        "https://cdn.brandfetch.io/idnrCPuv87/theme/dark/logo.svg?c=1dxbfHSJFAPEGdCLU4o5B",
+      dark: "https://cdn.brandfetch.io/idnrCPuv87/theme/light/logo.svg?c=1dxbfHSJFAPEGdCLU4o5B",
+    },
+    url: "https://www.apple.com",
+  },
+];
+
+export const experience = [
+  {
+    company: "Intryc (Y Combinator W24)",
+    position: "Software Engineer Intern",
+    period: "Dec 2024 - Present",
+    location: "London, United Kingdom",
+    highlights: [
+      "Led migration from legacy JavaScript components to a standardized TypeScript component library across a 50K+ LOC codebase, improving type safety, reducing runtime errors by 20%, and enhancing developer productivity",
+      "Engineered high-performance RESTful APIs with FastAPI and Python, leveraging Pydantic for robust type validation and implementing custom error handling that reduced API error rates by 15%. Created comprehensive OpenAPI/Swagger documentation, following best practices including HATEOAS and versioning, facilitating client integration and improving API discoverability",
+      "Engineered advanced data filtering and sorting system using SQLAlchemy ORM, implementing dynamic query builders with multiple parameter support and relationship joins. Optimized database performance by 35% through efficient pagination, sorting, and filtering, resulting in faster API response times and better user experience. Implemented cursor-based pagination for efficient retrieval of millions of records",
+      "Optimized component rendering through implementation of React's useMemo and useCallback hooks, reducing unnecessary re-renders by 30%",
+      "Developed a workload management system with real-time data visualization using WebSockets and React, featuring dynamic filtering controls that allowed users to refine data by multiple criteria, resulting in a 20% improvement in user workflow efficiency",
+      "Implemented advanced state management and error handling in a Remix application, utilizing React hooks and custom form stores to prevent race conditions. Improved application navigation through nested routing and protected routes, reducing page load times by 10% and improving SEO",
+      "Engineered reusable form components with complex, asynchronous state management using Zustand and asynchronous actions, reducing code complexity by 15% and improving form performance. Implemented custom validation and error handling for improved user feedback",
+      "Implemented a repository pattern with SQLAlchemy to abstract data access logic, improving code maintainability, testability, and enabling easier integration of future data sources. This reduced code duplication by 20% and improved developer onboarding time",
+      "Developed custom sorting algorithms to handle diverse data types, including localized dates and internationalized strings, providing accurate and consistent sorting across different locales",
+      "Collaborated with senior developers to define and implement key architectural decisions, including the migration to a microservices architecture. Actively participated in code reviews, contributing to improved code quality and knowledge sharing within the team",
+      "Engineered a modular typography component system with TypeScript and TailwindCSS, featuring dynamic color theming, truncation handling, and responsive variants. Reduced code duplication by 25% and improved UI consistency across the platform through standardized text components and comprehensive Storybook documentation",
+    ],
+    logo: "/intryc.jpg",
+    url: "https://www.intryc.com",
+  },
+  {
+    company: "Hertel",
+    position: "Software Engineer Intern",
+    period: "June 2024 - Sept 2024",
+    location: "Abu Dhabi, United Arab Emirates",
+    highlights: [
+    "Engineered a modular full-stack React application using Styled Components and Material-UI, implementing 10+ business modules while reducing development time by 15% through reusable component architecture",
+    "Optimized application performance through React Context and custom hooks implementation, improving component render times by 20% and reducing memory usage across high-traffic modules",
+    "Developed an enterprise-grade data management system supporting 500+ users across CRM, HR, and Procurement modules, featuring real-time updates and reducing data processing time by 25%",
+    "Implemented comprehensive data visualization using PrimeReact tables with advanced filtering and sorting capabilities, reducing data analysis time by 20% and improving user productivity across core business functions",
+    "Architected a dynamic form generation system with JSON configurations and Material-UI components, standardizing data input workflows and reducing form development time by 25%",
+    "Enhanced system reliability through robust RESTful API integration using axios, implementing efficient error handling and caching strategies that improved data loading performance by 15%",
+    "Architected and implemented a scalable RESTful API suite using ASP.NET Core MVC, serving 30+ business domains with comprehensive logging, monitoring, and error handling that reduced system downtime by 15%.",
+    "Designed and implemented an enterprise-wide dynamic filtering system using LINQ expression trees and optimized database queries, resulting in 25% faster load times for large datasets and a 20% overall improvement in system performance. Also improved page load time by 10%.",
+    "Established robust architectural patterns, including a repository pattern and dependency injection, resulting in a 20% reduction in code duplication and significantly improved system maintainability.",
+    "Implemented reusable components that reduced development time for new features by 30% and streamlined the developer onboarding process.",
+    ],
+    logo: "/hertel.png",
+    url: "https://www.intryc.com",
+  },
+];
 export const coursework = [
   "Engineering Mathematics",
   "Statistics and Discrete Mathematics",
