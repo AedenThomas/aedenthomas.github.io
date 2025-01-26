@@ -931,6 +931,12 @@ function Home({
           />
         </div>
 
+
+        <div
+          className={`transition-all duration-300 ${
+            hoveredProjectIndex !== null || isReachOutHovered ? "blur-xs" : ""
+          }`}
+        >
         <div
           className={`mb-8 transition-all duration-300 ${
             isReachOutHovered ? "blur-sm" : ""
@@ -1118,6 +1124,8 @@ function Home({
           ))}
         </div>
 
+
+</div>
         <AnimatePresence>
           {isImageModalOpen && selectedImage && (
             <motion.div
