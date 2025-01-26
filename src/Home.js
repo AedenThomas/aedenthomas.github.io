@@ -995,9 +995,11 @@ function Home({
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {exp.position}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {exp.location} • {exp.period}
-                  </p>
+                  <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                    <span>{exp.location}</span>
+                    <span>{exp.period}</span>
+                  </div>
+
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 italic">
                     {exp.description}
                   </p>

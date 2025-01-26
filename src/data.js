@@ -17,7 +17,7 @@ export const notableInteractions = [
     period: "Jun 2024",
     logo: "https://framerusercontent.com/images/tYGb5cME2Fsep50igI5HcnEw.png",
     url: "https://i.inc",
-    image: "/invisibility-interaction.webp"
+    image: "/invisibility-interaction.webp",
   },
   {
     company: "GitHub",
@@ -30,7 +30,7 @@ export const notableInteractions = [
       dark: "https://cdn.brandfetch.io/idZAyF9rlg/theme/light/symbol.svg?c=1dxbfHSJFAPEGdCLU4o5B",
     },
     url: "https://github.com",
-    image: "/github-interaction.png"
+    image: "/github-interaction.png",
   },
   {
     company: "The Browser Company",
@@ -39,7 +39,7 @@ export const notableInteractions = [
     period: "Apr 2024",
     logo: "https://cdn.brandfetch.io/idwAFJ6S5L/theme/dark/logo.svg?c=1bfwsmEH20zzEfSNTed",
     url: "https://thebrowser.company",
-    image: "/tbc-interaction.png"
+    image: "/tbc-interaction.png",
   },
   {
     company: "Texts.com (Automattic)",
@@ -67,15 +67,18 @@ export const experience = [
   {
     company: "Intryc (Y Combinator W24)",
     position: "Software Engineer Intern",
-    period: "Dec 2024 - Present",
+    period: "Nov 2024 - Jan 2025",
     location: "London, United Kingdom",
     highlights: [
-      "Led migration from legacy JavaScript components to a standardized TypeScript component library across a 50K+ LOC codebase, improving type safety, reducing runtime errors by 20%, and enhancing developer productivity",
-      "Engineered high-performance RESTful APIs with FastAPI and Python, leveraging Pydantic for robust type validation and implementing custom error handling that reduced API error rates by 15%. Created comprehensive OpenAPI/Swagger documentation, following best practices including HATEOAS and versioning, facilitating client integration and improving API discoverability",
-      "Engineered advanced data filtering and sorting system using SQLAlchemy ORM, implementing dynamic query builders with multiple parameter support and relationship joins. Optimized database performance by 35% through efficient pagination, sorting, and filtering, resulting in faster API response times and better user experience. Implemented cursor-based pagination for efficient retrieval of millions of records",
+      "Contributed to migration from legacy JavaScript components to a standardized TypeScript component library across a 50K+ LOC codebase, improving type safety, reducing runtime errors by 20%, and enhancing developer productivity",
+      "Engineered high-performance RESTful APIs with FastAPI and Python, leveraging Pydantic for robust type validation and implementing custom error handling that reduced API error rates by 15%.",
+      // Created comprehensive OpenAPI/Swagger documentation, following best practices including HATEOAS and versioning, facilitating client integration and improving API discoverability",
+      "Engineered advanced data filtering and sorting system using SQLAlchemy ORM, implementing dynamic query builders with multiple parameter support and relationship joins.",
+       "Optimized database performance by 35% through efficient pagination, sorting, and filtering, resulting in faster API response times and better user experience. Implemented cursor-based pagination for efficient retrieval of millions of records",
       "Optimized component rendering through implementation of React's useMemo and useCallback hooks, reducing unnecessary re-renders by 30%",
       "Developed a workload management system with real-time data visualization using WebSockets and React, featuring dynamic filtering controls that allowed users to refine data by multiple criteria, resulting in a 20% improvement in user workflow efficiency",
-      "Implemented advanced state management and error handling in a Remix application, utilizing React hooks and custom form stores to prevent race conditions. Improved application navigation through nested routing and protected routes, reducing page load times by 10% and improving SEO",
+      "Implemented advanced state management and error handling in a Remix application, utilizing React hooks and custom form stores to prevent race conditions.",
+       "Improved application navigation through nested routing and protected routes, reducing page load times by 10% and improving SEO",
       "Engineered reusable form components with complex, asynchronous state management using Zustand and asynchronous actions, reducing code complexity by 15% and improving form performance. Implemented custom validation and error handling for improved user feedback",
       "Implemented a repository pattern with SQLAlchemy to abstract data access logic, improving code maintainability, testability, and enabling easier integration of future data sources. This reduced code duplication by 20% and improved developer onboarding time",
       "Developed custom sorting algorithms to handle diverse data types, including localized dates and internationalized strings, providing accurate and consistent sorting across different locales",
@@ -87,25 +90,22 @@ export const experience = [
   },
   {
     company: "Hertel",
-    position: "Software Engineer Intern",
+    position: "Software Engineer Intern (Contract)",
     period: "June 2024 - Sept 2024",
     location: "Abu Dhabi, United Arab Emirates",
     highlights: [
-    "Engineered a modular full-stack React application using Styled Components and Material-UI, implementing 10+ business modules while reducing development time by 15% through reusable component architecture",
-    "Optimized application performance through React Context and custom hooks implementation, improving component render times by 20% and reducing memory usage across high-traffic modules",
-    "Developed an enterprise-grade data management system supporting 500+ users across CRM, HR, and Procurement modules, featuring real-time updates and reducing data processing time by 25%",
-    "Implemented comprehensive data visualization using PrimeReact tables with advanced filtering and sorting capabilities, reducing data analysis time by 20% and improving user productivity across core business functions",
-    "Architected a dynamic form generation system with JSON configurations and Material-UI components, standardizing data input workflows and reducing form development time by 25%",
-    "Enhanced system reliability through robust RESTful API integration using axios, implementing efficient error handling and caching strategies that improved data loading performance by 15%",
-    "Architected and implemented a scalable RESTful API suite using ASP.NET Core MVC, serving 30+ business domains with comprehensive logging, monitoring, and error handling that reduced system downtime by 15%.",
-    "Designed and implemented an enterprise-wide dynamic filtering system using LINQ expression trees and optimized database queries, resulting in 25% faster load times for large datasets and a 20% overall improvement in system performance. Also improved page load time by 10%.",
-    "Established robust architectural patterns, including a repository pattern and dependency injection, resulting in a 20% reduction in code duplication and significantly improved system maintainability.",
-    "Implemented reusable components that reduced development time for new features by 30% and streamlined the developer onboarding process.",
+      "Engineered a modular full-stack React application using Styled Components and Material-UI, implementing 10+ business modules while reducing development time by 15% through reusable component architecture",
+      "Optimized application performance through React Context and custom hooks implementation, improving component render times by 20% and reducing memory usage across high-traffic modules",
+      "Developed an enterprise-grade data management system supporting 500+ users across CRM, HR, and Procurement modules, featuring real-time updates and reducing data processing time by 25%",
+      "Architected a dynamic form generation system with JSON configurations and Material-UI components, standardizing data input workflows and reducing form development time by 25%",
+      "Architected and implemented a scalable RESTful API suite using ASP.NET Core MVC, serving 30+ business domains with comprehensive logging, monitoring, and error handling that reduced system downtime by 15%",
+      "Designed and implemented an enterprise-wide dynamic filtering system using LINQ expression trees and optimized database queries, resulting in 25% faster load times for large datasets",
+      "Architected and implemented an advanced data pagination system with Entity Framework Core, optimizing performance for 100k+ records and reducing database load by 30%, while supporting complex sorting and filtering operations" ,
+      "Designed and implemented a scalable repository pattern architecture with LINQ, enabling advanced filtering capabilities and dynamic query building, resulting in 20% reduced code duplication and improved application maintainability" 
     ],
     logo: "/hertel.png",
     url: "https://www.intryc.com",
   },
-  
 ];
 export const coursework = [
   "Engineering Mathematics",
