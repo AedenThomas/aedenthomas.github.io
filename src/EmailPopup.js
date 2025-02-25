@@ -1,7 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PropTypes from "prop-types";
-
+  
 const EmailPopup = ({
   email,
   isOpen,

@@ -59,8 +59,10 @@ function Home({
 }) {
   const navigate = useNavigate();
   const [isAIButtonHovered, setIsAIButtonHovered] = useState(false);
+  const [isBlogButtonHovered, setBlogButtonHovered] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const aiButtonRef = useRef(null);
+  const blogButtonRef = useRef(null);
   const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
   const [isPrefetched, setIsPrefetched] = useState(false);
   const [showAIPage, setShowAIPage] = useState(false);
@@ -69,6 +71,9 @@ function Home({
     animationStatus: "idle",
     aiPageStatus: "hidden",
     navigationStatus: "idle",
+    blogButtonClicks: 0,
+    lastClickTimestamp: null,
+    navigationAttempts: [],
   });
   const [buttonDebug, setButtonDebug] = useState({
     hoverState: true,
@@ -544,6 +549,48 @@ function Home({
     setSelectedImage(null);
   };
 
+  // Add this effect for initial blog button animation
+  useEffect(() => {
+    // Initial expansion
+    const expandTimer = setTimeout(() => {
+      setBlogButtonHovered(true);
+      setButtonDebug((prev) => ({
+        ...prev,
+        animationPhase: "expanding",
+        timestamp: Date.now(),
+      }));
+    }, 400); // Start slightly before AI button
+
+    // Collapse after display
+    const collapseTimer = setTimeout(() => {
+      setBlogButtonHovered(false);
+      setButtonDebug((prev) => ({
+        ...prev,
+        animationPhase: "collapsing",
+        timestamp: Date.now(),
+      }));
+    }, 3600); // Collapse slightly before AI button
+
+    return () => {
+      clearTimeout(expandTimer);
+      clearTimeout(collapseTimer);
+    };
+  }, []); // Empty dependency array for one-time execution
+
+  const handleBlogClick = () => {
+    window.open("/#/blog", "_blank");
+  };
+
+  // Add this effect for debugging navigation state
+  useEffect(() => {
+    if (isNavigating) {
+      console.log("⚡ [Blog] Navigation state changed", {
+        timestamp: new Date().toISOString(),
+        debugInfo,
+      });
+    }
+  }, [isNavigating, debugInfo]);
+
   return (
     <motion.div
       initial={{ opacity: 1 }}
@@ -600,7 +647,9 @@ function Home({
             handleClickableHover(false);
             setShowThemeTooltip(false);
           }}
-          className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 z-50 flex items-center justify-center transition-all duration-500 ease-in-out ${
+          className={`fixed ${
+            isMobile ? "top-28" : "top-16"
+          } right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 z-50 flex items-center justify-center transition-all duration-500 ease-in-out ${
             transitionTheme ? "bg-white text-black" : "bg-black text-white"
           }`}
           style={{
@@ -618,7 +667,9 @@ function Home({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.2 }}
-              className={`fixed top-4 px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
+              className={`fixed ${
+                isMobile ? "top-28" : "top-16"
+              } px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
                 isDarkMode
                   ? "bg-white text-black shadow-light"
                   : "bg-black text-white shadow-dark"
@@ -671,8 +722,7 @@ function Home({
           handleClickableHover(false);
           setIsAIButtonHovered(false);
         }}
-        className={`fixed top-16 right-4 rounded-full custom-cursor-clickable overflow-hidden h-10 z-50 ${
-          // Add z-50 here
+        className={`fixed top-4 right-4 rounded-full custom-cursor-clickable overflow-hidden h-10 z-50 ${
           isDarkMode ? "bg-white text-black" : "bg-black text-white"
         }`}
         variants={buttonVariants}
@@ -729,6 +779,8 @@ function Home({
           </div>
         </div>
       </motion.button>
+
+      
 
       <AnimatePresence mode="wait">
         {isNavigating && (
@@ -931,201 +983,198 @@ function Home({
           />
         </div>
 
-
         <div
           className={`transition-all duration-300 ${
             hoveredProjectIndex !== null || isReachOutHovered ? "blur-xs" : ""
           }`}
         >
-        <div
-          className={`mb-8 transition-all duration-300 ${
-            isReachOutHovered ? "blur-sm" : ""
-          }`}
-        >
-          <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
-            ~/experience
-          </h2>
-          {experience.map((exp, index) => (
-            <motion.div
-              key={index}
-              className="mb-2 relative bg-transparent rounded-lg p-4 transition-colors duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              onMouseEnter={() => {
-                handleCardHover(index);
-                handleClickableHover(true);
-              }}
-              onMouseLeave={() => {
-                handleCardLeave(index);
-                handleClickableHover(false);
-              }}
-              onClick={() => toggleExperience(index)}
-            >
-              <div className="flex items-start gap-3">
-                {exp.logo && (
-                  <img
-                    src={exp.logo}
-                    alt={`${exp.company} logo`}
-                    className="w-8 h-8 mt-1 shrink-0"
-                  />
-                )}
-                <div className="w-full">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-                      {exp.company}
-                    </h3>
-                    {exp.url && (
-                      <a
-                        href={exp.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:text-blue-600"
-                      >
-                        <svg
-                          className="w-4 h-4 inline"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+          <div
+            className={`mb-8 transition-all duration-300 ${
+              isReachOutHovered ? "blur-sm" : ""
+            }`}
+          >
+            <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+              ~/experience
+            </h2>
+            {experience.map((exp, index) => (
+              <motion.div
+                key={index}
+                className="mb-2 relative bg-transparent rounded-lg p-4 transition-colors duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                onMouseEnter={() => {
+                  handleCardHover(index);
+                  handleClickableHover(true);
+                }}
+                onMouseLeave={() => {
+                  handleCardLeave(index);
+                  handleClickableHover(false);
+                }}
+                onClick={() => toggleExperience(index)}
+              >
+                <div className="flex items-start gap-3">
+                  {exp.logo && (
+                    <img
+                      src={exp.logo}
+                      alt={`${exp.company} logo`}
+                      className="w-8 h-8 mt-1 shrink-0"
+                    />
+                  )}
+                  <div className="w-full">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                        {exp.company}
+                      </h3>
+                      {exp.url && (
+                        <a
+                          href={exp.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:text-blue-600"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {exp.position}
-                  </p>
-                  <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
-                    <span>{exp.location}</span>
-                    <span>{exp.period}</span>
-                  </div>
+                          <svg
+                            className="w-4 h-4 inline"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {exp.position}
+                    </p>
+                    <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                      <span>{exp.location}</span>
+                      <span>{exp.period}</span>
+                    </div>
 
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 italic">
-                    {exp.description}
-                  </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 italic">
+                      {exp.description}
+                    </p>
 
-                  <div className="relative">
-                    <motion.div
-                      className="relative overflow-hidden"
-                      initial={{ height: 80 }}
-                      animate={{
-                        height: expandedExperiences.has(index)
-                          ? "auto"
-                          : hoveredCard === index
-                          ? "auto"
-                          : 80,
-                        transition: { duration: 0.3, ease: "easeInOut" },
-                      }}
-                    >
-                      <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 mt-2">
-                        {exp.highlights.map((highlight, i) => (
-                          <li key={i} className="ml-4 mb-2">
-                            {highlight}
-                          </li>
-                        ))}
-                      </ul>
+                    <div className="relative">
+                      <motion.div
+                        className="relative overflow-hidden"
+                        initial={{ height: 80 }}
+                        animate={{
+                          height: expandedExperiences.has(index)
+                            ? "auto"
+                            : hoveredCard === index
+                            ? "auto"
+                            : 80,
+                          transition: { duration: 0.3, ease: "easeInOut" },
+                        }}
+                      >
+                        <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 mt-2">
+                          {exp.highlights.map((highlight, i) => (
+                            <li key={i} className="ml-4 mb-2">
+                              {highlight}
+                            </li>
+                          ))}
+                        </ul>
 
-                      {!expandedExperiences.has(index) &&
-                        hoveredCard !== index && (
-                          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#F2F0E9] dark:from-black to-transparent pointer-events-none z-0" />
-                        )}
-                    </motion.div>
+                        {!expandedExperiences.has(index) &&
+                          hoveredCard !== index && (
+                            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#F2F0E9] dark:from-black to-transparent pointer-events-none z-0" />
+                          )}
+                      </motion.div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
 
-        <div
-          className={`mb-8 transition-all duration-300 ${
-            isReachOutHovered ? "blur-sm" : ""
-          }`}
-        >
-          <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
-            ~/notable interactions
-          </h2>
-          {notableInteractions.map((interaction, index) => (
-            <motion.div
-              key={index}
-              className={`mb-4 p-4 rounded-lg hover:bg-navy-800 dark:hover:bg-navy-900 transition-transform duration-200 ease-in-out 
+          <div
+            className={`mb-8 transition-all duration-300 ${
+              isReachOutHovered ? "blur-sm" : ""
+            }`}
+          >
+            <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+              ~/notable interactions
+            </h2>
+            {notableInteractions.map((interaction, index) => (
+              <motion.div
+                key={index}
+                className={`mb-4 p-4 rounded-lg hover:bg-navy-800 dark:hover:bg-navy-900 transition-transform duration-200 ease-in-out 
       ${interaction.image ? "custom-cursor-clickable" : ""}`} // Add custom cursor only if image exists
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.01 }}
-              onMouseEnter={() =>
-                interaction.image && handleClickableHover(true)
-              }
-              onMouseLeave={() =>
-                interaction.image && handleClickableHover(false)
-              }
-              onClick={() =>
-                interaction.image && openImageModal(interaction.image)
-              }
-            >
-              <div className="flex items-start">
-                {interaction.logo && (
-                  <img
-                    src={
-                      typeof interaction.logo === "string"
-                        ? interaction.logo
-                        : isDarkMode
-                        ? interaction.logo.dark
-                        : interaction.logo.light
-                    }
-                    alt={`${interaction.company} logo`}
-                    className="w-8 h-8 mr-3 mt-1"
-                  />
-                )}
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold group-hover:text-white">
-                      {interaction.company}
-                    </h3>
-                    {interaction.url && (
-                      <a
-                        href={interaction.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-                      >
-                        <svg
-                          className="w-4 h-4 inline"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.01 }}
+                onMouseEnter={() =>
+                  interaction.image && handleClickableHover(true)
+                }
+                onMouseLeave={() =>
+                  interaction.image && handleClickableHover(false)
+                }
+                onClick={() =>
+                  interaction.image && openImageModal(interaction.image)
+                }
+              >
+                <div className="flex items-start">
+                  {interaction.logo && (
+                    <img
+                      src={
+                        typeof interaction.logo === "string"
+                          ? interaction.logo
+                          : isDarkMode
+                          ? interaction.logo.dark
+                          : interaction.logo.light
+                      }
+                      alt={`${interaction.company} logo`}
+                      className="w-8 h-8 mr-3 mt-1"
+                    />
+                  )}
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold group-hover:text-white">
+                        {interaction.company}
+                      </h3>
+                      {interaction.url && (
+                        <a
+                          href={interaction.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                    {interaction.period}
-                  </p>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 prose prose-sm dark:prose-invert max-w-none">
-                    <ReactMarkdown>{interaction.description}</ReactMarkdown>
+                          <svg
+                            className="w-4 h-4 inline"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      {interaction.period}
+                    </p>
+                    <div className="text-sm text-gray-600 dark:text-gray-400 prose prose-sm dark:prose-invert max-w-none">
+                      <ReactMarkdown>{interaction.description}</ReactMarkdown>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
-
-
-</div>
         <AnimatePresence>
           {isImageModalOpen && selectedImage && (
             <motion.div

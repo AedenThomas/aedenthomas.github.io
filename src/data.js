@@ -10,6 +10,18 @@ export const research = [
 ];
 
 export const notableInteractions = [
+  // {
+  //   company: "Y Combinator",
+  //   description:
+  //     "•  Selected as one of 2,000 top CS and AI students globally (out of 500,000 applicants) for this exclusive, **fully-sponsored** AI conference in San Francisco.\n\n• Engaged directly with AI's most influential leaders including **Elon Musk**, **Sam Altman**, **Satya Nadella**, and **Fei-Fei Li** through keynotes and intimate workshops.\n\n• Engaged in workshops on cutting-edge AI innovation and startup strategies, gaining unparalleled insights into the future of AI",
+  //   period: "Mar 2024",
+  //   logo: {
+  //     light:
+  //       "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Y_Combinator_logo.svg/1200px-Y_Combinator_logo.svg.png",
+  //     dark: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Y_Combinator_logo.svg/1200px-Y_Combinator_logo.svg.png",
+  //   },
+  //   url: "https://www.ycombinator.com",
+  // },
   {
     company: "Invisibility Inc.",
     description:
@@ -74,11 +86,11 @@ export const experience = [
       "Engineered high-performance RESTful APIs with FastAPI and Python, leveraging Pydantic for robust type validation and implementing custom error handling that reduced API error rates by 15%.",
       // Created comprehensive OpenAPI/Swagger documentation, following best practices including HATEOAS and versioning, facilitating client integration and improving API discoverability",
       "Engineered advanced data filtering and sorting system using SQLAlchemy ORM, implementing dynamic query builders with multiple parameter support and relationship joins.",
-       "Optimized database performance by 35% through efficient pagination, sorting, and filtering, resulting in faster API response times and better user experience. Implemented cursor-based pagination for efficient retrieval of millions of records",
+      "Optimized database performance by 35% through efficient pagination, sorting, and filtering, resulting in faster API response times and better user experience. Implemented cursor-based pagination for efficient retrieval of millions of records",
       "Optimized component rendering through implementation of React's useMemo and useCallback hooks, reducing unnecessary re-renders by 30%",
       "Developed a workload management system with real-time data visualization using WebSockets and React, featuring dynamic filtering controls that allowed users to refine data by multiple criteria, resulting in a 20% improvement in user workflow efficiency",
       "Implemented advanced state management and error handling in a Remix application, utilizing React hooks and custom form stores to prevent race conditions.",
-       "Improved application navigation through nested routing and protected routes, reducing page load times by 10% and improving SEO",
+      "Improved application navigation through nested routing and protected routes, reducing page load times by 10% and improving SEO",
       "Engineered reusable form components with complex, asynchronous state management using Zustand and asynchronous actions, reducing code complexity by 15% and improving form performance. Implemented custom validation and error handling for improved user feedback",
       "Implemented a repository pattern with SQLAlchemy to abstract data access logic, improving code maintainability, testability, and enabling easier integration of future data sources. This reduced code duplication by 20% and improved developer onboarding time",
       "Developed custom sorting algorithms to handle diverse data types, including localized dates and internationalized strings, providing accurate and consistent sorting across different locales",
@@ -100,8 +112,8 @@ export const experience = [
       "Architected a dynamic form generation system with JSON configurations and Material-UI components, standardizing data input workflows and reducing form development time by 25%",
       "Architected and implemented a scalable RESTful API suite using ASP.NET Core MVC, serving 30+ business domains with comprehensive logging, monitoring, and error handling that reduced system downtime by 15%",
       "Designed and implemented an enterprise-wide dynamic filtering system using LINQ expression trees and optimized database queries, resulting in 25% faster load times for large datasets",
-      "Architected and implemented an advanced data pagination system with Entity Framework Core, optimizing performance for 100k+ records and reducing database load by 30%, while supporting complex sorting and filtering operations" ,
-      "Designed and implemented a scalable repository pattern architecture with LINQ, enabling advanced filtering capabilities and dynamic query building, resulting in 20% reduced code duplication and improved application maintainability" 
+      "Architected and implemented an advanced data pagination system with Entity Framework Core, optimizing performance for 100k+ records and reducing database load by 30%, while supporting complex sorting and filtering operations",
+      "Designed and implemented a scalable repository pattern architecture with LINQ, enabling advanced filtering capabilities and dynamic query building, resulting in 20% reduced code duplication and improved application maintainability",
     ],
     logo: "/hertel.png",
     url: "https://www.intryc.com",
@@ -171,6 +183,26 @@ export const projects = [
       "Node.js",
     ],
     image: "/BillSplit.webp",
+  },
+  {
+    icon: "🎬",
+    title: "Ixie",
+    description:
+      "AI-powered movie recommendation platform using Next.js, TypeScript, and multiple AI services (Mistral, ElevenLabs, fal.ai) for personalized film discovery.",
+    popupDescription:
+      "Ixie is your personal movie matchmaker that curates films based on genre preferences. It uses Mistral and ElevenLabs to create narrative connections between recommended movies, making discovery feel like an adventure. Built with Next.js, TypeScript, and Tailwind, it features Clerk authentication and fal.ai for image/video generation.",
+    status: "Live",
+    url: "https://ixie.vercel.app",
+    technologies: [
+      "Next.js",
+      "TypeScript",
+      "Tailwind",
+      "Mistral",
+      "ElevenLabs",
+      "fal.ai",
+      "Clerk",
+    ],
+    image: "/ixie.png",
   },
   {
     icon: "🧠",

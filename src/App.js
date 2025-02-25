@@ -1,74 +1,27 @@
-import React, {
-  useState,
-  useRef,
-  useMemo,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   HashRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView.js";
-import AnimatedGreeting from "./AnimatedGreeting.js";
 import "./App.css";
-import Project from "./Project.js";
-import { education, projects, skills, research, coursework } from "./data";
-import ContactLinks from "./ContactLinks";
-import LanguageIcon from "./LanguageIcon";
-
 import Privacy from "./BillifyPrivacy.js";
 import AIResume from "./AIResume.js";
 import Home from "./Home";
 import AIPage from "./AIPage";
-
-
+import Blog from "./Blog";
+import BlogPost from "./BlogPost";
 
 function App() {
   const [isLiveVisible, setIsLiveVisible] = useState(true);
-  const greetingRef = useRef(null);
-  const [greetingHeight, setGreetingHeight] = useState(0);
   const [isReachOutHovered, setIsReachOutHovered] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
   const [hoveredLanguage, setHoveredLanguage] = useState(null);
   const [isHoveredClickable, setIsHoveredClickable] = useState(false);
-  const [hasPlayedInitialAnimation, setHasPlayedInitialAnimation] =
-    useState(false);
   const [hoveredProjectIndex, setHoveredProjectIndex] = useState(null);
-  const [initialAnimationComplete, setInitialAnimationComplete] =
-    useState(false);
-
-  const animationSequence = useMemo(
-    () => [
-      () => setHoveredLanguage("react"),
-      () => setHoveredLanguage("react native"),
-      () => setHoveredLanguage("flutter"),
-      () => setHoveredLanguage("asp.net core"),
-      () => setHoveredLanguage("python"),
-      () => {
-        const element = document.querySelector(".after\\:w-0");
-        if (element) {
-          element.classList.add("hover:after:w-full");
-        }
-      },
-      () => {
-        const element = document.querySelector(".hover\\:text-transparent");
-        if (element) {
-          element.classList.add(
-            "text-transparent",
-            "bg-gradient-to-r",
-            "from-green-400",
-            "to-blue-500"
-          );
-        }
-      },
-    ],
-    []
-  );
 
   const handleProjectHover = useCallback((index) => {
     setHoveredProjectIndex(index);
@@ -90,12 +43,11 @@ function App() {
     const checkMobile = () => {
       const isMobileDevice = window.innerWidth <= 768;
       setIsMobile(isMobileDevice);
-      
-      // Add or remove no-cursor class based on device type
+
       if (isMobileDevice) {
-        document.documentElement.classList.remove('no-cursor');
+        document.documentElement.classList.remove("no-cursor");
       } else {
-        document.documentElement.classList.add('no-cursor');
+        document.documentElement.classList.add("no-cursor");
       }
     };
 
@@ -125,37 +77,23 @@ function App() {
   const publicationsRef = useRef(null);
   const isPublicationsInView = useInView(publicationsRef, { threshold: 0.1 });
 
-  const greetings = useMemo(
-    () => [
-      "Hey!",
-      "Hola!",
-      "नमस्ते!",
-      "Bonjour!",
-      "你好!",
-      "Ciao!",
-      "Olá!",
-      "여보세요!",
-      "Hallo!",
-    ],
-    []
-  );
-
   const [currentGreeting, setCurrentGreeting] = useState(0);
-
-  useEffect(() => {
-  }, []);
-
-  useEffect(() => {
-    if (greetingRef.current) {
-      setGreetingHeight(greetingRef.current.offsetHeight);
-    }
-  }, []);
+  const greetings = [
+    "Hey!",
+    "Hola!",
+    "नमस्ते!",
+    "Bonjour!",
+    "你好!",
+    "Ciao!",
+    "Olá!",
+    "여보세요!",
+    "Hallo!",
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentGreeting((prev) => (prev + 1) % greetings.length);
     }, 5000);
-
     return () => clearInterval(interval);
   }, [greetings]);
 
@@ -178,13 +116,14 @@ function App() {
     setIsDarkMode(!prefersDarkMode);
     const timer = setTimeout(() => {
       setIsDarkMode(prefersDarkMode);
-      setInitialAnimationComplete(true);
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
+
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (e) => {
@@ -224,27 +163,6 @@ function App() {
   const email = "hey@aeden.me";
   const linkedinUrl = "https://www.linkedin.com/in/aedenthomas/";
   const githubUrl = "https://github.com/AedenThomas/";
-  const sortedProjects = useMemo(
-    () =>
-      projects.sort((a, b) => {
-        const order = ["Live", "Public", "In Development", "Private"];
-        const indexA = order.findIndex((status) => a.status.includes(status));
-        const indexB = order.findIndex((status) => b.status.includes(status));
-
-        if (indexA === indexB) {
-          if (a.status === "In Development" && b.status === "In Development") {
-            if (a.url && !b.url) return -1;
-            if (!a.url && b.url) return 1;
-          }
-          return 0;
-        }
-
-        return indexA - indexB;
-      }),
-    [projects]
-  );
-
-
 
   return (
     <Router>
@@ -284,16 +202,38 @@ function App() {
             />
           }
         />
-        <Route 
-          path="/ai" 
+        <Route
+          path="/ai"
           element={
-            <AIPage 
+            <AIPage
               isDarkMode={isDarkMode}
               toggleDarkMode={toggleDarkMode}
               handleClickableHover={handleClickableHover}
               isMobile={isMobile}
             />
-          } 
+          }
+        />
+        <Route
+          path="/blog"
+          element={
+            <Blog
+              isDarkMode={isDarkMode}
+              toggleDarkMode={toggleDarkMode}
+              handleClickableHover={handleClickableHover}
+              isMobile={isMobile}
+            />
+          }
+        />
+        <Route
+          path="/blog/:id"
+          element={
+            <BlogPost
+              isDarkMode={isDarkMode}
+              toggleDarkMode={toggleDarkMode}
+              handleClickableHover={handleClickableHover}
+              isMobile={isMobile}
+            />
+          }
         />
         <Route path="billify/privacy" element={<Privacy />} />
         <Route path="airesume/privacy" element={<AIResume />} />

@@ -440,7 +440,7 @@ function AIPage({
             handleClickableHover(false);
             setShowThemeTooltip(false);
           }}
-          className={`fixed top-4 right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 flex items-center justify-center transition-all duration-500 ease-in-out ${
+          className={`fixed top-16 right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 flex items-center justify-center transition-all duration-500 ease-in-out ${
             themeTransition ? "bg-white text-black" : "bg-black text-white"
           }`}
           style={{
@@ -458,7 +458,7 @@ function AIPage({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.2 }}
-              className={`fixed top-4 px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
+              className={`fixed top-16 px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
                 isDarkMode
                   ? "bg-white text-black shadow-light"
                   : "bg-black text-white shadow-dark"
@@ -512,7 +512,7 @@ function AIPage({
           handleLocalClickableHover(false);
           setIsHomeButtonHovered(false);
         }}
-        className={`fixed top-16 right-4 rounded-full custom-cursor-clickable overflow-hidden h-10 ${
+        className={`fixed top-4 right-4 rounded-full custom-cursor-clickable overflow-hidden h-10 ${
           themeTransition ? "bg-white text-black" : "bg-black text-white"
         }`}
         variants={buttonVariants}
