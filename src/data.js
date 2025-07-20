@@ -22,57 +22,57 @@ export const notableInteractions = [
   //   },
   //   url: "https://www.ycombinator.com",
   // },
-  {
-    company: "Invisibility Inc.",
-    description:
-      "• Collaborated with **Sulaiman Khan Ghori** (CEO) and the engineering team to diagnose and resolve critical performance issues in their SwiftUI-based messaging application\n\n• Identified key bottlenecks through advanced profiling using Instruments, including SwiftUI update cycles, memory allocation issues, and UI thread stalls\n\n• Led to a major codebase refactor that significantly improved the app's chat history panel and message sending functionality",
-    period: "Jun 2024",
-    logo: "https://framerusercontent.com/images/tYGb5cME2Fsep50igI5HcnEw.png",
-    url: "https://i.inc",
-    image: "/invisibility-interaction.webp",
-  },
-  {
-    company: "GitHub",
-    description:
-      "• Engaged in direct communication with **Thomas Dohmke** (CEO) to provide strategic feedback on GitHub Copilot's development\n\n• Successfully advocated for multimodal capabilities and proposed an enhanced branch-based code analysis feature for detecting potential bugs before merging\n\n• Influenced GitHub Copilot's product roadmap, particularly around improving code review capabilities and making AI tools more accessible to developers globally",
-    period: "Oct 2024 - Dec 2024",
-    logo: {
-      light:
-        "https://cdn.brandfetch.io/idZAyF9rlg/theme/dark/symbol.svg?c=1dxbfHSJFAPEGdCLU4o5B",
-      dark: "https://cdn.brandfetch.io/idZAyF9rlg/theme/light/symbol.svg?c=1dxbfHSJFAPEGdCLU4o5B",
-    },
-    url: "https://github.com",
-    image: "/github-interaction.png",
-  },
-  {
-    company: "The Browser Company",
-    description:
-      "• Collaborated with **Josh Miller** (CEO) and the engineering team to diagnose and resolve critical video playback issues in the Arc browser\n\n• Identified hardware acceleration as the root cause affecting multiple users\n\n• Influenced the development roadmap for enhanced video player features, including Picture-in-Picture functionality improvements",
-    period: "Apr 2024",
-    logo: "https://cdn.brandfetch.io/idwAFJ6S5L/theme/dark/logo.svg?c=1bfwsmEH20zzEfSNTed",
-    url: "https://thebrowser.company",
-    image: "/tbc-interaction.png",
-  },
-  {
-    company: "Texts.com (Automattic)",
-    description:
-      "• Collaborated with **Kishan Bagaria** (Founder) and the engineering team to resolve a critical 6-month-long WhatsApp integration issue\n\n• Implemented an innovative solution involving system directory cleanup, which was subsequently incorporated into the app's troubleshooting documentation\n\n• Significantly enhanced Texts.com's WhatsApp integration reliability and installation process",
-    period: "Dec 2023 - Apr 2024",
-    logo: "https://texts.com/_next/image?url=%2Ficon.png&w=128&q=75",
-    url: "https://texts.com",
-  },
-  {
-    company: "Apple",
-    description:
-      "• Engaged with **Craig Federighi** (SVP of Software Engineering) to propose innovative iOS features, including a less intrusive call UI, enhanced Face ID functionality, RAW photo capture, and split-screen multitasking\n\n• Several proposed features were later implemented in iOS releases, significantly improving the user experience for millions of iPhone users",
-    period: "Oct 2019",
-    logo: {
-      light:
-        "https://cdn.brandfetch.io/idnrCPuv87/theme/dark/logo.svg?c=1dxbfHSJFAPEGdCLU4o5B",
-      dark: "https://cdn.brandfetch.io/idnrCPuv87/theme/light/logo.svg?c=1dxbfHSJFAPEGdCLU4o5B",
-    },
-    url: "https://www.apple.com",
-  },
+  // {
+  //   company: "Invisibility Inc.",
+  //   description:
+  //     "• Collaborated with **Sulaiman Khan Ghori** (CEO) and the engineering team to diagnose and resolve critical performance issues in their SwiftUI-based messaging application\n\n• Identified key bottlenecks through advanced profiling using Instruments, including SwiftUI update cycles, memory allocation issues, and UI thread stalls\n\n• Led to a major codebase refactor that significantly improved the app's chat history panel and message sending functionality",
+  //   period: "Jun 2024",
+  //   logo: "https://framerusercontent.com/images/tYGb5cME2Fsep50igI5HcnEw.png",
+  //   url: "https://i.inc",
+  //   image: "/invisibility-interaction.webp",
+  // },
+  // {
+  //   company: "GitHub",
+  //   description:
+  //     "• Engaged in direct communication with **Thomas Dohmke** (CEO) to provide strategic feedback on GitHub Copilot's development\n\n• Successfully advocated for multimodal capabilities and proposed an enhanced branch-based code analysis feature for detecting potential bugs before merging\n\n• Influenced GitHub Copilot's product roadmap, particularly around improving code review capabilities and making AI tools more accessible to developers globally",
+  //   period: "Oct 2024 - Dec 2024",
+  //   logo: {
+  //     light:
+  //       "https://cdn.brandfetch.io/idZAyF9rlg/theme/dark/symbol.svg?c=1dxbfHSJFAPEGdCLU4o5B",
+  //     dark: "https://cdn.brandfetch.io/idZAyF9rlg/theme/light/symbol.svg?c=1dxbfHSJFAPEGdCLU4o5B",
+  //   },
+  //   url: "https://github.com",
+  //   image: "/github-interaction.png",
+  // },
+  // {
+  //   company: "The Browser Company",
+  //   description:
+  //     "• Collaborated with **Josh Miller** (CEO) and the engineering team to diagnose and resolve critical video playback issues in the Arc browser\n\n• Identified hardware acceleration as the root cause affecting multiple users\n\n• Influenced the development roadmap for enhanced video player features, including Picture-in-Picture functionality improvements",
+  //   period: "Apr 2024",
+  //   logo: "https://cdn.brandfetch.io/idwAFJ6S5L/theme/dark/logo.svg?c=1bfwsmEH20zzEfSNTed",
+  //   url: "https://thebrowser.company",
+  //   image: "/tbc-interaction.png",
+  // },
+  // {
+  //   company: "Texts.com (Automattic)",
+  //   description:
+  //     "• Collaborated with **Kishan Bagaria** (Founder) and the engineering team to resolve a critical 6-month-long WhatsApp integration issue\n\n• Implemented an innovative solution involving system directory cleanup, which was subsequently incorporated into the app's troubleshooting documentation\n\n• Significantly enhanced Texts.com's WhatsApp integration reliability and installation process",
+  //   period: "Dec 2023 - Apr 2024",
+  //   logo: "https://texts.com/_next/image?url=%2Ficon.png&w=128&q=75",
+  //   url: "https://texts.com",
+  // },
+  // {
+  //   company: "Apple",
+  //   description:
+  //     "• Engaged with **Craig Federighi** (SVP of Software Engineering) to propose innovative iOS features, including a less intrusive call UI, enhanced Face ID functionality, RAW photo capture, and split-screen multitasking\n\n• Several proposed features were later implemented in iOS releases, significantly improving the user experience for millions of iPhone users",
+  //   period: "Oct 2019",
+  //   logo: {
+  //     light:
+  //       "https://cdn.brandfetch.io/idnrCPuv87/theme/dark/logo.svg?c=1dxbfHSJFAPEGdCLU4o5B",
+  //     dark: "https://cdn.brandfetch.io/idnrCPuv87/theme/light/logo.svg?c=1dxbfHSJFAPEGdCLU4o5B",
+  //   },
+  //   url: "https://www.apple.com",
+  // },
 ];
 
 export const experience = [
@@ -174,7 +174,7 @@ export const projects = [
     popupDescription:
       "Bill Split simplifies splitting expenses. It utilizes a sophisticated algorithm for fair distribution, supports multiple currencies and payment methods, and integrates Azure Functions for secure API communication. Azure Form Recognizer enables seamless receipt scanning and data extraction.",
     status: "Coming Soon",
-    // url: "https://apps.apple.com/us/app/google-family-link/id1150085200",
+    url: "https://apps.apple.com/gb/app/billify-smart-bill-split/id6747454007",
     technologies: [
       "Flutter",
       "Dart",

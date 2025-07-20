@@ -780,8 +780,6 @@ function Home({
         </div>
       </motion.button>
 
-      
-
       <AnimatePresence mode="wait">
         {isNavigating && (
           <motion.div
@@ -1099,9 +1097,9 @@ function Home({
               isReachOutHovered ? "blur-sm" : ""
             }`}
           >
-            <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            {/* <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
               ~/notable interactions
-            </h2>
+            </h2> */}
             {notableInteractions.map((interaction, index) => (
               <motion.div
                 key={index}

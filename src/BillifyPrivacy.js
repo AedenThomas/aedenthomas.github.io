@@ -38,9 +38,6 @@ const Privacy = () => {
     };
   }, []);
 
-  const handleClickableHover = useCallback((isHovered) => {
-    setIsHoveredClickable(isHovered);
-  }, []);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return !window.matchMedia("(prefers-color-scheme: dark)").matches;
