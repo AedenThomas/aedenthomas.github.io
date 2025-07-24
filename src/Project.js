@@ -4,7 +4,6 @@ import useInView from "./useInView";
 import "./App.css";
 import { FaLock, FaLockOpen, FaClock } from "react-icons/fa";
 
-
 const statusConfig = {
   Live: { colorClass: "text-green-500 border-green-500", width: "w-[4.75rem]" },
   Public: { colorClass: "text-blue-500 border-blue-500", width: "w-20" },
@@ -12,12 +11,17 @@ const statusConfig = {
     colorClass: "text-yellow-500 border-yellow-500",
     width: "w-40",
   },
-  
-  "Coming Soon": { 
-    colorClass: "text-purple-500 border-purple-500", 
-    width: "w-32"
+  "Coming Soon": {
+    colorClass: "text-purple-500 border-purple-500",
+    width: "w-32",
   },
   Private: { colorClass: "text-gray-500 border-gray-500", width: "w-20" },
+};
+
+// FIX: Define options OUTSIDE the component. This object is now a stable constant.
+const viewOptions = {
+  threshold: 0.1,
+  triggerOnce: true,
 };
 
 const Project = ({
@@ -29,22 +33,19 @@ const Project = ({
   onProjectHover,
   isBlurred,
   hoveredProjectIndex,
-  isReachOutHovered, // Make sure this prop is being passed and used
+  isReachOutHovered,
 }) => {
   const projectRef = useRef(null);
-  const isInView = useInView(projectRef, { 
-    threshold: 0.1,  // Changed from 0.1 to 0.6 (60% visibility required)
-    triggerOnce: false,
-    rootMargin: '0px'  // Changed from 150px to 0px to make animation more precise
-  });
+
+  // Pass the stable viewOptions object to the hook.
+  const isInView = useInView(projectRef, viewOptions);
+
   const contentRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isAtBottom, setIsAtBottom] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
   const handleMouseEnter = () => {
     handleClickableHover(true);
     onProjectHover(index);
@@ -70,34 +71,11 @@ const Project = ({
         closeModal();
       }
     };
-
     if (isModalOpen) {
       document.addEventListener("keydown", handleEscapeKey);
     }
-
     return () => {
       document.removeEventListener("keydown", handleEscapeKey);
-    };
-  }, [isModalOpen]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (contentRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
-        setIsScrolled(scrollTop > 0);
-        setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 1);
-      }
-    };
-
-    const currentRef = contentRef.current;
-    if (currentRef) {
-      currentRef.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      if (currentRef) {
-        currentRef.removeEventListener("scroll", handleScroll);
-      }
     };
   }, [isModalOpen]);
 
@@ -108,48 +86,40 @@ const Project = ({
         contentRef.current.scrollTop += e.deltaY;
       }
     };
-
     window.addEventListener("wheel", handleWheel, { passive: false });
-
     return () => {
       window.removeEventListener("wheel", handleWheel);
     };
   }, [isModalOpen]);
 
   const getProjectUrl = (project) => {
-    if (project.url) {
-      return project.url;
-    }
-    if (project.relativePath) {
+    if (project.url) return project.url;
+    if (project.relativePath)
       return `${window.location.origin}/${project.relativePath}`;
-    }
     return null;
   };
 
   return (
     <>
       <motion.div
-        data-project-id={`project-${index}`} // Added data-project-id
+        data-project-id={`project-${index}`}
         ref={projectRef}
         key={index}
         className={`flex items-start mb-1 p-2 rounded-lg 
           hover:bg-navy-800 dark:hover:bg-navy-900 cursor-pointer
-          custom-cursor-clickable ${isBlurred || isReachOutHovered ? "blur-xs" : ""} 
+          custom-cursor-clickable ${
+            isBlurred || isReachOutHovered ? "blur-xs" : ""
+          } 
           ${hoveredProjectIndex === index ? "z-10 relative" : ""}`}
-        initial={{ opacity: 0, y: 30 }}  // Increased from 20 to 30 for more noticeable movement
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ 
-          type: "spring",  // Changed to spring animation
-          stiffness: 50,   // Lower stiffness for smoother motion
-          mass: 0.5,       // Lower mass for quicker response
-          damping: 8,      // Adjusted damping for natural feel
-          duration: 0.8,   // Increased duration
-          opacity: { duration: 0.5 }  // Separate opacity duration
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{
+          duration: 0.6,
+          ease: "easeOut",
         }}
         onClick={openModal}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        
       >
         <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
         <div className="flex-grow min-w-0">
@@ -159,13 +129,14 @@ const Project = ({
             </h3>
             <button
               className={`text-xs rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative
-    ${getStatusConfig(project.status).width}
-    ${getStatusConfig(project.status).colorClass}
-    ${
-      project.status === "Live" || project.status.includes("In Development")
-        ? "pl-6 pr-3"
-        : "px-3"
-    }`}
+                ${getStatusConfig(project.status).width}
+                ${getStatusConfig(project.status).colorClass}
+                ${
+                  project.status === "Live" ||
+                  project.status.includes("In Development")
+                    ? "pl-6 pr-3"
+                    : "px-3"
+                }`}
             >
               <AnimatePresence>
                 {project.status === "Live" && isLiveVisible && (
@@ -192,22 +163,21 @@ const Project = ({
                     )}
                   </motion.span>
                 )}
-              {project.status === "Coming Soon" && (
-              <motion.span
-                className="absolute left-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <FaClock className="text-purple-500" size={12} />
-              </motion.span>
-            )}
-          </AnimatePresence>
+                {project.status === "Coming Soon" && (
+                  <motion.span
+                    className="absolute left-2"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <FaClock className="text-purple-500" size={12} />
+                  </motion.span>
+                )}
+              </AnimatePresence>
               <span className="flex-grow text-center">{project.status}</span>
             </button>
           </div>
-
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 break-words group-hover:text-gray-200">
             {project.description}
           </p>
@@ -285,9 +255,9 @@ const Project = ({
                   {project.popupDescription || project.description}
                 </p>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {project.technologies.map((tech, index) => (
+                  {project.technologies.map((tech, i) => (
                     <span
-                      key={index}
+                      key={i}
                       className={`text-sm px-3 py-1 rounded-full ${
                         isDarkMode
                           ? "bg-gray-900 text-gray-200"
