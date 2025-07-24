@@ -173,7 +173,7 @@ export const projects = [
       "Cross-platform bill splitting app using Flutter, Azure Functions, and Azure Form Recognizer for accurate expense distribution and receipt scanning.",
     popupDescription:
       "Bill Split simplifies splitting expenses. It utilizes a sophisticated algorithm for fair distribution, supports multiple currencies and payment methods, and integrates Azure Functions for secure API communication. Azure Form Recognizer enables seamless receipt scanning and data extraction.",
-    status: "Coming Soon",
+    status: "Live",
     url: "https://apps.apple.com/gb/app/billify-smart-bill-split/id6747454007",
     technologies: [
       "Flutter",
@@ -183,6 +183,18 @@ export const projects = [
       "Node.js",
     ],
     image: "/BillSplit.webp",
+  },
+  {
+    icon: "📄",
+    title: "AIResume",
+    description:
+      "Chrome extension that uses AI to tailor resumes and generate cover letters with a single click, powered by a C# and .NET API backend.",
+    popupDescription:
+      "AIResume is a Chrome extension that leverages AI to help users quickly and easily modify their resumes to match specific job descriptions. It also generates compelling cover letters. The backend is built using C# and .NET APIs.",
+    status: "Live",
+    url: "https://chromewebstore.google.com/detail/ai-resume-tailor/gckmlapghemhhedhmcigalmiilifkbpb",
+    technologies: ["Chrome Extension", "JavaScript", "C#", ".NET API"],
+    image: "/AIResume.webp",
   },
   {
     icon: "🎬",
@@ -240,30 +252,19 @@ export const projects = [
     technologies: ["Python", "NLP"],
     image: "/EmailDecoder.webp",
   },
-  {
-    icon: "🏢",
-    title: "Nedea",
-    description:
-      "Comprehensive ERP (Enterprise Resource Planning) React application with ASP.NET Core backend and SQL Server database, handling thousands of records efficiently.",
-    popupDescription:
-      "Nedea is a robust ERP system built with React for the frontend and ASP.NET Core for the backend, connected to a SQL Server database. It provides a centralized platform for managing various business processes and handles large datasets with efficient pagination and data management.",
-    status: "In Development",
-    url: "https://insightx.example.com",
-    technologies: ["React", "ASP.NET Core", "C#", "SQL Server"],
-    image: "/Nedea.webp",
-  },
-  {
-    icon: "📄",
-    title: "AIResume",
-    description:
-      "Chrome extension that uses AI to tailor resumes and generate cover letters with a single click, powered by a C# and .NET API backend.",
-    popupDescription:
-      "AIResume is a Chrome extension that leverages AI to help users quickly and easily modify their resumes to match specific job descriptions. It also generates compelling cover letters. The backend is built using C# and .NET APIs.",
-    status: "Live",
-    url: "https://chromewebstore.google.com/detail/ai-resume-tailor/gckmlapghemhhedhmcigalmiilifkbpb",
-    technologies: ["Chrome Extension", "JavaScript", "C#", ".NET API"],
-    image: "/AIResume.webp",
-  },
+  // {
+  //   icon: "🏢",
+  //   title: "Nedea",
+  //   description:
+  //     "Comprehensive ERP (Enterprise Resource Planning) React application with ASP.NET Core backend and SQL Server database, handling thousands of records efficiently.",
+  //   popupDescription:
+  //     "Nedea is a robust ERP system built with React for the frontend and ASP.NET Core for the backend, connected to a SQL Server database. It provides a centralized platform for managing various business processes and handles large datasets with efficient pagination and data management.",
+  //   status: "In Development",
+  //   url: "https://insightx.example.com",
+  //   technologies: ["React", "ASP.NET Core", "C#", "SQL Server"],
+  //   image: "/Nedea.webp",
+  // },
+
   {
     icon: "📝",
     title: "Textara",
