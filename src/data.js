@@ -82,16 +82,25 @@ export const experience = [
     period: "Nov 2024 - Jan 2025",
     location: "London, United Kingdom",
     highlights: [
-      "Implemented advanced state management and error handling in a Remix application, utilizing React hooks and custom form stores to prevent race conditions and improve user experience",
-      "Architected debouncing mechanisms for error handling using vanilla JavaScript, demonstrating deep understanding of browser event handling and async operations",
+      "Collaborated with senior developers on architectural decisions and reviews as employee #4 at an early-stage startup, establishing best practices for component development and state management in a high-impact, resource-constrained environment",
+
       "Led migration from legacy components to a standardized TypeScript component library across a 50K+ LOC codebase, improving type safety and reducing technical debt",
-      "Architected reusable component library using TypeScript and Remix's form handling, improving development efficiency and type safety across a 50K+ LOC codebase",
+
       "Optimized component rendering through implementation of React's useMemo and useCallback hooks, reducing unnecessary re-renders by 30%",
-      "Developed reusable form components with complex state management patterns, implementing custom validation logic and error handling across multiple routes",
-      "Enhanced application routing and navigation controls using Remix's built-in features, implementing debouncing mechanisms to prevent edge-case navigation issues",
+
       "Built workload management system featuring dynamic filtering and real-time data visualization, handling complex state updates while maintaining consistent UI/UX",
+
+      "Architected reusable component library using TypeScript and Remix's form handling, improving development efficiency and type safety across a 50K+ LOC codebase",
+
+      "Implemented advanced state management and error handling in a Remix application, utilizing React hooks and custom form stores to prevent race conditions and improve user experience",
+
+      "Architected debouncing mechanisms for error handling using vanilla JavaScript, demonstrating deep understanding of browser event handling and async operations",
+
+      "Developed reusable form components with complex state management patterns, implementing custom validation logic and error handling across multiple routes",
+
+      "Enhanced application routing and navigation controls using Remix's built-in features, implementing debouncing mechanisms to prevent edge-case navigation issues",
+
       "Contributed to modernizing the codebase through TypeScript adoption and implementation of shared component patterns, improving maintainability across multiple applications",
-      "Collaborated with senior developers on architectural decisions and code reviews as employee #4 at an early-stage startup, establishing best practices for component development and state management in a high-impact, resource-constrained environment",
     ],
     logo: "/intryc.jpg",
     url: "https://www.intryc.com",
