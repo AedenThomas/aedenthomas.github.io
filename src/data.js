@@ -10,18 +10,18 @@ export const research = [
 ];
 
 export const notableInteractions = [
-  // {
-  //   company: "Y Combinator",
-  //   description:
-  //     "•  Selected as one of 2,000 top CS and AI students globally (out of 500,000 applicants) for this exclusive, **fully-sponsored** AI conference in San Francisco.\n\n• Engaged directly with AI's most influential leaders including **Elon Musk**, **Sam Altman**, **Satya Nadella**, and **Fei-Fei Li** through keynotes and intimate workshops.\n\n• Engaged in workshops on cutting-edge AI innovation and startup strategies, gaining unparalleled insights into the future of AI",
-  //   period: "Mar 2024",
-  //   logo: {
-  //     light:
-  //       "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Y_Combinator_logo.svg/1200px-Y_Combinator_logo.svg.png",
-  //     dark: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Y_Combinator_logo.svg/1200px-Y_Combinator_logo.svg.png",
-  //   },
-  //   url: "https://www.ycombinator.com",
-  // },
+  {
+    company: "Y Combinator",
+    description:
+      "•  Selected as one of 2,000 top CS and AI students globally (out of 30,000 applicants) for this exclusive, **fully-sponsored** AI conference in San Francisco.\n\n• Engaged directly with AI's most influential leaders including **Elon Musk**, **Sam Altman**, **Satya Nadella**, and **Fei-Fei Li** through keynotes.\n\n• Engaged in workshops on cutting-edge AI innovation and startup strategies, gaining unparalleled insights into the future of AI",
+    period: "Mar 2024",
+    logo: {
+      light:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Y_Combinator_logo.svg/1200px-Y_Combinator_logo.svg.png",
+      dark: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Y_Combinator_logo.svg/1200px-Y_Combinator_logo.svg.png",
+    },
+    url: "https://www.ycombinator.com",
+  },
   // {
   //   company: "Invisibility Inc.",
   //   description:
