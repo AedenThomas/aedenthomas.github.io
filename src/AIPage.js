@@ -387,13 +387,11 @@ function AIPage({
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className={`min-h-screen flex flex-col items-center p-4 md:p-8 theme-transition custom-cursor ${
-        themeTransition ? "bg-black text-white" : "bg-[#F2F0E9] text-gray-900"
+      className={`h-dvh flex flex-col items-center custom-cursor ${
+        isDarkMode ? "text-white" : "text-gray-900"
       }`}
       style={{
-        transition: "background-color 0.5s ease-in-out, color 0.5s ease-in-out",
-        height: "100vh", // Ensures the container fits the viewport
-        overflow: "hidden", // Prevents page-level scrolling
+        overflow: "hidden",
       }}
     >
       {!isMobile && (
@@ -670,7 +668,7 @@ function AIPage({
       </AnimatePresence>
 
       {/* Main heading - show only if chat hasn't started */}
-      {!chatStarted && (
+      {/* {!chatStarted && (
         <div className="flex-[0.4] md:flex-none md:h-auto md:mt-[30vh] flex items-center justify-center md:block">
           <h1 className="text-xl md:text-4xl font-semibold h-[1.5em] md:h-[2em] flex items-center">
             <AnimatePresence mode="wait">
@@ -682,19 +680,124 @@ function AIPage({
             </AnimatePresence>
           </h1>
         </div>
-      )}
+      )} */}
 
-      <div
-        className={`w-full max-w-4xl px-2 md:px-4 flex-1 overflow-hidden ${
-          chatStarted
-            ? "flex flex-col h-[calc(100vh-2rem)]"
-            : "flex-[0.6] md:flex-none flex flex-col justify-center md:block md:h-auto mt-4 md:mt-20"
-        }`}
-      >
-        {chatStarted ? (
-          <>
-            {/* Chat history area */}
-            <div className="flex-1 overflow-y-auto mb-4 space-y-3 md:space-y-4 pb-32 md:pb-0">
+      {/* Centered container for all content within the viewport */}
+      <div className="w-full max-w-4xl h-full flex flex-col p-4 md:p-8">
+        {/*
+          MAIN CONTENT AREA
+          - This div is ALWAYS here. It grows to fill available space (`flex-1`) and scrolls its content.
+          - We change what's INSIDE it, but the div itself never disappears. This prevents the layout jump.
+        */}
+        <div className="flex-1 overflow-y-auto min-h-0">
+          {!chatStarted ? (
+            // INITIAL STATE: Greeting and buttons, centered vertically within this scrollable area.
+            <div className="h-full flex flex-col justify-center items-center text-center">
+              <h1 className="text-xl md:text-4xl font-semibold h-[1.5em] md:h-[2em] flex items-center mb-8">
+                <AnimatePresence mode="wait">
+                  <AnimatedGreeting
+                    key={aiCurrentGreeting}
+                    greeting={aiGreetings[aiCurrentGreeting]}
+                    className="handwritten-font"
+                  />
+                </AnimatePresence>
+              </h1>
+              {/* Initial Action Buttons */}
+              <div className="flex flex-col gap-2 w-full">
+                <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
+                  <button
+                    onClick={() =>
+                      handleButtonClick("What is your favorite project?")
+                    }
+                    onMouseEnter={() => handleLocalClickableHover(true)}
+                    onMouseLeave={() => handleLocalClickableHover(false)}
+                    className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
+                      themeTransition
+                        ? "bg-[#2F2F2F] text-gray-300"
+                        : "bg-white text-gray-700"
+                    } w-full md:w-auto`}
+                  >
+                    <StarIcon className="w-4 h-4 text-yellow-500" />
+                    <span className="text-left flex-1">
+                      What is your favorite project?
+                    </span>
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleButtonClick("What tech stack do you know?")
+                    }
+                    onMouseEnter={() => handleLocalClickableHover(true)}
+                    onMouseLeave={() => handleLocalClickableHover(false)}
+                    className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
+                      themeTransition
+                        ? "bg-[#2F2F2F] text-gray-300"
+                        : "bg-white text-gray-700"
+                    } w-full md:w-auto`}
+                  >
+                    <CodeBracketIcon className="w-4 h-4 text-blue-500" />
+                    <span className="text-left flex-1">
+                      What tech stack do you know?
+                    </span>
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleButtonClick("What are your weaknesses?")
+                    }
+                    onMouseEnter={() => handleLocalClickableHover(true)}
+                    onMouseLeave={() => handleLocalClickableHover(false)}
+                    className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
+                      themeTransition
+                        ? "bg-[#2F2F2F] text-gray-300"
+                        : "bg-white text-gray-700"
+                    } w-full md:w-auto`}
+                  >
+                    <ExclamationTriangleIcon className="w-4 h-4 text-orange-500" />
+                    <span className="text-left flex-1">
+                      What are your weaknesses?
+                    </span>
+                  </button>
+                </div>
+                <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
+                  <button
+                    onClick={() =>
+                      handleButtonClick("What work interests you?")
+                    }
+                    onMouseEnter={() => handleLocalClickableHover(true)}
+                    onMouseLeave={() => handleLocalClickableHover(false)}
+                    className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
+                      themeTransition
+                        ? "bg-[#2F2F2F] text-gray-300"
+                        : "bg-white text-gray-700"
+                    } w-full md:w-auto`}
+                  >
+                    <BriefcaseIcon className="w-4 h-4 text-purple-500" />
+                    <span className="text-left flex-1">
+                      What work interests you?
+                    </span>
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleButtonClick("How do I get in touch with you?")
+                    }
+                    onMouseEnter={() => handleLocalClickableHover(true)}
+                    onMouseLeave={() => handleLocalClickableHover(false)}
+                    className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
+                      themeTransition
+                        ? "bg-[#2F2F2F] text-gray-300"
+                        : "bg-white text-gray-700"
+                    } w-full md:w-auto`}
+                  >
+                    <ChatBubbleLeftRightIcon className="w-4 h-4 text-red-500" />
+                    <span className="text-left flex-1">
+                      How do I get in touch with you?
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            // CHAT STATE: Just the list of messages, which will scroll if it gets long.
+            <div className="space-y-3 md:space-y-4 pt-4">
               {messageHistory.map((message, index) => (
                 <div
                   key={index}
@@ -703,7 +806,7 @@ function AIPage({
                   }`}
                 >
                   <div
-                    className={`max-w-[90%] md:max-w-[80%] p-2 md:p-3 rounded-lg text-sm md:text-base ${
+                    className={`max-w-[90%] md:max-w-[80%] p-2 md:p-3 rounded-lg text-sm md:text-base markdown-content ${
                       message.role === "user"
                         ? themeTransition
                           ? "bg-blue-600 text-white"
@@ -711,7 +814,7 @@ function AIPage({
                         : themeTransition
                         ? "bg-[#2F2F2F] text-white"
                         : "bg-white text-gray-900"
-                    } markdown-content`} // Added markdown-content class
+                    }`}
                   >
                     <ReactMarkdown>{message.text}</ReactMarkdown>
                   </div>
@@ -733,44 +836,43 @@ function AIPage({
                 </div>
               )}
             </div>
-          </>
-        ) : null}
+          )}
+        </div>
 
-        {/* Reorder elements using absolute positioning on mobile */}
-        <div className="relative flex flex-col-reverse md:flex-col">
-          {/* Chat action buttons - show when chat has started */}
+        {/* 
+          BOTTOM CONTROLS AREA
+          - This section is a sibling to the main content area, not inside it.
+          - It contains the action buttons and the input form.
+          - The `mt-auto` (margin-top: auto) on the form is the key to pushing it to the very bottom, but flexbox handles this well.
+        */}
+        <div className="pt-4">
           {chatStarted && (
-            <div className="fixed md:relative bottom-[80px] md:bottom-auto left-0 right-0 px-2 md:px-0 z-10 md:z-auto md:mb-4 bg-inherit">
-              <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
-                {getAvailableActionButtons()
-                  .slice(0, 2)
-                  .map((button, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleButtonClick(button.text)}
-                      onMouseEnter={() => handleLocalClickableHover(true)}
-                      onMouseLeave={() => handleLocalClickableHover(false)}
-                      className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable w-full md:w-auto ${
-                        themeTransition
-                          ? "bg-[#2F2F2F] text-gray-300"
-                          : "bg-white text-gray-700"
-                      }`}
-                    >
-                      {button.icon}
-                      <span className="text-left flex-1 md:flex-none">
-                        {button.text}
-                      </span>
-                    </button>
-                  ))}
-              </div>
+            <div className="mb-4 flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
+              {getAvailableActionButtons()
+                .slice(0, 2)
+                .map((button, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleButtonClick(button.text)}
+                    onMouseEnter={() => handleLocalClickableHover(true)}
+                    onMouseLeave={() => handleLocalClickableHover(false)}
+                    className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable w-full md:w-auto ${
+                      themeTransition
+                        ? "bg-[#2F2F2F] text-gray-300"
+                        : "bg-white text-gray-700"
+                    }`}
+                  >
+                    {button.icon}
+                    <span className="text-left flex-1 md:flex-none">
+                      {button.text}
+                    </span>
+                  </button>
+                ))}
             </div>
           )}
 
-          {/* Input form */}
-          <form
-            onSubmit={handleSubmit}
-            className="fixed md:relative bottom-0 left-0 right-0 md:bottom-auto px-2 md:px-0 bg-inherit pb-4 pt-2 md:py-0 md:mb-0"
-          >
+          {/* Input Form */}
+          <form onSubmit={handleSubmit} className="relative w-full">
             <input
               type="text"
               value={inputMessage}
@@ -806,101 +908,6 @@ function AIPage({
               )}
             </button>
           </form>
-
-          {/* Initial action buttons */}
-          {!chatStarted && (
-            <div className="flex flex-col gap-2 mt-8 mb-24 md:mb-0">
-              <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
-                <button
-                  onClick={() =>
-                    handleButtonClick("What is your favorite project?")
-                  }
-                  onMouseEnter={() => handleLocalClickableHover(true)}
-                  onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
-                    themeTransition
-                      ? "bg-[#2F2F2F] text-gray-300"
-                      : "bg-white text-gray-700"
-                  } w-full md:w-auto`}
-                >
-                  <StarIcon className="w-4 h-4 text-yellow-500" />
-                  <span className="text-left flex-1">
-                    What is your favorite project?
-                  </span>
-                </button>
-
-                <button
-                  onClick={() =>
-                    handleButtonClick("What tech stack do you know?")
-                  }
-                  onMouseEnter={() => handleLocalClickableHover(true)}
-                  onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
-                    themeTransition
-                      ? "bg-[#2F2F2F] text-gray-300"
-                      : "bg-white text-gray-700"
-                  } w-full md:w-auto`}
-                >
-                  <CodeBracketIcon className="w-4 h-4 text-blue-500" />
-                  <span className="text-left flex-1">
-                    What tech stack do you know?
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => handleButtonClick("What are your weaknesses?")}
-                  onMouseEnter={() => handleLocalClickableHover(true)}
-                  onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
-                    themeTransition
-                      ? "bg-[#2F2F2F] text-gray-300"
-                      : "bg-white text-gray-700"
-                  } w-full md:w-auto`}
-                >
-                  <ExclamationTriangleIcon className="w-4 h-4 text-orange-500" />
-                  <span className="text-left flex-1">
-                    What are your weaknesses?
-                  </span>
-                </button>
-              </div>
-
-              <div className="flex flex-col md:flex-row justify-center gap-2 text-xs md:text-sm">
-                <button
-                  onClick={() => handleButtonClick("What work interests you?")}
-                  onMouseEnter={() => handleLocalClickableHover(true)}
-                  onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
-                    themeTransition
-                      ? "bg-[#2F2F2F] text-gray-300"
-                      : "bg-white text-gray-700"
-                  } w-full md:w-auto`}
-                >
-                  <BriefcaseIcon className="w-4 h-4 text-purple-500" />
-                  <span className="text-left flex-1">
-                    What work interests you?
-                  </span>
-                </button>
-
-                <button
-                  onClick={() =>
-                    handleButtonClick("How do I get in touch with you?")
-                  }
-                  onMouseEnter={() => handleLocalClickableHover(true)}
-                  onMouseLeave={() => handleLocalClickableHover(false)}
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-full custom-cursor-clickable ${
-                    themeTransition
-                      ? "bg-[#2F2F2F] text-gray-300"
-                      : "bg-white text-gray-700"
-                  } w-full md:w-auto`}
-                >
-                  <ChatBubbleLeftRightIcon className="w-4 h-4 text-red-500" />
-                  <span className="text-left flex-1">
-                    How do I get in touch with you?
-                  </span>
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </motion.div>

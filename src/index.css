@@ -2,31 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  THIS IS THE CORE FIX:
+  Set the background color for the entire page canvas, including the overscroll area.
+*/
+html {
+  /* Default light mode background */
+  background-color: #f2f0e9;
+  /* Smooth transition for background color changes */
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+  cursor: none !important;
+}
+
+html.dark {
+  /* Dark mode background */
+  background-color: #000000;
+}
+
+/* Ensure body and root take up full height and have a transparent background */
+body,
+#root {
+  height: 100%;
+  background-color: transparent; /* This is crucial */
+}
+
 /* Add these cursor styles near the top of the file */
 * {
   cursor: none !important; /* Force no cursor on all elements */
 }
 
 /* Ensure cursor remains hidden even on interactive elements */
-button, 
-a, 
-input, 
-textarea, 
-select, 
+button,
+a,
+input,
+textarea,
+select,
 [role="button"],
 .custom-cursor-clickable {
   cursor: none !important;
 }
 
-/* Hide cursor when outside viewport */
-html {
-  cursor: none !important;
-}
-
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -34,7 +55,7 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
@@ -43,34 +64,35 @@ code {
   & p {
     margin-bottom: 0.5rem;
   }
-  
+
   & strong {
     font-weight: 600;
   }
-  
+
   & em {
     font-style: italic;
   }
-  
+
   & code {
     background-color: rgba(0, 0, 0, 0.1);
     padding: 0.2em 0.4em;
     border-radius: 3px;
     font-family: monospace;
   }
-  
+
   & pre {
     background-color: rgba(0, 0, 0, 0.1);
     padding: 1em;
     border-radius: 5px;
     overflow-x: auto;
   }
-  
-  & ul, & ol {
+
+  & ul,
+  & ol {
     margin-left: 1.5em;
     margin-bottom: 0.5rem;
   }
-  
+
   & li {
     margin-bottom: 0.25rem;
   }
@@ -101,11 +123,11 @@ code {
   cursor: none !important;
 }
 
-.no-cursor button, 
-.no-cursor a, 
-.no-cursor input, 
-.no-cursor textarea, 
-.no-cursor select, 
+.no-cursor button,
+.no-cursor a,
+.no-cursor input,
+.no-cursor textarea,
+.no-cursor select,
 .no-cursor [role="button"],
 .no-cursor .custom-cursor-clickable {
   cursor: none !important;

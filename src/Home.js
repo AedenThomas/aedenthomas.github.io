@@ -597,12 +597,9 @@ function Home({
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       onAnimationStart={() => {}}
-      className={`min-h-screen flex flex-col items-center p-4 md:p-8 theme-transition custom-cursor ${
-        transitionTheme ? "bg-black text-white" : "bg-[#F2F0E9] text-gray-900"
+      className={`min-h-screen flex flex-col items-center p-4 md:p-8 custom-cursor ${
+        transitionTheme ? "text-white" : "text-gray-900"
       }`}
-      style={{
-        transition: "background-color 1.5s ease-in-out, color 1.5s ease-in-out",
-      }}
     >
       {!isMobile && (
         <>
@@ -829,7 +826,12 @@ function Home({
         )}
       </AnimatePresence>
 
-      <div className="max-w-3xl mx-auto">
+      <motion.div
+        className="max-w-3xl mx-auto"
+        // This new animate prop will fade out the content when you click the AI button
+        animate={{ opacity: isNavigating ? 0 : 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <div
           className={`transition-all duration-300 ${
             hoveredProjectIndex !== null
@@ -1414,7 +1416,7 @@ function Home({
             </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
