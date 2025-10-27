@@ -1,17 +1,31 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo } from "react"; // Add useMemo
 import { motion } from "framer-motion";
 
 const AnimatedGreeting = ({ greeting, className }) => {
   const [isComplete, setIsComplete] = useState(false);
   const [visibleLetters, setVisibleLetters] = useState(0);
-  
+
+  // THIS IS THE CRITICAL CHANGE
+  // We use Intl.Segmenter to correctly split the string into graphemes.
+  // useMemo ensures we don't recreate the segmenter on every render.
+  const graphemes = useMemo(() => {
+    // Create a segmenter for the user's locale that splits by grapheme.
+    const segmenter = new Intl.Segmenter(undefined, {
+      granularity: "grapheme",
+    });
+
+    // Perform the segmentation and convert the result into an array of strings.
+    return Array.from(segmenter.segment(greeting), (s) => s.segment);
+  }, [greeting]);
+
   useEffect(() => {
     setVisibleLetters(0);
     setIsComplete(false);
 
     const letterInterval = setInterval(() => {
       setVisibleLetters((prev) => {
-        if (prev < greeting.length) {
+        // We now check against the length of our correctly segmented array.
+        if (prev < graphemes.length) {
           return prev + 1;
         } else {
           clearInterval(letterInterval);
@@ -19,12 +33,12 @@ const AnimatedGreeting = ({ greeting, className }) => {
           return prev;
         }
       });
-    }, 100); // Faster typing speed
+    }, 100);
 
     return () => {
       clearInterval(letterInterval);
     };
-  }, [greeting]);
+  }, [greeting, graphemes]); // Add graphemes to the dependency array
 
   return (
     <motion.div
@@ -34,19 +48,22 @@ const AnimatedGreeting = ({ greeting, className }) => {
       transition={{ duration: 0.5, ease: "easeInOut" }}
       className={className}
     >
-      {greeting.split('').map((letter, index) => (
+      {/* We now map over the correctly segmented 'graphemes' array */}
+      {graphemes.map((letter, index) => (
         <motion.span
           key={index}
           initial={{ opacity: 0, y: 20 }}
-          animate={{ 
+          animate={{
             opacity: index < visibleLetters ? 1 : 0,
-            y: index < visibleLetters ? 0 : 20 
+            y: index < visibleLetters ? 0 : 20,
           }}
-          transition={{ 
+          transition={{
             duration: 0.3,
             ease: "easeOut",
-            delay: index < visibleLetters ? 0 : 0 
+            delay: 0, // No delay needed here
           }}
+          // Add this style to prevent letter wrapping during animation
+          style={{ display: "inline-block" }}
         >
           {letter}
         </motion.span>

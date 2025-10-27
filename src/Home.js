@@ -133,15 +133,15 @@ function Home({
 
   const [currentGreeting, setCurrentGreeting] = useState(0);
   const greetings = [
-    "Hey!",
-    "Hola!",
-    "नमस्ते!",
-    "Bonjour!",
-    "你好!",
-    "Ciao!",
-    "Olá!",
-    "여보세요!",
-    "Hallo!",
+    "Hey! ",
+    "Hola! ",
+    "नमस्ते! ",
+    "Bonjour! ",
+    "你好! ",
+    "Ciao! ",
+    "Olá! ",
+    "여보세요! ",
+    "Hallo! ",
   ];
 
   useEffect(() => {
@@ -850,7 +850,7 @@ function Home({
               className="text-4xl mb-7"
             />
 
-            <h1 className="text-2xl md:text-4xl font-bold mb-5 mt-5 h-[2em] flex items-center">
+            <h1 className="text-2xl md:text-4xl font-bold mb-5 mt-5">
               <AnimatePresence mode="wait">
                 <AnimatedGreeting
                   key={currentGreeting}
@@ -1001,14 +1001,22 @@ function Home({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                onMouseEnter={() => {
-                  handleCardHover(index);
-                  handleClickableHover(true);
-                }}
-                onMouseLeave={() => {
-                  handleCardLeave(index);
-                  handleClickableHover(false);
-                }}
+                onMouseEnter={
+                  !isMobile
+                    ? () => {
+                        handleCardHover(index);
+                        handleClickableHover(true);
+                      }
+                    : undefined
+                }
+                onMouseLeave={
+                  !isMobile
+                    ? () => {
+                        handleCardLeave(index);
+                        handleClickableHover(false);
+                      }
+                    : undefined
+                }
                 onClick={() => toggleExperience(index)}
               >
                 <div className="flex items-start gap-3">
@@ -1066,7 +1074,7 @@ function Home({
                         animate={{
                           height: expandedExperiences.has(index)
                             ? "auto"
-                            : hoveredCard === index
+                            : !isMobile && hoveredCard === index // <-- This condition is now mobile-aware
                             ? "auto"
                             : 80,
                           transition: { duration: 0.3, ease: "easeInOut" },

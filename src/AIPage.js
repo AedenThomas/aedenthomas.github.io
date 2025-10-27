@@ -693,7 +693,7 @@ function AIPage({
           {!chatStarted ? (
             // INITIAL STATE: Greeting centered vertically within this scrollable area.
             <div className="h-full flex flex-col justify-center items-center text-center">
-              <h1 className="text-xl md:text-4xl font-semibold h-[1.5em] md:h-[2em] flex items-center">
+              <h1 className="text-xl md:text-4xl font-semibold h-[1.5em] md:h-[2em] flex items-center mb-8 whitespace-pre-wrap">
                 <AnimatePresence mode="wait">
                   <AnimatedGreeting
                     key={aiCurrentGreeting}
