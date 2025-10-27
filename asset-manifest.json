@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.971539e3.css",
-    "main.js": "/static/js/main.5c3f9469.js",
+    "main.css": "/static/css/main.9a18c531.css",
+    "main.js": "/static/js/main.15f81609.js",
     "static/js/453.a0343227.chunk.js": "/static/js/453.a0343227.chunk.js",
     "static/media/react-native.svg": "/static/media/react-native.be71bed1bce21ae23843e3443f0b1408.svg",
     "index.html": "/index.html",
@@ -10,12 +10,12 @@
     "static/media/python.svg": "/static/media/python.1e608010b20e8c54ca4e5bf6091d90ef.svg",
     "static/media/default.svg": "/static/media/default.6b9b428864d6f95ada3092145e4be76b.svg",
     "static/media/flutter.svg": "/static/media/flutter.50bb17c0e69f24a17adbcca9bd6e8528.svg",
-    "main.971539e3.css.map": "/static/css/main.971539e3.css.map",
-    "main.5c3f9469.js.map": "/static/js/main.5c3f9469.js.map",
+    "main.9a18c531.css.map": "/static/css/main.9a18c531.css.map",
+    "main.15f81609.js.map": "/static/js/main.15f81609.js.map",
     "453.a0343227.chunk.js.map": "/static/js/453.a0343227.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.971539e3.css",
-    "static/js/main.5c3f9469.js"
+    "static/css/main.9a18c531.css",
+    "static/js/main.15f81609.js"
   ]
 }
