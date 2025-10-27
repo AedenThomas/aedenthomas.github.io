@@ -62,13 +62,13 @@ const SuccessAnimation = ({ isDarkMode }) => {
         />
       </motion.svg>
       <motion.div variants={textVariants}>
-        <h3 className="text-lg font-semibold">Thank You</h3>
+        <h3 className="text-lg font-semibold">Message Received</h3>
         <p
           className={`text-sm ${
             isDarkMode ? "text-gray-400" : "text-gray-600"
           }`}
         >
-          Your message has been sent.
+          I'll be in touch shortly.
         </p>
       </motion.div>
     </motion.div>
