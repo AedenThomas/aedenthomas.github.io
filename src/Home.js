@@ -106,6 +106,7 @@ function Home({
   const [expandedExperiences, setExpandedExperiences] = useState(new Set());
 
   const [expandedItems, setExpandedItems] = useState(new Set());
+  const [isQuickMessageAnimating, setIsQuickMessageAnimating] = useState(false);
 
   // Add a click handler
   const handleExperienceClick = (index) => {
@@ -767,7 +768,7 @@ function Home({
                   onAnimationStart={() => {}}
                   onAnimationComplete={() => {}}
                 >
-                  Talk to AI Aeden
+                  talk to ai me
                 </motion.span>
               )}
             </AnimatePresence>
@@ -861,6 +862,32 @@ function Home({
             </h1>
 
             <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 mb-4 leading-[1.7]">
+              i'm an engineer, and i build software people want.
+              <br />
+              <br />
+              got a hard problem?{" "}
+              <span
+                className="reach-out-text relative custom-cursor-clickable"
+                onMouseEnter={() => {
+                  handleReachOutMouseEnter();
+                  handleClickableHover(true);
+                  setIsAIButtonHovered(true); // Trigger AI button hover
+                  setIsQuickMessageAnimating(true); // Trigger quick message animation
+                  setTimeout(() => setIsQuickMessageAnimating(false), 1000); // Reset after 1 second
+                }}
+                onMouseLeave={() => {
+                  handleReachOutMouseLeave();
+                  handleClickableHover(false);
+                  setIsAIButtonHovered(false); // Reset AI button hover
+                }}
+              >
+                hmu
+              </span>{" "}
+              !
+              <br />
+              <br />
+            </p>
+            {/* <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 mb-4 leading-[1.7]">
               I'm a full-stack developer, and I've gotten pretty good with{" "}
               <span
                 onMouseEnter={() => handleLanguageHover("react")}
@@ -939,8 +966,8 @@ function Home({
                 where things are always moving
               </span>
               .
-            </p>
-            <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 mb-4 leading-[1.7]">
+            </p> */}
+            {/* <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 mb-4 leading-[1.7]">
               My main thing is using my tech skills to build stuff that actually
               matters. I'm super interested in enterprise solutions, especially
               with <span className="relative">cool startups</span>. I'm pretty
@@ -963,7 +990,7 @@ function Home({
                 Drop me a line
               </span>{" "}
               if you wanna chat about working together!
-            </p>
+            </p> */}
           </div>
         </div>
 
@@ -978,6 +1005,7 @@ function Home({
             githubUrl={githubUrl}
             handleClickableHover={handleClickableHover}
             isDarkMode={isDarkMode}
+            isQuickMessageAnimating={isQuickMessageAnimating}
           />
         </div>
 

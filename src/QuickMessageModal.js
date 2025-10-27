@@ -131,7 +131,11 @@ const QuickMessageModal = ({ isOpen, onClose, isDarkMode }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[999] p-4"
+          className={`fixed inset-0 ${
+            isDarkMode
+              ? "dark-mode-backdrop"
+              : "bg-black bg-opacity-30 backdrop-blur"
+          } flex items-center justify-center z-[9998]`}
           onClick={onClose}
         >
           <motion.div
@@ -139,10 +143,10 @@ const QuickMessageModal = ({ isOpen, onClose, isDarkMode }) => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 30, opacity: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className={`relative p-6 rounded-2xl w-full max-w-lg shadow-2xl border ${
+            className={`relative p-6 rounded-2xl w-full max-w-lg shadow-2xl ${
               isDarkMode
-                ? "bg-black border-gray-800 text-gray-200"
-                : "bg-[#F2F0E9] border-gray-200 text-gray-800"
+                ? "bg-black text-gray-200"
+                : "bg-[#F2F0E9] text-gray-800"
             }`}
             onClick={(e) => e.stopPropagation()}
           >

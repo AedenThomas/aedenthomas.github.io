@@ -4,6 +4,7 @@ import { getCalApi } from "@calcom/embed-react";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
+import { motion } from "framer-motion";
 import EmailPopup from "./EmailPopup";
 import QuickMessageModal from "./QuickMessageModal"; // <-- 1. IMPORT THE NEW MODAL
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid"; // <-- 2. IMPORT AN ICON FOR THE BUTTON
@@ -14,6 +15,7 @@ const ContactLinks = ({
   githubUrl,
   handleClickableHover,
   isDarkMode,
+  isQuickMessageAnimating,
 }) => {
   const [contributionData, setContributionData] = useState(null);
   const [intrycContributionData, setIntrycContributionData] = useState(null);
@@ -293,7 +295,7 @@ const ContactLinks = ({
                 clipRule="evenodd"
               ></path>
             </svg>
-            LinkedIn
+            linkedin
           </a>
           <a
             href={githubUrl}
@@ -316,7 +318,7 @@ const ContactLinks = ({
                 clipRule="evenodd"
               ></path>
             </svg>
-            GitHub
+            github
           </a>
           <Tooltip
             id="github-tooltip"
@@ -352,19 +354,42 @@ const ContactLinks = ({
                 clipRule="evenodd"
               />
             </svg>
-            Book a call
+            book a call
           </button>
 
           {/* --- 4. ADD THE NEW "QUICK MESSAGE" BUTTON HERE --- */}
-          <button
+          <motion.button
             onClick={() => setIsQuickMessageOpen(true)}
-            className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 md:ml-4 custom-cursor-clickable"
+            className="origin-left text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 md:ml-4 custom-cursor-clickable" // <-- CLASS ADDED HERE
             onMouseEnter={() => handleClickableHover(true)}
             onMouseLeave={() => handleClickableHover(false)}
+            animate={
+              isQuickMessageAnimating
+                ? {
+                    // Keyframes adjusted for a 2-second, high-impact animation
+                    scale: [1, 1.4, 1.3, 1.4, 1.35, 1.4, 1.3, 1.35, 1],
+                    rotate: [0, -2, 2.5, -3, 3, -2.5, 2, -1, 1.5, 0],
+                    x: [0, 3, -3, 4, -4, 3.5, -3, 2, -1, 0],
+                    y: [0, -2, 2.5, -3, 3, -2, 2.5, -1.5, 1, 0],
+
+                    // Transition settings updated
+                    transition: {
+                      duration: 2, // Animation now lasts for 2 seconds
+                      ease: "easeInOut",
+                    },
+                  }
+                : {
+                    // Return to default state when not animating
+                    scale: 1,
+                    rotate: 0,
+                    x: 0,
+                    y: 0,
+                  }
+            }
           >
             <ChatBubbleLeftRightIcon className="w-4 h-4 mr-2" />
-            Quick Message
-          </button>
+            quick message
+          </motion.button>
         </div>
       </div>
 
