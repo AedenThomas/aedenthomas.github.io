@@ -170,7 +170,7 @@ const QuickMessageModal = ({ isOpen, onClose, isDarkMode }) => {
               ) : (
                 <motion.div key="form">
                   <h2 className="text-xl md:text-2xl font-bold mb-6 text-center">
-                    Get in Touch
+                    Quick Message
                   </h2>
                   <form onSubmit={handleSubmit} className="space-y-5">
                     {/* ... (Your form inputs remain exactly the same) ... */}

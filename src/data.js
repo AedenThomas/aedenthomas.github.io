@@ -109,7 +109,7 @@ export const experience = [
     company: "Hertel",
     position: "Software Engineer Intern (Contract)",
     period: "June 2024 - Sept 2024",
-    location: "Abu Dhabi, United Arab Emirates",
+    location: "Abu Dhabi, U.A.E.",
     highlights: [
       "Led the development of migrating a large-scale ERP system from Visual Basic to ASP.NET Core and React, integrating 10+ business modules including HR, Payroll, Recruitment, CRM, and Procurement, while reducing development time by 15% through reusable component architecture",
       "Engineered a modular full-stack React application using Styled Components and Material-UI, implementing responsive UI design ensuring seamless user experience across desktop and mobile devices during the modernization process",
