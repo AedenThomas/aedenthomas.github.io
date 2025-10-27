@@ -661,15 +661,13 @@ function Home({
         </button>
 
         <AnimatePresence>
-          {showThemeTooltip && (
+          {showThemeTooltip && !isMobile && (
             <motion.div
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.2 }}
-              className={`fixed ${
-                isMobile ? "top-28" : "top-16"
-              } px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
+              className={`fixed top-16 px-3 py-2 rounded-lg text-sm whitespace-nowrap ${
                 isDarkMode
                   ? "bg-white text-black shadow-light"
                   : "bg-black text-white shadow-dark"
@@ -850,7 +848,7 @@ function Home({
               className="text-4xl mb-7"
             />
 
-            <h1 className="text-4xl font-bold mb-5 mt-5 h-[2em] flex items-center">
+            <h1 className="text-2xl md:text-4xl font-bold mb-5 mt-5 h-[2em] flex items-center">
               <AnimatePresence mode="wait">
                 <AnimatedGreeting
                   key={currentGreeting}
@@ -860,7 +858,7 @@ function Home({
               </AnimatePresence>
             </h1>
 
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 mb-4 leading-[1.7]">
               I'm a full-stack developer, and I've gotten pretty good with{" "}
               <span
                 onMouseEnter={() => handleLanguageHover("react")}
@@ -940,7 +938,7 @@ function Home({
               </span>
               .
             </p>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 mb-4 leading-[1.7]">
               My main thing is using my tech skills to build stuff that actually
               matters. I'm super interested in enterprise solutions, especially
               with <span className="relative">cool startups</span>. I'm pretty
@@ -991,7 +989,7 @@ function Home({
               isReachOutHovered ? "blur-sm" : ""
             }`}
           >
-            <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            <h2 className="text-base md:text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
               ~/experience
             </h2>
             {experience.map((exp, index) => (
@@ -1021,7 +1019,7 @@ function Home({
                   )}
                   <div className="w-full">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                      <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {exp.company}
                       </h3>
                       {exp.url && (
@@ -1047,15 +1045,15 @@ function Home({
                         </a>
                       )}
                     </div>
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <p className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">
                       {exp.position}
                     </p>
-                    <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex justify-between text-xs md:text-sm text-gray-500 dark:text-gray-400">
                       <span>{exp.location}</span>
                       <span>{exp.period}</span>
                     </div>
 
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 italic">
+                    <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-2 italic">
                       {exp.description}
                     </p>
 
@@ -1072,7 +1070,7 @@ function Home({
                           transition: { duration: 0.3, ease: "easeInOut" },
                         }}
                       >
-                        <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        <ul className="list-disc list-inside text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-2">
                           {exp.highlights.map((highlight, i) => (
                             <li key={i} className="ml-4 mb-2">
                               {highlight}
@@ -1097,7 +1095,7 @@ function Home({
               isReachOutHovered ? "blur-sm" : ""
             }`}
           >
-            <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            <h2 className="text-base md:text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
               ~/professional development
             </h2>
             {notableInteractions.map((interaction, index) => (
@@ -1135,7 +1133,7 @@ function Home({
                   )}
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold group-hover:text-white">
+                      <h3 className="text-sm md:text-base font-semibold group-hover:text-white">
                         {interaction.company}
                       </h3>
                       {interaction.url && (
@@ -1161,10 +1159,10 @@ function Home({
                         </a>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                    <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-2">
                       {interaction.period}
                     </p>
-                    <div className="text-sm text-gray-600 dark:text-gray-400 prose prose-sm dark:prose-invert max-w-none">
+                    <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400 prose prose-xs md:prose-sm dark:prose-invert max-w-none">
                       <ReactMarkdown>{interaction.description}</ReactMarkdown>
                     </div>
                   </div>
@@ -1218,7 +1216,7 @@ function Home({
             isReachOutHovered ? "blur-sm" : ""
           }`}
         >
-          <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+          <h2 className="text-base md:text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
             ~/side projects
           </h2>
           {projects.map((project, index) => (
@@ -1245,7 +1243,7 @@ function Home({
           }`}
         >
           <div ref={skillsRef} className="mb-8">
-            <h2 className="text-xl font-semibold mb-5 text-gray-500 dark:text-gray-400">
+            <h2 className="text-base md:text-xl font-semibold mb-5 text-gray-500 dark:text-gray-400">
               ~/skills
             </h2>
             <motion.div
@@ -1259,7 +1257,7 @@ function Home({
               {skills.map((skill, index) => (
                 <motion.span
                   key={index}
-                  className="bg-gray-200 text-gray-700 dark:bg-gray-900 dark:text-gray-200 rounded-full px-3 py-1 text-sm cursor-pointer"
+                  className="bg-gray-200 text-gray-700 dark:bg-gray-900 dark:text-gray-200 rounded-full px-3 py-1 text-xs md:text-sm cursor-pointer"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={
                     isSkillsInView
@@ -1279,7 +1277,7 @@ function Home({
           </div>
 
           <div ref={educationRef} className="mb-8">
-            <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            <h2 className="text-base md:text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
               ~/education
             </h2>
             <motion.div
@@ -1311,13 +1309,13 @@ function Home({
                       />
                     )}
                     <div>
-                      <h3 className="font-semibold group-hover:text-white">
+                      <h3 className="text-sm md:text-base font-semibold group-hover:text-white">
                         {edu.university}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-200">
+                      <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-200">
                         {edu.degree} in {edu.branch}
                       </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300">
+                      <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300">
                         {edu.period}
                       </p>
                     </div>
@@ -1328,7 +1326,7 @@ function Home({
           </div>
 
           <div ref={publicationsRef} className="mb-8">
-            <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            <h2 className="text-base md:text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
               ~/research
             </h2>
             <motion.div
@@ -1353,17 +1351,17 @@ function Home({
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.01 }}
                 >
-                  <h3 className="font-semibold group-hover:text-white">
+                  <h3 className="text-sm md:text-base font-semibold group-hover:text-white">
                     {pub.title}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-200">
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-200">
                     {pub.authors}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300">
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300">
                     {pub.journal}, {pub.year}
                   </p>
                   {pub.doi && (
-                    <p className="text-sm text-blue-500 group-hover:text-gray-300">
+                    <p className="text-xs md:text-sm text-blue-500 group-hover:text-gray-300">
                       DOI:{" "}
                       <a
                         href={`https://doi.org/${pub.doi}`}
@@ -1381,7 +1379,7 @@ function Home({
           </div>
 
           <div ref={courseworkRef} className="mb-8">
-            <h2 className="text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
+            <h2 className="text-base md:text-xl font-semibold mb-3 text-gray-500 dark:text-gray-400">
               ~/coursework
             </h2>
             <motion.div
@@ -1397,7 +1395,7 @@ function Home({
               {coursework.map((course, index) => (
                 <motion.span
                   key={index}
-                  className="bg-gray-200 text-gray-700 dark:bg-gray-900 dark:text-gray-200 rounded-full px-3 py-1 text-sm cursor-pointer"
+                  className="bg-gray-200 text-gray-700 dark:bg-gray-900 dark:text-gray-200 rounded-full px-3 py-1 text-xs md:text-sm cursor-pointer"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={
                     isCourseworkInView

@@ -124,7 +124,7 @@ const Project = ({
         <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
         <div className="flex-grow min-w-0">
           <div className="flex justify-between items-center">
-            <h3 className="font-semibold truncate mr-2 group-hover:text-white">
+            <h3 className="text-sm md:text-base font-semibold truncate mr-2 group-hover:text-white">
               {project.title}
             </h3>
             <button
@@ -178,14 +178,14 @@ const Project = ({
               <span className="flex-grow text-center">{project.status}</span>
             </button>
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 break-words group-hover:text-gray-200">
+          <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-1 break-words group-hover:text-gray-200">
             {project.description}
           </p>
           <div className="mt-2 flex flex-wrap gap-1">
             {project.technologies.map((tech, techIndex) => (
               <span
                 key={techIndex}
-                className={`text-xs px-2 py-1 rounded-full ${
+                className={`text-[10px] md:text-xs px-2 py-1 rounded-full ${
                   isDarkMode
                     ? "bg-gray-900 text-gray-200"
                     : "bg-gray-200 text-gray-700"
@@ -227,7 +227,9 @@ const Project = ({
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6 flex justify-between items-start">
-                <h2 className="text-3xl font-bold">{project.title}</h2>
+                <h2 className="text-xl md:text-3xl font-bold">
+                  {project.title}
+                </h2>
                 <button
                   onClick={closeModal}
                   className={`text-2xl font-bold ${
@@ -248,7 +250,7 @@ const Project = ({
                   />
                 </div>
                 <p
-                  className={`text-lg mb-6 ${
+                  className={`text-sm md:text-lg mb-6 ${
                     isDarkMode ? "text-gray-300" : "text-gray-600"
                   }`}
                 >
@@ -258,7 +260,7 @@ const Project = ({
                   {project.technologies.map((tech, i) => (
                     <span
                       key={i}
-                      className={`text-sm px-3 py-1 rounded-full ${
+                      className={`text-xs md:text-sm px-3 py-1 rounded-full ${
                         isDarkMode
                           ? "bg-gray-900 text-gray-200"
                           : "bg-gray-200 text-gray-700"
@@ -277,7 +279,7 @@ const Project = ({
                       isDarkMode
                         ? "border-gray-700 text-gray-300 hover:bg-gray-800"
                         : "border-gray-300 text-gray-700 hover:bg-gray-100"
-                    } rounded-lg transition duration-300 text-sm font-medium mt-4 mb-6`}
+                    } rounded-lg transition duration-300 text-xs md:text-sm font-medium mt-4 mb-6`}
                   >
                     View Project →
                   </a>

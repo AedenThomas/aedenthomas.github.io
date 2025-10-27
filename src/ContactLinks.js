@@ -2,7 +2,7 @@ import { getCalApi } from "@calcom/embed-react";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
-import EmailPopup from './EmailPopup';
+import EmailPopup from "./EmailPopup";
 
 const ContactLinks = ({
   email,
@@ -26,7 +26,8 @@ const ContactLinks = ({
         }
 
         const urlParts = url.split("/");
-        const username = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2];
+        const username =
+          urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2];
 
         if (!username) {
           throw new Error("Invalid GitHub URL");
@@ -42,32 +43,39 @@ const ContactLinks = ({
     };
 
     fetchContributions(githubUrl, setContributionData);
-    fetchContributions("https://github.com/AedenThomasIntryc", setIntrycContributionData);
+    fetchContributions(
+      "https://github.com/AedenThomasIntryc",
+      setIntrycContributionData
+    );
   }, [githubUrl]);
 
   const combinedPastYearContributions = useMemo(() => {
     if (!contributionData && !intrycContributionData) return null;
-    
-    const mainContributions = contributionData?.contributions.flat().slice(-365) || [];
-    const intrycContributions = intrycContributionData?.contributions.flat().slice(-365) || [];
-    
+
+    const mainContributions =
+      contributionData?.contributions.flat().slice(-365) || [];
+    const intrycContributions =
+      intrycContributionData?.contributions.flat().slice(-365) || [];
+
     // Create a map to combine contributions by date
     const contributionsByDate = new Map();
-    
-    mainContributions.forEach(day => {
+
+    mainContributions.forEach((day) => {
       contributionsByDate.set(day.date, day.contributionCount);
     });
-    
-    intrycContributions.forEach(day => {
+
+    intrycContributions.forEach((day) => {
       const existing = contributionsByDate.get(day.date) || 0;
       contributionsByDate.set(day.date, existing + day.contributionCount);
     });
-    
+
     // Convert back to array format
-    return Array.from(contributionsByDate.entries()).map(([date, count]) => ({
-      date,
-      contributionCount: count
-    })).sort((a, b) => new Date(a.date) - new Date(b.date));
+    return Array.from(contributionsByDate.entries())
+      .map(([date, count]) => ({
+        date,
+        contributionCount: count,
+      }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
   }, [contributionData, intrycContributionData]);
 
   const totalPastYearContributions = useMemo(() => {
@@ -81,18 +89,17 @@ const ContactLinks = ({
   const calculateCurrentStreak = (contributions) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     let streak = 0;
     // Find today's index or the most recent day
-    let currentIndex = contributions.findIndex(day => 
-      new Date(day.date) > today
-    ) - 1;
-    
+    let currentIndex =
+      contributions.findIndex((day) => new Date(day.date) > today) - 1;
+
     // If not found, start from the last day
     if (currentIndex === -2) {
       currentIndex = contributions.length - 1;
     }
-  
+
     // Count streak backwards from current day
     for (let i = currentIndex; i >= 0; i--) {
       if (contributions[i].contributionCount > 0) {
@@ -107,12 +114,12 @@ const ContactLinks = ({
   const getTodayContributions = (contributions) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    const todayContribution = contributions.find(day => {
+
+    const todayContribution = contributions.find((day) => {
       const contribDate = new Date(day.date);
       return contribDate.getTime() === today.getTime();
     });
-    
+
     return todayContribution ? todayContribution.contributionCount : 0;
   };
 
@@ -133,22 +140,18 @@ const ContactLinks = ({
   const getContributionsSummary = useCallback(() => {
     if (error) return [error];
     if (!combinedPastYearContributions) return ["Loading contributions..."];
-  
+
     const currentStreak = calculateCurrentStreak(combinedPastYearContributions);
     const longestStreak = calculateLongestStreak(combinedPastYearContributions);
     const todayCount = getTodayContributions(combinedPastYearContributions);
-  
+
     return [
       `Today: ${todayCount} contributions`,
       `Past year: ${totalPastYearContributions} contributions`,
       `Current streak: ${currentStreak} days`,
       `Longest streak: ${longestStreak} days`,
     ];
-  }, [
-    error,
-    combinedPastYearContributions,
-    totalPastYearContributions,
-  ]);
+  }, [error, combinedPastYearContributions, totalPastYearContributions]);
 
   const handleCopyEmail = async (e) => {
     e.preventDefault();
@@ -157,7 +160,7 @@ const ContactLinks = ({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
@@ -181,7 +184,7 @@ const ContactLinks = ({
     <div className="mb-8">
       <div className="flex flex-wrap items-center justify-between mb-4">
         <div className="flex flex-wrap items-center">
-          <div 
+          <div
             className="relative group"
             onMouseEnter={() => {
               handleClickableHover(true);
@@ -192,7 +195,7 @@ const ContactLinks = ({
               // Don't hide immediately, add a delay
               setTimeout(() => {
                 // Only hide if we're not hovering over the button
-                if (!document.querySelector('.copy-button:hover')) {
+                if (!document.querySelector(".copy-button:hover")) {
                   setShowCopy(false);
                 }
               }, 100);
@@ -206,22 +209,42 @@ const ContactLinks = ({
                   setShowCopy(true);
                 }}
                 className={`copy-button absolute transform -translate-x-1/2 -top-8 left-1/2 text-xs px-2 py-1 rounded-md transition-all duration-200 whitespace-nowrap ${
-                  copied 
-                    ? 'bg-green-500 text-white' 
-                    : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  copied
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
                 }`}
               >
                 {copied ? (
                   <span className="flex items-center">
-                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     Copied!
                   </span>
                 ) : (
                   <span className="flex items-center">
-                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                      />
                     </svg>
                     Copy email
                   </span>
@@ -231,7 +254,7 @@ const ContactLinks = ({
             <a
               href={`mailto:${email}`}
               onClick={handleEmailClick}
-              className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
+              className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
             >
               <svg
                 className="w-4 h-4 mr-2"
@@ -249,7 +272,7 @@ const ContactLinks = ({
             href={linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
+            className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
             onMouseEnter={() => handleClickableHover(true)}
             onMouseLeave={() => handleClickableHover(false)}
           >
@@ -271,7 +294,7 @@ const ContactLinks = ({
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
+            className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
             onMouseEnter={() => handleClickableHover(true)}
             onMouseLeave={() => handleClickableHover(false)}
             data-tooltip-id="github-tooltip"
@@ -308,7 +331,7 @@ const ContactLinks = ({
           <button
             data-cal-namespace="15min"
             data-cal-link="aeden/15min"
-            className="text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
+            className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
             onMouseEnter={() => handleClickableHover(true)}
             onMouseLeave={() => handleClickableHover(false)}
           >

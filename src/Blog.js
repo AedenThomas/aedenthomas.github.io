@@ -308,8 +308,8 @@ function Blog({ isDarkMode, isMobile, handleClickableHover, toggleDarkMode }) {
           className="max-w-4xl mx-auto w-full"
         >
           <div className="mb-12 text-center">
-            <h1 className="text-4xl font-bold mb-4">Blog</h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <h1 className="text-2xl md:text-4xl font-bold mb-4">Blog</h1>
+            <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400">
               Thoughts, learnings, and experiences from my journey in tech
             </p>
           </div>
@@ -345,22 +345,24 @@ function Blog({ isDarkMode, isMobile, handleClickableHover, toggleDarkMode }) {
                 )}
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                    <span className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
                       {post.date}
                     </span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                    <span className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
                       {post.readTime}
                     </span>
                   </div>
-                  <h2 className="text-xl font-semibold mb-3">{post.title}</h2>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  <h2 className="text-base md:text-xl font-semibold mb-3">
+                    {post.title}
+                  </h2>
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-4">
                     {post.excerpt}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+                        className="px-2 py-1 text-xs md:text-sm rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
                       >
                         {tag}
                       </span>

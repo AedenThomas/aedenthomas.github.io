@@ -378,19 +378,21 @@ Building AI Aeden has been a fascinating journey...
         >
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
                 {post.date}
               </span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
                 {post.readTime}
               </span>
             </div>
-            <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+            <h1 className="text-2xl md:text-4xl font-bold mb-4">
+              {post.title}
+            </h1>
             <div className="flex flex-wrap gap-2 mb-8">
               {post.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-1 text-sm rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+                  className="px-2 py-1 text-xs md:text-sm rounded-full bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
                 >
                   {tag}
                 </span>
@@ -405,7 +407,7 @@ Building AI Aeden has been a fascinating journey...
                 />
               </div>
             )}
-            <div className="prose prose-lg dark:prose-invert max-w-none">
+            <div className="prose prose-sm md:prose-lg dark:prose-invert max-w-none">
               <ReactMarkdown>{post.content}</ReactMarkdown>
             </div>
           </div>
