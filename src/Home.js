@@ -645,7 +645,7 @@ function Home({
             setShowThemeTooltip(false);
           }}
           className={`fixed ${
-            isMobile ? "top-28" : "top-16"
+            isMobile ? "top-20" : "top-16"
           } right-4 p-2 rounded-full custom-cursor-clickable w-10 h-10 z-50 flex items-center justify-center transition-all duration-500 ease-in-out ${
             transitionTheme ? "bg-white text-black" : "bg-black text-white"
           }`}
