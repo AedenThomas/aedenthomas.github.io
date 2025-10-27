@@ -23,7 +23,6 @@ const ContactLinks = ({
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
   const [isQuickMessageOpen, setIsQuickMessageOpen] = useState(false); // <-- 3. ADD STATE FOR THE NEW MODAL
 
-
   useEffect(() => {
     const fetchContributions = async (url, setter) => {
       try {
@@ -359,7 +358,7 @@ const ContactLinks = ({
           {/* --- 4. ADD THE NEW "QUICK MESSAGE" BUTTON HERE --- */}
           <button
             onClick={() => setIsQuickMessageOpen(true)}
-            className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 ml-4 custom-cursor-clickable"
+            className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 md:ml-4 custom-cursor-clickable"
             onMouseEnter={() => handleClickableHover(true)}
             onMouseLeave={() => handleClickableHover(false)}
           >
