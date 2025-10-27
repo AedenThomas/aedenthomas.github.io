@@ -1,15 +1,19 @@
+// src/components/ContactLinks.js
+
 import { getCalApi } from "@calcom/embed-react";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
 import EmailPopup from "./EmailPopup";
+import QuickMessageModal from "./QuickMessageModal"; // <-- 1. IMPORT THE NEW MODAL
+import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid"; // <-- 2. IMPORT AN ICON FOR THE BUTTON
 
 const ContactLinks = ({
   email,
   linkedinUrl,
   githubUrl,
   handleClickableHover,
-  isDarkMode, // Add this prop
+  isDarkMode,
 }) => {
   const [contributionData, setContributionData] = useState(null);
   const [intrycContributionData, setIntrycContributionData] = useState(null);
@@ -17,6 +21,8 @@ const ContactLinks = ({
   const [showCopy, setShowCopy] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
+  const [isQuickMessageOpen, setIsQuickMessageOpen] = useState(false); // <-- 3. ADD STATE FOR THE NEW MODAL
+
 
   useEffect(() => {
     const fetchContributions = async (url, setter) => {
@@ -349,14 +355,33 @@ const ContactLinks = ({
             </svg>
             Book a call
           </button>
+
+          {/* --- 4. ADD THE NEW "QUICK MESSAGE" BUTTON HERE --- */}
+          <button
+            onClick={() => setIsQuickMessageOpen(true)}
+            className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 ml-4 custom-cursor-clickable"
+            onMouseEnter={() => handleClickableHover(true)}
+            onMouseLeave={() => handleClickableHover(false)}
+          >
+            <ChatBubbleLeftRightIcon className="w-4 h-4 mr-2" />
+            Quick Message
+          </button>
         </div>
       </div>
 
+      {/* Your existing Email Popup */}
       <EmailPopup
         email={email}
         isOpen={isEmailPopupOpen}
         onClose={() => setIsEmailPopupOpen(false)}
         handleClickableHover={handleClickableHover}
+        isDarkMode={isDarkMode}
+      />
+
+      {/* --- 5. ADD THE NEW QUICK MESSAGE MODAL RENDER HERE --- */}
+      <QuickMessageModal
+        isOpen={isQuickMessageOpen}
+        onClose={() => setIsQuickMessageOpen(false)}
         isDarkMode={isDarkMode}
       />
     </div>
