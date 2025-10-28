@@ -681,19 +681,19 @@ function Home({
               Press{" "}
               {getOperatingSystem() === "mac" ? (
                 <>
-                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-base">
                     ⌘
                   </kbd>
-                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-base">
                     ⇧
                   </kbd>
                 </>
               ) : (
                 <>
-                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-base">
                     Ctrl
                   </kbd>
-                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-xs">
+                  <kbd className="px-2 py-1 rounded bg-opacity-20 bg-gray-500 mx-1 font-mono text-base">
                     Shift
                   </kbd>
                 </>

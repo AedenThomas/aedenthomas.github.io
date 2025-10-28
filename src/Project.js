@@ -106,11 +106,6 @@ const Project = ({
         ref={projectRef}
         key={index}
         className={`flex items-center mb-3 p-4 rounded-xl 
-          ${
-            isDarkMode
-              ? "bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.15]"
-              : "bg-gray-900/[0.02] hover:bg-gray-900/[0.04] border border-gray-900/[0.08] hover:border-gray-900/[0.15] shadow-sm"
-          }
           cursor-pointer custom-cursor-clickable
           transition-all duration-300 ease-out
           active:scale-[0.98]
