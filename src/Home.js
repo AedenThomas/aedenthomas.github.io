@@ -10,6 +10,7 @@ import ReactMarkdown from "react-markdown";
 
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedGreeting from "./AnimatedGreeting.js";
+import AnimatedWordTransform from "./components/AnimatedWordTransform.js";
 import "./App.css";
 import Project from "./Project.js";
 import {
@@ -862,7 +863,15 @@ function Home({
             </h1>
 
             <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 mb-4 leading-[1.7]">
-              i'm an engineer, and i build software people want.
+              i'm an engineer, and i build{" "}
+              <AnimatedWordTransform
+                fromWord="sh*t"
+                toWord="software"
+                delay={3000}
+                className="inline"
+                handleClickableHover={handleClickableHover}
+              />{" "}
+              people want.
               <br />
               <br />
               got a hard problem?{" "}
@@ -883,8 +892,7 @@ function Home({
               >
                 hmu
               </span>{" "}
-              !
-              <br />
+              !{/* <br /> */}
               <br />
             </p>
             {/* <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 mb-4 leading-[1.7]">

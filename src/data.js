@@ -13,7 +13,7 @@ export const notableInteractions = [
   {
     company: "Y Combinator",
     description:
-      "•  Selected as one of 2,000 top CS and AI students globally (out of 30,000 applicants) for this exclusive, **fully-sponsored** AI conference in San Francisco.\n\n• Engaged directly with AI's most influential leaders including **Elon Musk**, **Sam Altman**, **Satya Nadella**, and **Fei-Fei Li** through keynotes.\n\n• Engaged in workshops on cutting-edge AI innovation and startup strategies, gaining unparalleled insights into the future of AI",
+      "•  Selected as one of 2,000 top CS and AI students globally (out of 30,000 applicants) for this exclusive, **fully-sponsored** AI conference in San Francisco.\n\n• Engaged directly with AI's most influential leaders including **Elon Musk**, **Sam Altman**, **Satya Nadella**, and **Fei-Fei Li** through keynotes.",
     period: "Mar 2024",
     logo: {
       light:
@@ -77,30 +77,51 @@ export const notableInteractions = [
 
 export const experience = [
   {
-    company: "Intryc (Y Combinator W24)",
+    company: "SJ Telford",
+    position: "Backend .NET Cloud Developer",
+    period: "August 2025 - Present",
+    location: "London, United Kingdom",
+    highlights: [
+      "built a new serverless .net 8 API from the ground up on azure functions, designed to handle over 12,000 concurrent players for 20+ games.",
+      "wrote a ton of tests (using xunit and moq) to take the project from 0% to over 95% test coverage, which let us finally build a stable CI/CD pipeline.",
+      "was obsessed with performance, so i wrote a complete load testing strategy with k6 to make sure the API stayed fast (under 500ms) and didn't crash, even under real-world, production-scale traffic.",
+      "fixed a nasty cold-start problem in azure functions by building a hybrid L1/L2 cache, which cut initial response times by over 85%.",
+      "wrote custom middleware to handle API key auth, securing 100% of the data endpoints and stopping bad requests right at the start.",
+      "figured out a novel way to test .NET 8 middleware when the framework itself had a limitation, allowing us to unit test 100% of our critical authentication logic (which was impossible before).",
+    ],
+    logo: "/telford.jpg",
+    url: "https://www.sj.com",
+  },
+  {
+    company: "Intryc (YC W24)",
     position: "Software Engineer Intern",
     period: "Nov 2024 - Jan 2025",
     location: "London, United Kingdom",
     highlights: [
-      "Collaborated with senior developers on architectural decisions and reviews as employee #4 at an early-stage startup, establishing best practices for component development and state management in a high-impact, resource-constrained environment",
+      // "Collaborated with senior developers on architectural decisions and reviews as employee #4 at an early-stage startup, establishing best practices for component development and state management in a high-impact, resource-constrained environment",
 
-      "Led migration from legacy components to a standardized TypeScript component library across a 50K+ LOC codebase, improving type safety and reducing technical debt",
+      // "Led migration from legacy components to a standardized TypeScript component library across a 50K+ LOC codebase, improving type safety and reducing technical debt",
 
-      "Optimized component rendering through implementation of React's useMemo and useCallback hooks, reducing unnecessary re-renders by 30%",
+      // "Optimized component rendering through implementation of React's useMemo and useCallback hooks, reducing unnecessary re-renders by 30%",
 
-      "Built workload management system featuring dynamic filtering and real-time data visualization, handling complex state updates while maintaining consistent UI/UX",
+      // "Built workload management system featuring dynamic filtering and real-time data visualization, handling complex state updates while maintaining consistent UI/UX",
 
-      "Architected reusable component library using TypeScript and Remix's form handling, improving development efficiency and type safety across a 50K+ LOC codebase",
+      // "Architected reusable component library using TypeScript and Remix's form handling, improving development efficiency and type safety across a 50K+ LOC codebase",
 
-      "Implemented advanced state management and error handling in a Remix application, utilizing React hooks and custom form stores to prevent race conditions and improve user experience",
+      // "Implemented advanced state management and error handling in a Remix application, utilizing React hooks and custom form stores to prevent race conditions and improve user experience",
 
-      "Architected debouncing mechanisms for error handling using vanilla JavaScript, demonstrating deep understanding of browser event handling and async operations",
+      // "Architected debouncing mechanisms for error handling using vanilla JavaScript, demonstrating deep understanding of browser event handling and async operations",
 
-      "Developed reusable form components with complex state management patterns, implementing custom validation logic and error handling across multiple routes",
+      // "Developed reusable form components with complex state management patterns, implementing custom validation logic and error handling across multiple routes",
 
-      "Enhanced application routing and navigation controls using Remix's built-in features, implementing debouncing mechanisms to prevent edge-case navigation issues",
+      // "Enhanced application routing and navigation controls using Remix's built-in features, implementing debouncing mechanisms to prevent edge-case navigation issues",
 
-      "Contributed to modernizing the codebase through TypeScript adoption and implementation of shared component patterns, improving maintainability across multiple applications",
+      // "Contributed to modernizing the codebase through TypeScript adoption and implementation of shared component patterns, improving maintainability across multiple applications",
+      "jumped in as employee #4 at an early-stage YC startup, helping shape the architecture and coding standards from the beginning.",
+      "led the migration of a 50k+ line javascript codebase to typescript, ripping out old components and cutting down on our technical debt.",
+      "dug into our remix app and used useMemo and useCallback to slash unnecessary re-renders by 30%.",
+      "built the entire workload management system from scratch, handling complex state updates and real-time data visualization.",
+      "architected a reusable component library using typescript and remix's form handling, improving development efficiency and type safety across a 50k+ line codebase.",
     ],
     logo: "/intryc.jpg",
     url: "https://www.intryc.com",
@@ -111,15 +132,20 @@ export const experience = [
     period: "June 2024 - Sept 2024",
     location: "Abu Dhabi, U.A.E.",
     highlights: [
-      "Led the development of migrating a large-scale ERP system from Visual Basic to ASP.NET Core and React, integrating 10+ business modules including HR, Payroll, Recruitment, CRM, and Procurement, while reducing development time by 15% through reusable component architecture",
-      "Engineered a modular full-stack React application using Styled Components and Material-UI, implementing responsive UI design ensuring seamless user experience across desktop and mobile devices during the modernization process",
-      "Optimized application performance through React Context API and custom hooks implementation, improving component render times by 20%, reducing memory usage across high-traffic modules, and decreasing component coupling by 60%",
-      "Developed an enterprise-grade data management system supporting 500+ users with real-time updates, reducing data processing time by 25% and achieving 30% reduction in data redundancy through flexible data model design",
-      "Architected a dynamic form generation system with JSON configurations and Material-UI components, standardizing data input workflows, reducing form development time by 25%, and accelerating new feature development by 40%",
-      "Architected and implemented a scalable RESTful API suite using ASP.NET Core MVC, serving 30+ business domains with comprehensive logging, monitoring, and error handling that reduced system downtime by 15% and debugging time by 35%",
-      "Designed and implemented an enterprise-wide dynamic filtering system using LINQ expression trees and optimized database queries, resulting in 25% faster load times for large datasets",
-      "Architected and implemented advanced server-side pagination system with Entity Framework Core, optimizing performance for datasets exceeding 100,000 records with response times under 500ms, reducing database load by 30%, and supporting complex sorting and filtering operations",
-      "Designed and implemented a scalable repository pattern architecture with LINQ, enabling advanced filtering capabilities and dynamic query building, resulting in 20% reduced code duplication and improved application maintainability",
+      // "Led the development of migrating a large-scale ERP system from Visual Basic to ASP.NET Core and React, integrating 10+ business modules including HR, Payroll, Recruitment, CRM, and Procurement, while reducing development time by 15% through reusable component architecture",
+      // "Engineered a modular full-stack React application using Styled Components and Material-UI, implementing responsive UI design ensuring seamless user experience across desktop and mobile devices during the modernization process",
+      // "Optimized application performance through React Context API and custom hooks implementation, improving component render times by 20%, reducing memory usage across high-traffic modules, and decreasing component coupling by 60%",
+      // "Developed an enterprise-grade data management system supporting 500+ users with real-time updates, reducing data processing time by 25% and achieving 30% reduction in data redundancy through flexible data model design",
+      // "Architected a dynamic form generation system with JSON configurations and Material-UI components, standardizing data input workflows, reducing form development time by 25%, and accelerating new feature development by 40%",
+      // "Architected and implemented a scalable RESTful API suite using ASP.NET Core MVC, serving 30+ business domains with comprehensive logging, monitoring, and error handling that reduced system downtime by 15% and debugging time by 35%",
+      // "Designed and implemented an enterprise-wide dynamic filtering system using LINQ expression trees and optimized database queries, resulting in 25% faster load times for large datasets",
+      // "Architected and implemented advanced server-side pagination system with Entity Framework Core, optimizing performance for datasets exceeding 100,000 records with response times under 500ms, reducing database load by 30%, and supporting complex sorting and filtering operations",
+      // "Designed and implemented a scalable repository pattern architecture with LINQ, enabling advanced filtering capabilities and dynamic query building, resulting in 20% reduced code duplication and improved application maintainability",
+      "led the development of migrating a massive, old-school ERP system from Visual Basic to a modern stack using ASP.NET Core and React.",
+      "the new system i helped build brought 10+ business modules (like hr, payroll, and crm) together and handled data for over 500 users, making queries 25% faster.",
+      "architected a server-side pagination system that could zip through 100,000+ records in under 500ms and cut database load by 30%.",
+      "designed a dynamic filtering system that could handle complex quexries and cut load times by 25%.",
+      "built a dynamic JSON-based form generator that made building new features 40% faster and standardized all our data inputs.",
     ],
     logo: "/hertel.png",
     url: "https://www.intryc.com",
