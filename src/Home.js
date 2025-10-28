@@ -861,7 +861,7 @@ function Home({
               </AnimatePresence>
             </h1>
 
-            <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 mb-4 leading-[1.7]">
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 mb-4 leading-[1.7]">
               i'm an engineer, and i build software people want.
               <br />
               <br />

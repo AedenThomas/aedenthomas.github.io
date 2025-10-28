@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useInView from "./useInView";
 import "./App.css";
-import { FaLock, FaLockOpen, FaClock } from "react-icons/fa";
+import { FaLock, FaLockOpen, FaClock, FaChevronRight } from "react-icons/fa";
 
 const statusConfig = {
   Live: { colorClass: "text-green-500 border-green-500", width: "w-[4.75rem]" },
@@ -105,11 +105,16 @@ const Project = ({
         data-project-id={`project-${index}`}
         ref={projectRef}
         key={index}
-        className={`flex items-start mb-1 p-2 rounded-lg 
-          hover:bg-navy-800 dark:hover:bg-navy-900 cursor-pointer
-          custom-cursor-clickable ${
-            isBlurred || isReachOutHovered ? "blur-xs" : ""
-          } 
+        className={`flex items-center mb-3 p-4 rounded-xl 
+          ${
+            isDarkMode
+              ? "bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.15]"
+              : "bg-gray-900/[0.02] hover:bg-gray-900/[0.04] border border-gray-900/[0.08] hover:border-gray-900/[0.15] shadow-sm"
+          }
+          cursor-pointer custom-cursor-clickable
+          transition-all duration-300 ease-out
+          active:scale-[0.98]
+          ${isBlurred || isReachOutHovered ? "blur-xs" : ""} 
           ${hoveredProjectIndex === index ? "z-10 relative" : ""}`}
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -117,11 +122,13 @@ const Project = ({
           duration: 0.6,
           ease: "easeOut",
         }}
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.98 }}
         onClick={openModal}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <span className="text-2xl mr-4 mt-1 flex-shrink-0">{project.icon}</span>
+        <span className="text-2xl mr-4 flex-shrink-0">{project.icon}</span>
         <div className="flex-grow min-w-0">
           <div className="flex justify-between items-center">
             <h3 className="text-sm md:text-base font-semibold truncate mr-2 group-hover:text-white">
@@ -196,6 +203,12 @@ const Project = ({
             ))}
           </div>
         </div>
+        <FaChevronRight
+          className={`flex-shrink-0 ml-2 transition-transform duration-300 group-hover:translate-x-1 ${
+            isDarkMode ? "text-white/30" : "text-gray-900/30"
+          }`}
+          size={16}
+        />
       </motion.div>
 
       <AnimatePresence>

@@ -1,5 +1,82 @@
 # Development Log
 
+## 2025-10-28 - Project Card UI Enhancement for Mobile & Dark Mode
+
+### Problem
+
+Project cards appeared flat and non-interactive, especially on mobile devices where there is no cursor to indicate clickability. Dark mode styling looked muddy with gray-900 backgrounds that didn't match the site's clean, minimalist aesthetic using pure black backgrounds.
+
+### Solution
+
+Redesigned project cards with a modern, tactile feel inspired by Jony Ive's design philosophy - subtle depth, clear affordances, and minimalist elegance.
+
+**Key Changes:**
+
+1. **Added Visual Depth & Interactivity**:
+
+   - Semi-transparent backgrounds with subtle borders that respond to hover/tap
+   - Smooth transitions (300ms) for all interactive states
+   - Cards lift slightly on hover (`whileHover={{ y: -2 }}`)
+   - Tap feedback with scale animation (`whileTap={{ scale: 0.98 }}`)
+   - Active state for mobile tap (`active:scale-[0.98]`)
+
+2. **Dark Mode Refinement**:
+
+   - Changed from muddy `bg-gray-900/40` to clean `bg-white/[0.02]` (2% white tint)
+   - Hover state: `bg-white/[0.04]` (4% white tint)
+   - Borders: `border-white/[0.08]` (8% white opacity)
+   - Hover borders: `border-white/[0.15]` (15% white opacity)
+   - Chevron icon: `text-white/30` for subtle but visible affordance
+   - Matches the site's pure black (`#000000`) background aesthetic
+
+3. **Light Mode Styling**:
+
+   - Mirrored dark mode approach with subtle dark overlays (`bg-gray-900/[0.02]`)
+   - Hover state: `bg-gray-900/[0.04]` for subtle feedback
+   - Borders: `border-gray-900/[0.08]` matching the flat aesthetic
+   - Removed all shadows to maintain flat, minimal design consistent with rest of site
+   - Chevron icon: `text-gray-900/30` for subtle affordance
+
+4. **Mobile-Specific Improvements**:
+   - Added chevron arrow (`FaChevronRight`) on right side as clear "tap to view" indicator
+   - Increased padding from `p-2` to `p-4` for easier touch targets
+   - Increased spacing between cards (`mb-3`) for distinct, tappable objects
+   - Changed layout from `items-start` to `items-center` for better visual balance
+
+**Files Modified:**
+
+- `src/Project.js` - Complete card styling overhaul
+
+### Implementation Details
+
+- Cards now feel like physical objects with depth and tactile feedback
+- Dark mode uses additive white overlays instead of gray backgrounds
+- All animations use Framer Motion for smooth, native-feeling interactions
+- Design works seamlessly on both desktop and mobile
+- Active states provide immediate feedback on touch devices
+
+### Why This Works
+
+- **Depth Perception**: Subtle backgrounds and borders create layering against the page background
+- **Affordance**: Chevron arrow is universally understood as "tap/click here"
+- **Feedback**: Immediate visual response to hover/tap confirms interactivity
+- **Minimalism**: Very subtle effects (2-4% opacity) maintain clean aesthetic while adding necessary depth
+- **Mobile First**: Touch targets are large, feedback is immediate, visual cues don't rely on cursor
+
+### Dead Ends
+
+- Initial attempt used `bg-gray-900/40` in dark mode - looked muddy and didn't match the site's pure black aesthetic
+- Tried `shadow-md hover:shadow-lg` with `bg-white/60` backgrounds in light mode - looked too skeuomorphic and didn't match the flat, minimal aesthetic of the rest of the site
+- Removed all shadow effects for consistency - shadows in dark mode don't show well, and shadows in light mode broke the flat design language
+
+### Dependencies
+
+- Framer Motion - whileHover, whileTap animations
+- React Icons - FaChevronRight for visual affordance
+- Tailwind CSS - opacity utilities and transition classes
+
+---
+
 ## 2025-10-27 - Class-Based Dark Mode Fix for Mobile Overscroll
 
 ### Problem
