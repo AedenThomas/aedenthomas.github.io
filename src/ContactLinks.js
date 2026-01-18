@@ -201,7 +201,7 @@ const ContactLinks = ({
     // Add breakdown if ADO data exists
     if (contributionBreakdown && contributionBreakdown.ado > 0) {
       summary.push(
-        `${contributionBreakdown.github} personal commits \u2022 ${contributionBreakdown.ado} work commits`
+        `${contributionBreakdown.github} personal commits \u2022 ${contributionBreakdown.ado} work commits (🔒)`
       );
     }
 
@@ -340,28 +340,75 @@ const ContactLinks = ({
               {email}
             </a>
           </div>
-          <a
-            href={linkedinUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
-            onMouseEnter={() => handleClickableHover(true)}
-            onMouseLeave={() => handleClickableHover(false)}
-          >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
+          <div className="relative group/linkedin">
+            <a
+              href={linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
+              onMouseEnter={() => handleClickableHover(true)}
+              onMouseLeave={() => handleClickableHover(false)}
             >
-              <path
-                fillRule="evenodd"
-                d="M16.338 16.338H13.67V12.16c0-.995-.017-2.277-1.387-2.277-1.39 0-1.601 1.086-1.601 2.207v4.248H8.014v-8.59h2.559v1.174h.037c.356-.675 1.227-1.387 2.526-1.387 2.703 0 3.203 1.778 3.203 4.092v4.711zM5.005 6.575a1.548 1.548 0 11-.003-3.096 1.548 1.548 0 01.003 3.096zm-1.337 9.763H6.34v-8.59H3.667v8.59zM17.668 1H2.328C1.595 1 1 1.581 1 2.298v15.403C1 18.418 1.595 19 2.328 19h15.34c.734 0 1.332-.582 1.332-1.299V2.298C19 1.581 18.402 1 17.668 1z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-            linkedin
-          </a>
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.338 16.338H13.67V12.16c0-.995-.017-2.277-1.387-2.277-1.39 0-1.601 1.086-1.601 2.207v4.248H8.014v-8.59h2.559v1.174h.037c.356-.675 1.227-1.387 2.526-1.387 2.703 0 3.203 1.778 3.203 4.092v4.711zM5.005 6.575a1.548 1.548 0 11-.003-3.096 1.548 1.548 0 01.003 3.096zm-1.337 9.763H6.34v-8.59H3.667v8.59zM17.668 1H2.328C1.595 1 1 1.581 1 2.298v15.403C1 18.418 1.595 19 2.328 19h15.34c.734 0 1.332-.582 1.332-1.299V2.298C19 1.581 18.402 1 17.668 1z"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+              linkedin
+            </a>
+            {/* Handwritten annotation that appears on hover */}
+            <div className="linkedin-hover-annotation opacity-0 group-hover/linkedin:opacity-100 transition-opacity duration-300 absolute left-full top-1/2 -translate-y-1/2 ml-2 pointer-events-none whitespace-nowrap flex items-center">
+              {/* Hand-drawn arrow SVG */}
+              <svg
+                className="w-12 h-8 -mr-1"
+                viewBox="0 0 60 40"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 30 Q15 32, 25 25 Q35 18, 45 20 Q50 21, 55 18"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  fill="none"
+                  style={{ filter: 'url(#handdrawn)' }}
+                />
+                <path
+                  d="M50 14 L55 18 L50 22"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+                <defs>
+                  <filter id="handdrawn">
+                    <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="noise"/>
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1" />
+                  </filter>
+                </defs>
+              </svg>
+              {/* Handwritten text */}
+              <span 
+                className="text-white text-sm italic"
+                style={{ 
+                  fontFamily: "'Caveat', 'Brush Script MT', cursive",
+                  fontSize: '1.1rem',
+                  transform: 'rotate(-3deg)',
+                  letterSpacing: '0.5px'
+                }}
+              >
+                not active on it
+              </span>
+            </div>
+          </div>
           <a
             href={githubUrl}
             target="_blank"
