@@ -2,6 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+/* LinkedIn hover annotation styles */
+.linkedin-hover-annotation {
+  z-index: 50;
+}
+
+@keyframes draw-arrow {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw-arrow {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: draw-arrow 0.6s ease-out forwards;
+}
+
+.animate-draw-arrow-head {
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  animation: draw-arrow 0.3s ease-out 0.4s forwards;
+}
+
+.animate-fade-in-text {
+  opacity: 0;
+  animation: fade-in 0.3s ease-out 0.5s forwards;
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
 /*
   THIS IS THE CORE FIX:
   Set the background color for the entire page canvas, including the overscroll area.

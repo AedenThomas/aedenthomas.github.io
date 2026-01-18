@@ -208,7 +208,7 @@ const ContactLinks = ({
     // Show streaks
     if (currentStreak > 0) {
       if (currentStreak === longestStreak) {
-        summary.push(`current & longest streak: ${currentStreak} days 🔥`);
+        summary.push(`current & longest streak: ${currentStreak} days`);
       } else {
         summary.push(`current streak: ${currentStreak} days`);
         summary.push(`longest streak: ${longestStreak} days`);
@@ -251,6 +251,8 @@ const ContactLinks = ({
       });
     })();
   }, []);
+
+  const [isLinkedinHovered, setIsLinkedinHovered] = useState(false); // New state for hover animation
 
   return (
     <div className="mb-8">
@@ -346,8 +348,14 @@ const ContactLinks = ({
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
-              onMouseEnter={() => handleClickableHover(true)}
-              onMouseLeave={() => handleClickableHover(false)}
+              onMouseEnter={() => {
+                handleClickableHover(true);
+                setIsLinkedinHovered(true);
+              }}
+              onMouseLeave={() => {
+                handleClickableHover(false);
+                setIsLinkedinHovered(false);
+              }}
             >
               <svg
                 className="w-4 h-4 mr-2"
@@ -363,51 +371,55 @@ const ContactLinks = ({
               </svg>
               linkedin
             </a>
-            {/* Handwritten annotation that appears on hover */}
-            <div className="linkedin-hover-annotation opacity-0 group-hover/linkedin:opacity-100 transition-opacity duration-300 absolute left-full top-1/2 -translate-y-1/2 ml-2 pointer-events-none whitespace-nowrap flex items-center">
-              {/* Hand-drawn arrow SVG */}
-              <svg
-                className="w-12 h-8 -mr-1"
-                viewBox="0 0 60 40"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+            {/* Handwritten annotation - conditionally rendered safely */}
+            {isLinkedinHovered && (
+              <div
+                className="linkedin-hover-annotation absolute pointer-events-none"
+                style={{ left: '10px', top: '100%' }}
               >
-                <path
-                  d="M5 30 Q15 32, 25 25 Q35 18, 45 20 Q50 21, 55 18"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
+                <svg
+                  width="250"
+                  height="80"
+                  viewBox="0 0 250 80"
                   fill="none"
-                  style={{ filter: 'url(#handdrawn)' }}
-                />
-                <path
-                  d="M50 14 L55 18 L50 22"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-                <defs>
-                  <filter id="handdrawn">
-                    <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="noise"/>
-                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="1" />
-                  </filter>
-                </defs>
-              </svg>
-              {/* Handwritten text */}
-              <span 
-                className="text-white text-sm italic"
-                style={{ 
-                  fontFamily: "'Caveat', 'Brush Script MT', cursive",
-                  fontSize: '1.1rem',
-                  transform: 'rotate(-3deg)',
-                  letterSpacing: '0.5px'
-                }}
-              >
-                not active on it
-              </span>
-            </div>
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ overflow: 'visible' }}
+                >
+                  <path
+                    className="animate-draw-arrow"
+                    d="M 30 5 C 15 20, 5 30, 30 45 C 50 55, 70 50, 95 50"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                  <path
+                    className="animate-draw-arrow-head"
+                    d="M 90 45 L 95 50 L 90 55"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                  />
+                  <text
+                    className="animate-fade-in-text"
+                    x="105"
+                    y="55"
+                    fill="white"
+                    style={{
+                      fontFamily: "'Caveat', cursive",
+                      fontSize: '30px', /* Kept user's requested 30px size */
+                      fontStyle: 'italic',
+                      fontWeight: '500'
+                    }}
+                    transform="rotate(-2, 105, 55)"
+                  >
+                    should i update it? hmmm...
+                  </text>
+                </svg>
+              </div>
+            )}
           </div>
           <a
             href={githubUrl}
