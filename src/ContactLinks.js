@@ -163,6 +163,23 @@ const ContactLinks = ({
     return longestStreak;
   };
 
+  const contributionBreakdown = useMemo(() => {
+    if (!contributionData && !intrycContributionData && !adoContributionData)
+      return null;
+    const githubTotal =
+      (contributionData?.contributions
+        .flat()
+        .slice(-365)
+        .reduce((s, d) => s + d.contributionCount, 0) || 0) +
+      (intrycContributionData?.contributions
+        .flat()
+        .slice(-365)
+        .reduce((s, d) => s + d.contributionCount, 0) || 0);
+    const adoTotal =
+      adoContributionData?.contributions.reduce((s, d) => s + d.count, 0) || 0;
+    return { github: githubTotal, ado: adoTotal };
+  }, [contributionData, intrycContributionData, adoContributionData]);
+
   const getContributionsSummary = useCallback(() => {
     if (error) return [error];
     if (!combinedPastYearContributions) return ["Loading contributions..."];
@@ -175,22 +192,38 @@ const ContactLinks = ({
 
     // Only show today's contributions if > 0
     if (todayCount > 0) {
-      summary.push(`Today: ${todayCount} contributions`);
+      summary.push(`today: ${todayCount} contributions`);
     }
 
     // Always show past year total
-    summary.push(`Past year: ${totalPastYearContributions} contributions`);
+    summary.push(`past year: ${totalPastYearContributions} contributions`);
 
-    // Only show current streak if > 0
-    if (currentStreak > 0) {
-      summary.push(`Current streak: ${currentStreak} days`);
+    // Add breakdown if ADO data exists
+    if (contributionBreakdown && contributionBreakdown.ado > 0) {
+      summary.push(
+        `${contributionBreakdown.github} personal commits \u2022 ${contributionBreakdown.ado} work commits`
+      );
     }
 
-    // Always show longest streak
-    summary.push(`Longest streak: ${longestStreak} days`);
+    // Show streaks
+    if (currentStreak > 0) {
+      if (currentStreak === longestStreak) {
+        summary.push(`current & longest streak: ${currentStreak} days 🔥`);
+      } else {
+        summary.push(`current streak: ${currentStreak} days`);
+        summary.push(`longest streak: ${longestStreak} days`);
+      }
+    } else {
+      summary.push(`Longest streak: ${longestStreak} days`);
+    }
 
     return summary;
-  }, [error, combinedPastYearContributions, totalPastYearContributions]);
+  }, [
+    error,
+    combinedPastYearContributions,
+    totalPastYearContributions,
+    contributionBreakdown,
+  ]);
 
   const handleCopyEmail = async (e) => {
     e.preventDefault();
