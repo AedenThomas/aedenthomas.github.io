@@ -201,7 +201,7 @@ const ContactLinks = ({
     // Add breakdown if ADO data exists
     if (contributionBreakdown && contributionBreakdown.ado > 0) {
       summary.push(
-        `${contributionBreakdown.github} personal commits \u2022 ${contributionBreakdown.ado} work commits (🔒)`
+        `${contributionBreakdown.github} personal commits ● ${contributionBreakdown.ado} work commits (🔒)`
       );
     }
 
