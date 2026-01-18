@@ -1,0 +1,44 @@
+
+name: Update Azure DevOps Stats
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight
+  workflow_dispatch:      # Allow manual trigger
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Fetch ADO Contributions
+        env:
+          ADO_PAT: ${{ secrets.ADO_PAT }}
+          ADO_ORG: ${{ secrets.ADO_ORG }}
+          ADO_AUTHOR_EMAIL: ${{ secrets.ADO_AUTHOR_EMAIL }}
+        run: node scripts/fetch-ado-contributions.js
+
+      - name: Commit and Push changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "chore: update ado contributions [skip ci]"
+          file_pattern: public/ado-contributions.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy to GitHub Pages
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          npm run deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

@@ -90,7 +90,7 @@ export const experience = [
       "figured out a novel way to test .NET 8 middleware when the framework itself had a limitation, allowing us to unit test 100% of our critical authentication logic (which was impossible before).",
     ],
     logo: "/telford.jpg",
-    url: "https://www.sj.com",
+    // url: "https://www.sj.com",
   },
   {
     company: "Intryc (YC W24)",
