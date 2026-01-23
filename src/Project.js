@@ -35,10 +35,8 @@ const Project = ({
   hoveredProjectIndex,
   isReachOutHovered,
 }) => {
-  const projectRef = useRef(null);
-
   // Pass the stable viewOptions object to the hook.
-  const isInView = useInView(projectRef, viewOptions);
+  const [projectRef, isInView] = useInView(viewOptions);
 
   const contentRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

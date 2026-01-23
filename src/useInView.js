@@ -1,15 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
-function useInView(ref, options) {
+function useInView(options = {}) {
   const [isInView, setIsInView] = useState(false);
+  const [element, setElement] = useState(null);
+  const observerRef = useRef(null);
+  
+  // Use a callback ref to handle element mounting/unmounting
+  const ref = useCallback((node) => {
+    setElement(node);
+  }, []);
 
   // Create a stable, primitive dependency from the options object.
   const stringifiedOptions = JSON.stringify(options);
 
   useEffect(() => {
-    const element = ref.current;
-    if (!element) {
-      return;
+    if (!element) return;
+
+    // Disconnect previous observer if exists
+    if (observerRef.current) {
+      observerRef.current.disconnect();
     }
 
     const parsedOptions = JSON.parse(stringifiedOptions);
@@ -18,8 +27,8 @@ function useInView(ref, options) {
     const observerCallback = ([entry]) => {
       if (entry.isIntersecting) {
         setIsInView(true);
-        if (triggerOnce) {
-          observer.unobserve(element);
+        if (triggerOnce && observerRef.current) {
+          observerRef.current.unobserve(element);
         }
       } else if (!triggerOnce) {
         setIsInView(false);
@@ -27,16 +36,17 @@ function useInView(ref, options) {
     };
 
     const observer = new IntersectionObserver(observerCallback, parsedOptions);
+    observerRef.current = observer;
     observer.observe(element);
 
-    // Cleanup function to disconnect the observer
     return () => {
-      observer.disconnect();
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
     };
-    // FIX: The dependency array now ONLY contains stable values, preventing the infinite loop.
-  }, [ref, stringifiedOptions]);
+  }, [element, stringifiedOptions]);
 
-  return isInView;
+  return [ref, isInView];
 }
 
 export default useInView;

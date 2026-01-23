@@ -67,16 +67,11 @@ function App() {
     []
   );
 
-  const courseworkRef = useRef(null);
-  const isCourseworkInView = useInView(courseworkRef, { threshold: 0.1 });
-
-  const skillsRef = useRef(null);
-  const educationRef = useRef(null);
-  const isSkillsInView = useInView(skillsRef, { threshold: 0.1 });
-  const isEducationInView = useInView(educationRef, { threshold: 0.1 });
-
-  const publicationsRef = useRef(null);
-  const isPublicationsInView = useInView(publicationsRef, { threshold: 0.1 });
+  // useInView now returns [ref, isInView]
+  const [courseworkRef, isCourseworkInView] = useInView({ threshold: 0.1 });
+  const [skillsRef, isSkillsInView] = useInView({ threshold: 0.1 });
+  const [educationRef, isEducationInView] = useInView({ threshold: 0.1 });
+  const [publicationsRef, isPublicationsInView] = useInView({ threshold: 0.1 });
 
   const [currentGreeting, setCurrentGreeting] = useState(0);
   const greetings = useMemo(() => [
