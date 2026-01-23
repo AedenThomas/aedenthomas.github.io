@@ -70,7 +70,7 @@ function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
 
   return (
     <motion.div
-      className={`min-h-screen p-4 md:p-8 pt-24 pb-24 font-mono ${textColor}`}
+      className={`min-h-screen md:p-8 pt-24 pb-24 font-mono ${textColor} break-words w-full`}
       initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.3 } }}
@@ -91,7 +91,7 @@ function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
         {/* Contact */}
         <section>
           <h2 className={`text-lg font-semibold mb-4 ${dimColor}`}>## Contact</h2>
-          <motion.div variants={itemVariants} className="space-y-1 text-sm">
+          <motion.div variants={itemVariants} className="space-y-1 text-sm break-all">
             <div>- Email: {email}</div>
             <div>- LinkedIn: {linkedinUrl}</div>
             <div>- GitHub: {githubUrl}</div>
@@ -183,7 +183,7 @@ function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
                 </motion.p>
                 
                 {project.url && (
-                   <motion.div variants={itemVariants} className="text-sm">
+                   <motion.div variants={itemVariants} className="text-sm break-all">
                      <span className={dimColor}>[</span>
                      <span className="underline">View Project</span>
                      <span className={dimColor}>]({project.url})</span>
