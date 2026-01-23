@@ -1,6 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Machine Mode Styles */
+.machine-mode {
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+  background-color: #0a0a0a;
+  color: #e5e5e5;
+}
+
+.machine-mode-transition {
+  transition: font-family 0.5s ease-in-out,
+              background-color 0.5s ease-in-out,
+              color 0.5s ease-in-out;
+}
 
 /* LinkedIn hover annotation styles */
 .linkedin-hover-annotation {

@@ -107,7 +107,7 @@ const Project = ({
         key={index}
         className={`flex items-center mb-3 p-4 rounded-xl 
           cursor-pointer custom-cursor-clickable
-          transition-all duration-300 ease-out
+          transition-colors duration-300 ease-out
           active:scale-[0.98]
           ${isBlurred || isReachOutHovered ? "blur-xs" : ""} 
           ${hoveredProjectIndex === index ? "z-10 relative" : ""}`}
@@ -126,9 +126,12 @@ const Project = ({
         <span className="text-2xl mr-4 flex-shrink-0">{project.icon}</span>
         <div className="flex-grow min-w-0">
           <div className="flex justify-between items-center">
-            <h3 className="text-sm md:text-base font-semibold truncate mr-2 group-hover:text-white">
+            <motion.h3 
+              layoutId={`proj-title-${index}`}
+              className="text-sm md:text-base font-semibold truncate mr-2 group-hover:text-white"
+            >
               {project.title}
-            </h3>
+            </motion.h3>
             <button
               className={`text-xs rounded-full border flex items-center justify-center h-8 flex-shrink-0 relative
                 ${getStatusConfig(project.status).width}
@@ -180,9 +183,12 @@ const Project = ({
               <span className="flex-grow text-center">{project.status}</span>
             </button>
           </div>
-          <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-1 break-words group-hover:text-gray-200">
+          <motion.p 
+            layoutId={`proj-desc-${index}`}
+            className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-1 break-words group-hover:text-gray-200"
+          >
             {project.description}
-          </p>
+          </motion.p>
           <div className="mt-2 flex flex-wrap gap-1">
             {project.technologies.map((tech, techIndex) => (
               <span

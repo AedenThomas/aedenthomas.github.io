@@ -25,6 +25,8 @@ import {
 import ContactLinks from "./ContactLinks";
 import LanguageIcon from "./LanguageIcon";
 import { useNavigate } from "react-router-dom";
+import ModeToggle from "./ModeToggle";
+import MachineMode from "./MachineMode";
 
 // Add this near the top of the file, outside the component
 const AIPage = React.lazy(() => import("./AIPage"));
@@ -57,6 +59,8 @@ function Home({
   isPublicationsInView,
   courseworkRef,
   isCourseworkInView,
+  viewMode,
+  setViewMode,
 }) {
   const navigate = useNavigate();
   const [isAIButtonHovered, setIsAIButtonHovered] = useState(false);
@@ -606,7 +610,7 @@ function Home({
       {!isMobile && (
         <>
           <div
-            className={`fixed w-5 h-5 rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2`}
+            className={`fixed w-5 h-5 rounded-full pointer-events-none z-[99999] transform -translate-x-1/2 -translate-y-1/2`}
             style={{
               left: mousePosition.x,
               top: mousePosition.y,
@@ -619,7 +623,7 @@ function Home({
             }}
           />
           <div
-            className={`fixed w-7 h-7 rounded-full pointer-events-none z-[9999] transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 ${
+            className={`fixed w-7 h-7 rounded-full pointer-events-none z-[99999] transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 ${
               isHoveredClickable
                 ? "opacity-100 scale-110"
                 : "opacity-0 scale-100"
@@ -828,12 +832,16 @@ function Home({
         )}
       </AnimatePresence>
 
-      <motion.div
-        className="max-w-3xl mx-auto"
-        // This new animate prop will fade out the content when you click the AI button
-        animate={{ opacity: isNavigating ? 0 : 1 }}
-        transition={{ duration: 0.5 }}
-      >
+      <AnimatePresence mode="popLayout">
+        {viewMode === 'human' ? (
+          <motion.div
+            key="human"
+            className="max-w-3xl mx-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isNavigating ? 0 : 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
         <div
           className={`transition-all duration-300 ${
             hoveredProjectIndex !== null
@@ -853,13 +861,15 @@ function Home({
             />
 
             <h1 className="text-2xl md:text-4xl font-bold mb-5 mt-5">
-              <AnimatePresence mode="wait">
-                <AnimatedGreeting
-                  key={currentGreeting}
-                  greeting={greetings[currentGreeting]}
-                  className="handwritten-font"
-                />
-              </AnimatePresence>
+              <motion.span layoutId="hero-name" className="inline-block">
+                <AnimatePresence mode="wait">
+                  <AnimatedGreeting
+                    key={currentGreeting}
+                    greeting={greetings[currentGreeting]}
+                    className="handwritten-font"
+                  />
+                </AnimatePresence>
+              </motion.span>
             </h1>
 
             <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 mb-4 leading-[1.7]">
@@ -1065,9 +1075,12 @@ function Home({
                   )}
                   <div className="w-full">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-base md:text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      <motion.h3 
+                        layoutId={`exp-company-${index}`}
+                        className="text-base md:text-lg font-semibold text-gray-900 dark:text-gray-100"
+                      >
                         {exp.company}
-                      </h3>
+                      </motion.h3>
                       {exp.url && (
                         <a
                           href={exp.url}
@@ -1091,17 +1104,23 @@ function Home({
                         </a>
                       )}
                     </div>
-                    <p className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <motion.p 
+                      layoutId={`exp-pos-${index}`}
+                      className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
                       {exp.position}
-                    </p>
+                    </motion.p>
                     <div className="flex justify-between text-xs md:text-sm text-gray-500 dark:text-gray-400">
-                      <span>{exp.location}</span>
-                      <span>{exp.period}</span>
+                      <motion.span layoutId={`exp-location-${index}`}>{exp.location}</motion.span>
+                      <motion.span layoutId={`exp-period-${index}`}>{exp.period}</motion.span>
                     </div>
 
-                    <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-2 italic">
+                    <motion.p 
+                      layoutId={`exp-desc-${index}`}
+                      className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-2 italic"
+                    >
                       {exp.description}
-                    </p>
+                    </motion.p>
 
                     <div className="relative">
                       <motion.div
@@ -1118,9 +1137,13 @@ function Home({
                       >
                         <ul className="list-disc list-inside text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-2">
                           {exp.highlights.map((highlight, i) => (
-                            <li key={i} className="ml-4 mb-2">
+                            <motion.li 
+                              key={i} 
+                              layoutId={`exp-point-${index}-${i}`}
+                              className="ml-4 mb-2"
+                            >
                               {highlight}
-                            </li>
+                            </motion.li>
                           ))}
                         </ul>
 
@@ -1461,6 +1484,31 @@ function Home({
           </div>
         </div>
       </motion.div>
+        ) : (
+          <motion.div
+            key="machine"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <MachineMode 
+              email={email}
+              linkedinUrl={linkedinUrl}
+              githubUrl={githubUrl}
+              isDarkMode={isDarkMode}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mode Toggle - Always visible */}
+      <ModeToggle 
+        viewMode={viewMode} 
+        setViewMode={setViewMode} 
+        handleClickableHover={handleClickableHover}
+        isDarkMode={isDarkMode}
+      />
     </motion.div>
   );
 }

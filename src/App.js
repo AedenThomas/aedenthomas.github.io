@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import {
   HashRouter as Router,
   Routes,
@@ -22,6 +22,7 @@ function App() {
   const [hoveredLanguage, setHoveredLanguage] = useState(null);
   const [isHoveredClickable, setIsHoveredClickable] = useState(false);
   const [hoveredProjectIndex, setHoveredProjectIndex] = useState(null);
+  const [viewMode, setViewMode] = useState('human'); // 'human' or 'machine'
 
   const handleProjectHover = useCallback((index) => {
     setHoveredProjectIndex(index);
@@ -78,7 +79,7 @@ function App() {
   const isPublicationsInView = useInView(publicationsRef, { threshold: 0.1 });
 
   const [currentGreeting, setCurrentGreeting] = useState(0);
-  const greetings = [
+  const greetings = useMemo(() => [
     "Hey!",
     "Hola!",
     "नमस्ते!",
@@ -88,7 +89,7 @@ function App() {
     "Olá!",
     "여보세요!",
     "Hallo!",
-  ];
+  ], []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -199,6 +200,8 @@ function App() {
               isPublicationsInView={isPublicationsInView}
               courseworkRef={courseworkRef}
               isCourseworkInView={isCourseworkInView}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
             />
           }
         />
