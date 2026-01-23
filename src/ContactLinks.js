@@ -207,14 +207,37 @@ const ContactLinks = ({
 
     // Only show today's contributions if > 0
     if (todayCount > 0) {
-      summary.push(<span><b>past 24h:</b> {todayCount} contributions</span>);
+      summary.push(
+        <div className="flex justify-between items-center w-full gap-8">
+          <span className="text-left">
+            <b>past 24h:</b>
+          </span>
+          <span className="text-right">{todayCount} contributions</span>
+        </div>
+      );
     }
-    
+
     // Always show past week
-    summary.push(<span><b>past week:</b> {pastWeekCount} contributions</span>);
+    summary.push(
+      <div className="flex justify-between items-center w-full gap-8">
+        <span className="text-left">
+          <b>past week:</b>
+        </span>
+        <span className="text-right">{pastWeekCount} contributions</span>
+      </div>
+    );
 
     // Always show past year total
-    summary.push(<span><b>past year:</b> {totalPastYearContributions} contributions</span>);
+    summary.push(
+      <div className="flex justify-between items-center w-full gap-8">
+        <span className="text-left">
+          <b>past year:</b>
+        </span>
+        <span className="text-right">
+          {totalPastYearContributions} contributions
+        </span>
+      </div>
+    );
 
     // Add breakdown if ADO data exists
     if (contributionBreakdown && contributionBreakdown.ado > 0) {
@@ -224,15 +247,44 @@ const ContactLinks = ({
     }
 
     // Show streaks
+    // Show streaks
     if (currentStreak > 0) {
       if (currentStreak === longestStreak) {
-        summary.push(<span><b>current & longest streak:</b> {currentStreak} days</span>);
+        summary.push(
+          <div className="flex justify-between items-center w-full gap-8">
+            <span className="text-left">
+              <b>current & longest streak:</b>
+            </span>
+            <span className="text-right">{currentStreak} days</span>
+          </div>
+        );
       } else {
-        summary.push(<span><b>current streak:</b> {currentStreak} days</span>);
-        summary.push(<span><b>longest streak:</b> {longestStreak} days</span>);
+        summary.push(
+          <div className="flex justify-between items-center w-full gap-8">
+            <span className="text-left">
+              <b>current streak:</b>
+            </span>
+            <span className="text-right">{currentStreak} days</span>
+          </div>
+        );
+        summary.push(
+          <div className="flex justify-between items-center w-full gap-8">
+            <span className="text-left">
+              <b>longest streak:</b>
+            </span>
+            <span className="text-right">{longestStreak} days</span>
+          </div>
+        );
       }
     } else {
-      summary.push(<span><b>longest streak:</b> {longestStreak} days</span>);
+      summary.push(
+        <div className="flex justify-between items-center w-full gap-8">
+          <span className="text-left">
+            <b>longest streak:</b>
+          </span>
+          <span className="text-right">{longestStreak} days</span>
+        </div>
+      );
     }
 
     return summary;
