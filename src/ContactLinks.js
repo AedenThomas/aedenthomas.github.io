@@ -406,7 +406,7 @@ const ContactLinks = ({
                   <path
                     className="animate-draw-arrow"
                     d="M 30 5 C 15 20, 5 30, 30 45 C 50 55, 70 50, 95 50"
-                    stroke="white"
+                    stroke={isDarkMode ? "white" : "black"}
                     strokeWidth="2"
                     strokeLinecap="round"
                     fill="none"
@@ -414,7 +414,7 @@ const ContactLinks = ({
                   <path
                     className="animate-draw-arrow-head"
                     d="M 90 45 L 95 50 L 90 55"
-                    stroke="white"
+                    stroke={isDarkMode ? "white" : "black"}
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -424,7 +424,7 @@ const ContactLinks = ({
                     className="animate-fade-in-text"
                     x="105"
                     y="55"
-                    fill="white"
+                    fill={isDarkMode ? "white" : "black"}
                     style={{
                       fontFamily: "'Caveat', cursive",
                       fontSize: '30px', /* Kept user's requested 30px size */
