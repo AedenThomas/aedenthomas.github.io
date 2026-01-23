@@ -25,7 +25,7 @@ if (process.env.ADO_PAT_CRUCIBLE) {
     configs.push({
         org: 'CrucibleGamingLTD',
         pat: process.env.ADO_PAT_CRUCIBLE,
-        email: process.env.ADO_EMAIL_CRUCIBLE || process.env.ADO_AUTHOR_EMAIL // Fallback to main email if specific one not provided
+        email: process.env.ADO_EMAIL_CRUCIBLE || 'aeden@sjtelford.uk'
     });
 }
 
@@ -34,7 +34,7 @@ if (process.env.ADO_PAT_SJ) {
     configs.push({
         org: 'SJTelfordConsultancy',
         pat: process.env.ADO_PAT_SJ,
-        email: process.env.ADO_EMAIL_SJ || process.env.ADO_AUTHOR_EMAIL
+        email: process.env.ADO_EMAIL_SJ || 'aeden@sjtelford.uk'
     });
 }
 
