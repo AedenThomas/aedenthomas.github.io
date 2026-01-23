@@ -24,6 +24,22 @@ const viewOptions = {
   triggerOnce: true,
 };
 
+const renderDescription = (text) => {
+  if (!text) return null;
+  // unique delimiter to avoid messing up with original text content
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <strong key={i} className="font-bold">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+};
+
 const Project = ({
   project,
   index,
@@ -185,7 +201,7 @@ const Project = ({
             layoutId={`proj-desc-${index}`}
             className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-1 break-words group-hover:text-gray-200"
           >
-            {project.description}
+            {renderDescription(project.description)}
           </motion.p>
           <div className="mt-2 flex flex-wrap gap-1">
             {project.technologies.map((tech, techIndex) => (
@@ -266,7 +282,7 @@ const Project = ({
                     isDarkMode ? "text-gray-300" : "text-gray-600"
                   }`}
                 >
-                  {project.popupDescription || project.description}
+                  {renderDescription(project.popupDescription || project.description)}
                 </p>
                 <div className="flex flex-wrap gap-2 mb-4">
                   {project.technologies.map((tech, i) => (

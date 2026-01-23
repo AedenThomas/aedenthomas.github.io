@@ -202,7 +202,7 @@ export const projects = [
     icon: "💰",
     title: "Bill Split",
     description:
-      "built a cross-platform bill splitting app that 3.66k+ people use on the app store",
+      "built a cross-platform bill splitting app that **3.66k+ people** use on the app store",
     popupDescription:
       "Bill Split simplifies splitting expenses. It utilizes a sophisticated algorithm for fair distribution, supports multiple currencies and payment methods, and integrates Azure Functions for secure API communication. Azure Form Recognizer enables seamless receipt scanning and data extraction.",
     status: "Live",
@@ -220,7 +220,7 @@ export const projects = [
     icon: "📄",
     title: "AIResume",
     description:
-      "built a Chrome extension that 117+ people use to tailor resumes and generate cover letters with AI in one click.",
+      "built a Chrome extension that **117+ people** use to tailor resumes and generate cover letters with AI in one click.",
     popupDescription:
       "AIResume is a Chrome extension that leverages AI to help users quickly and easily modify their resumes to match specific job descriptions. It also generates compelling cover letters. The backend is built using C# and .NET APIs.",
     status: "Live",
@@ -264,7 +264,7 @@ export const projects = [
     icon: "🎙️",
     title: "AI Interviewer",
     description:
-      "won 3rd place and most innovative project at MoonHacks by Moon Corp for building an AI-powered system that conducts fair, efficient, and personalized job interviews at scale.",
+      "won **3rd place** and **most innovative project** at MoonHacks by Moon Corp for building an AI-powered system that conducts fair, efficient, and personalized job interviews at scale.",
     popupDescription:
       "AI Interviewer is an end-to-end automated interviewing system. It generates customized interview questions, conducts voice-based conversations, analyzes candidate responses, provides feedback, and produces standardized evaluation scores for recruiters.",
     status: "Live",

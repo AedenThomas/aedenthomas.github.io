@@ -9,6 +9,21 @@ import {
   experience,
 } from './data';
 
+const renderDescription = (text) => {
+  if (!text) return null;
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <strong key={i} className="font-bold">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+};
+
 function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
   const [isCopied, setIsCopied] = React.useState(false);
   const containerVariants = {
@@ -179,7 +194,7 @@ function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
                   layoutId={`proj-desc-${index}`}
                   className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
                 >
-                  {project.description}
+                  {renderDescription(project.description)}
                 </motion.p>
                 
                 {project.url && (
