@@ -149,6 +149,20 @@ const ContactLinks = ({
     return todayContribution ? todayContribution.contributionCount : 0;
   };
 
+  const getPastWeekContributions = (contributions) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const oneWeekAgo = new Date(today);
+    oneWeekAgo.setDate(today.getDate() - 7);
+
+    return contributions
+      .filter((day) => {
+        const contribDate = new Date(day.date);
+        return contribDate >= oneWeekAgo && contribDate <= today;
+      })
+      .reduce((sum, day) => sum + day.contributionCount, 0);
+  };
+
   const calculateLongestStreak = (contributions) => {
     let longestStreak = 0;
     let currentStreak = 0;
@@ -187,34 +201,38 @@ const ContactLinks = ({
     const currentStreak = calculateCurrentStreak(combinedPastYearContributions);
     const longestStreak = calculateLongestStreak(combinedPastYearContributions);
     const todayCount = getTodayContributions(combinedPastYearContributions);
+    const pastWeekCount = getPastWeekContributions(combinedPastYearContributions);
 
     const summary = [];
 
     // Only show today's contributions if > 0
     if (todayCount > 0) {
-      summary.push(`today: ${todayCount} contributions`);
+      summary.push(<span><b>past 24h:</b> {todayCount} contributions</span>);
     }
+    
+    // Always show past week
+    summary.push(<span><b>past week:</b> {pastWeekCount} contributions</span>);
 
     // Always show past year total
-    summary.push(`past year: ${totalPastYearContributions} contributions`);
+    summary.push(<span><b>past year:</b> {totalPastYearContributions} contributions</span>);
 
     // Add breakdown if ADO data exists
     if (contributionBreakdown && contributionBreakdown.ado > 0) {
       summary.push(
-        `${contributionBreakdown.github} personal commits ● ${contributionBreakdown.ado} work commits (🔒)`
+        <span>{contributionBreakdown.github} personal commits ● {contributionBreakdown.ado} work commits (🔒)</span>
       );
     }
 
     // Show streaks
     if (currentStreak > 0) {
       if (currentStreak === longestStreak) {
-        summary.push(`current & longest streak: ${currentStreak} days`);
+        summary.push(<span><b>current & longest streak:</b> {currentStreak} days</span>);
       } else {
-        summary.push(`current streak: ${currentStreak} days`);
-        summary.push(`longest streak: ${longestStreak} days`);
+        summary.push(<span><b>current streak:</b> {currentStreak} days</span>);
+        summary.push(<span><b>longest streak:</b> {longestStreak} days</span>);
       }
     } else {
-      summary.push(`Longest streak: ${longestStreak} days`);
+      summary.push(<span><b>longest streak:</b> {longestStreak} days</span>);
     }
 
     return summary;
