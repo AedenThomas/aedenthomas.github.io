@@ -25,6 +25,8 @@ jobs:
           ADO_PAT: ${{ secrets.ADO_PAT }}
           ADO_ORG: ${{ secrets.ADO_ORG }}
           ADO_AUTHOR_EMAIL: ${{ secrets.ADO_AUTHOR_EMAIL }}
+          ADO_PAT_CRUCIBLE: ${{ secrets.ADO_PAT_CRUCIBLE }}
+          ADO_PAT_SJ: ${{ secrets.ADO_PAT_SJ }}
         run: node scripts/fetch-ado-contributions.js
 
       - name: Commit and Push changes

@@ -4,28 +4,51 @@ const path = require('path');
 const https = require('https');
 
 // Configuration
-const ADO_PAT = process.env.ADO_PAT;
-// Organization is often part of the URL, e.g. dev.azure.com/ORG
-// or visualstudio.com/ORG. We can try to infer or require it.
-// For now, let's assume the user might need to set this or we can try to fetch it.
-// Actually, looking at the user's request, they didn't specify the Org.
-// We might need to ask, or try to list all accounts if possible (usually hard with just PAT).
-// However, the PAT organization scope usually restricts it.
-// Let's assume a specific Organization is needed.
-// 'https://dev.azure.com/{organization}/_apis/projects?api-version=6.0'
+// We support multiple organizations.
+// Defined as:
+// ADO_CONFIG_JSON = '[{"org": "shoutt", "pat": "...", "email": "..."}, ...]'
+// OR fallback to individual env vars for backward compatibility/simplicity in GitHub Actions without JSON stringifying.
 
-// Since we don't know the Organization, I'll add a placeholder variable
-// and try to use a common method to find it or ask the user.
-// BUT, the user provided a PAT.
-// Let's rely on an env var for ORG as well, or hardcode if the user tells us.
-const ADO_ORG = process.env.ADO_ORG || 'aedenthomas'; // Guessing based on username, but likely wrong.
+const configs = [];
+
+// 1. Primary (original) config
+if (process.env.ADO_PAT && process.env.ADO_ORG) {
+    configs.push({
+        org: process.env.ADO_ORG,
+        pat: process.env.ADO_PAT,
+        email: process.env.ADO_AUTHOR_EMAIL
+    });
+}
+
+// 2. CrucibleGamingLTD
+if (process.env.ADO_PAT_CRUCIBLE) {
+    configs.push({
+        org: 'CrucibleGamingLTD',
+        pat: process.env.ADO_PAT_CRUCIBLE,
+        email: process.env.ADO_EMAIL_CRUCIBLE || process.env.ADO_AUTHOR_EMAIL // Fallback to main email if specific one not provided
+    });
+}
+
+// 3. SJTelfordConsultancy
+if (process.env.ADO_PAT_SJ) {
+    configs.push({
+        org: 'SJTelfordConsultancy',
+        pat: process.env.ADO_PAT_SJ,
+        email: process.env.ADO_EMAIL_SJ || process.env.ADO_AUTHOR_EMAIL
+    });
+}
+
+if (configs.length === 0) {
+    console.error('Error: No ADO configurations found. Please set ADO_PAT and ADO_ORG, or specific org secrets.');
+    process.exit(1);
+}
 
 // Helper for https requests
-function azRequest(url) {
+function azRequest(url, pat) {
     return new Promise((resolve, reject) => {
         const options = {
             headers: {
-                'Authorization': `Basic ${Buffer.from(':' + ADO_PAT).toString('base64')}`,
+                'Authorization': `Basic ${Buffer.from(':' + pat).toString('base64')}`,
                 'Content-Type': 'application/json'
             }
         };
@@ -48,99 +71,79 @@ function azRequest(url) {
     });
 }
 
-// 1. Get all projects
-// 2. For each project, get all repositories
-// 3. For each repo, get commits by author (current user) in IsPastYear
-// 4. Aggregate
-
 async function fetchContributions() {
-    if (!ADO_PAT) {
-        console.error('Error: ADO_PAT environment variable is missing');
-        process.exit(1);
-    }
-
-    // We need the user's email or descriptor to filter commits.
-    // Use the get Profile API to find current user details?
-    // GET https://app.vssps.visualstudio.com/_apis/profile/profiles/me?api-version=6.0
-    // This is global, might be tricky with some PAT scopes. 
-    // Let's assume the user email used in git commits.
-    // For now, we'll try to match by author email if known, or fetch all and filter?
-    // Filtering by author in the API is consistent.
-    // 'searchCriteria.author'
-    
-    // Let's verify the user identity first if possible, or use a hardcoded email env var.
-    const TARGET_AUTHOR = process.env.ADO_AUTHOR_EMAIL; // e.g. aeden.thomas@example.com
-
-    if (!TARGET_AUTHOR) {
-        console.error('Error: ADO_AUTHOR_EMAIL environment variable is missing. Please set it to the email used for ADO commits.');
-        process.exit(1);
-    }
-    
-    if (!process.env.ADO_ORG) {
-         console.warn("Warning: ADO_ORG not set. Using default 'aedenthomas'.");
-    }
-
-    const org = process.env.ADO_ORG || 'aedenthomas';
-    const baseUrl = `https://dev.azure.com/${org}`;
-    
     const contributions = {}; // date -> count
 
-    try {
-        console.log(`Fetching projects for org: ${org}...`);
-        const projectsResp = await azRequest(`${baseUrl}/_apis/projects?api-version=6.0`);
+    for (const config of configs) {
+        const { org, pat, email } = config;
         
-        // Handling both array structures just in case
-        const projects = projectsResp.value || [];
-        console.log(`Found ${projects.length} projects.`);
-
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-        const fromDate = oneYearAgo.toISOString();
-
-        for (const project of projects) {
-            console.log(`  Processing project: ${project.name}`);
-            try {
-                const reposResp = await azRequest(`${baseUrl}/${project.name}/_apis/git/repositories?api-version=6.0`);
-                const repos = reposResp.value || [];
-                
-                for (const repo of repos) {
-                    console.log(`    Fetching commits for repo: ${repo.name}`);
-                    // Fetch commits
-                    // searchCriteria.author=${encodeURIComponent(TARGET_AUTHOR)}
-                    // searchCriteria.fromDate=${fromDate}
-                    const commitsUrl = `${baseUrl}/${project.name}/_apis/git/repositories/${repo.id}/commits?searchCriteria.author=${encodeURIComponent(TARGET_AUTHOR)}&searchCriteria.fromDate=${fromDate}&api-version=6.0`;
-                    
-                    try {
-                        const commitsResp = await azRequest(commitsUrl);
-                        const commits = commitsResp.value || [];
-                        
-                        for (const commit of commits) {
-                            const dateStr = commit.author.date.split('T')[0]; // YYYY-MM-DD
-                            contributions[dateStr] = (contributions[dateStr] || 0) + 1;
-                        }
-                    } catch (err) {
-                        console.error(`    Failed to fetch commits for ${repo.name}: ${err.message}`);
-                    }
-                }
-            } catch (err) {
-                console.error(`  Failed to fetch repos for project ${project.name}: ${err.message}`);
-            }
+        if (!email) {
+            console.warn(`Skipping org ${org} because no email is configured.`);
+            continue;
         }
 
-        // Output results
-        const result = {
-            updatedAt: new Date().toISOString(),
-            contributions: Object.entries(contributions).map(([date, count]) => ({ date, count }))
-        };
+        console.log(`Processing Org: ${org} (User: ${email})`);
+        const baseUrl = `https://dev.azure.com/${org}`;
 
-        const outputPath = path.join(__dirname, '../public/ado-contributions.json');
-        fs.writeFileSync(outputPath, JSON.stringify(result, null, 2));
-        console.log(`Successfully wrote ${result.contributions.length} days of contributions to ${outputPath}`);
+        try {
+            console.log(`  Fetching projects...`);
+            const projectsResp = await azRequest(`${baseUrl}/_apis/projects?api-version=6.0`, pat);
+            const projects = projectsResp.value || [];
+            console.log(`  Found ${projects.length} projects.`);
 
-    } catch (error) {
-        console.error('Fatal error:', error.message);
-        process.exit(1);
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            // Optional: override date for consistent testing
+            // oneYearAgo = new Date('2025-01-23T00:00:00Z'); 
+            const fromDate = oneYearAgo.toISOString();
+            console.log(`  Fetching contribution from date: ${fromDate}`);
+
+            for (const project of projects) {
+                 // console.log(`    Processing project: ${project.name}`); // Reduce spam
+                try {
+                    const reposResp = await azRequest(`${baseUrl}/${project.name}/_apis/git/repositories?api-version=6.0`, pat);
+                    const repos = reposResp.value || [];
+                    
+                    for (const repo of repos) {
+                        // console.log(`      Repo: ${repo.name}`);
+                        const commitsUrl = `${baseUrl}/${project.name}/_apis/git/repositories/${repo.id}/commits?searchCriteria.author=${encodeURIComponent(email)}&searchCriteria.fromDate=${fromDate}&api-version=6.0`;
+                        
+                        try {
+                            const commitsResp = await azRequest(commitsUrl, pat);
+                            const commits = commitsResp.value || [];
+                            
+                            if (commits.length > 0) {
+                                console.log(`      Found ${commits.length} commits in ${repo.name} for ${email}`);
+                            }
+
+                            for (const commit of commits) {
+                                const dateStr = commit.author.date.split('T')[0]; // YYYY-MM-DD
+                                contributions[dateStr] = (contributions[dateStr] || 0) + 1;
+                            }
+                        } catch (err) {
+                            console.error(`      Failed to fetch commits for ${repo.name}: ${err.message}`);
+                        }
+                    }
+                } catch (err) {
+                    console.error(`    Failed to fetch repos for project ${project.name}: ${err.message}`);
+                }
+            }
+        } catch (err) {
+            console.error(`  Failed to process org ${org}: ${err.message}`);
+        }
     }
+
+    // Output results
+    const result = {
+        updatedAt: new Date().toISOString(),
+        contributions: Object.entries(contributions).map(([date, count]) => ({ date, count }))
+    };
+    
+    console.log(`Total contributions found: ${result.contributions.reduce((acc, curr) => acc + curr.count, 0)}`);
+
+    const outputPath = path.join(__dirname, '../public/ado-contributions.json');
+    fs.writeFileSync(outputPath, JSON.stringify(result, null, 2));
+    console.log(`Successfully wrote ${result.contributions.length} days of contributions to ${outputPath}`);
 }
 
 fetchContributions();
