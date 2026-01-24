@@ -13,19 +13,9 @@ function ModeToggle({ viewMode, setViewMode, handleClickableHover, isDarkMode })
       transition={{ delay: 0.5, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
       <div 
-        className={`flex items-center p-1 md:p-1.5 rounded-full backdrop-blur-xl shadow-2xl transition-all duration-500 border ${
-          viewMode === 'machine' 
-            ? 'bg-black/40 border-white/10' 
-            : isDarkMode 
-              ? 'bg-black/40 border-white/10'
-              : 'bg-white/40 border-black/5'
-        }`}
+        className="flex items-center p-1 md:p-1.5 rounded-full backdrop-blur-xl shadow-2xl transition-all duration-500 border bg-[#4E4E50] border-white/10 md:scale-[0.8]"
         style={{
-          boxShadow: viewMode === 'machine' 
-            ? '0 20px 40px -10px rgba(0,0,0,0.5)' 
-            : isDarkMode
-              ? '0 20px 40px -10px rgba(0,0,0,0.5)'
-              : '0 20px 40px -10px rgba(0,0,0,0.1)',
+          boxShadow: '0 20px 40px -10px rgba(0,0,0,0.5)',
         }}
       >
         {/* Human Mode Button */}
@@ -35,14 +25,8 @@ function ModeToggle({ viewMode, setViewMode, handleClickableHover, isDarkMode })
           onMouseLeave={() => handleClickableHover(false)}
           className={`relative px-3 py-1.5 md:px-6 md:py-2.5 rounded-full text-xs md:text-sm font-semibold tracking-tight transition-all duration-300 ${
             viewMode === 'human'
-              ? isDarkMode
-                ? 'text-black shadow-sm'
-                : 'text-white shadow-sm'
-              : viewMode === 'machine'
-                ? 'text-white/50 hover:text-white'
-                : isDarkMode
-                  ? 'text-white/50 hover:text-white'
-                  : 'text-black/50 hover:text-black'
+              ? 'text-black shadow-sm'
+              : 'text-white/50 hover:text-white'
           }`}
           style={{
              WebkitFontSmoothing: "antialiased",
@@ -50,9 +34,7 @@ function ModeToggle({ viewMode, setViewMode, handleClickableHover, isDarkMode })
         >
           {viewMode === 'human' && (
             <motion.div
-              className={`absolute inset-0 rounded-full ${
-                isDarkMode ? 'bg-white' : 'bg-black'
-              }`}
+              className="absolute inset-0 rounded-full bg-white"
               layoutId="modeIndicator"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
@@ -71,11 +53,7 @@ function ModeToggle({ viewMode, setViewMode, handleClickableHover, isDarkMode })
           className={`relative px-3 py-1.5 md:px-6 md:py-2.5 rounded-full text-xs md:text-sm font-semibold tracking-tight transition-all duration-300 ${
             viewMode === 'machine'
               ? 'text-black shadow-sm'
-              : viewMode === 'machine'
-                ? 'text-white/50 hover:text-white'
-                : isDarkMode
-                  ? 'text-white/50 hover:text-white'
-                  : 'text-black/50 hover:text-black'
+              : 'text-white/50 hover:text-white'
           }`}
           style={{
              WebkitFontSmoothing: "antialiased",

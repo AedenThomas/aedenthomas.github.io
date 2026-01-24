@@ -1,4 +1,5 @@
 import React from "react";
+import { copyToClipboard } from "./utils";
 import { motion, AnimatePresence } from "framer-motion";
 import PropTypes from "prop-types";
   
@@ -82,7 +83,7 @@ const EmailPopup = ({
       ),
       description: "Copy to clipboard",
       action: async () => {
-        await navigator.clipboard.writeText(email);
+        await copyToClipboard(email);
         onClose();
       },
     },

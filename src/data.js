@@ -76,10 +76,31 @@ export const notableInteractions = [
 ];
 
 export const experience = [
+  // {
+  //   company: "Shoutt",
+  //   position: "Full-Stack Engineer",
+  //   period: "Nov 2025 - Present",
+  //   url: "https://www.shoutt.ai",
+  //   logo: "/shoutt.jpg",
+  //   location: "London, United Kingdom",
+  //   highlights: [
+  //     "joined as the 1st engineering hire during shoutt’s £525k seed round.​",
+  //     "architected a hybrid scraping engine (C# .NET Core + React TypeScript + Azure Cosmos DB) that pulls 500+ freelance gigs daily with 99.8% accuracy—zero blocking risks, zero downtime.​",
+  //     "shipped an AI-powered gig summary generator that saves 15+ hours of manual admin work every week while keeping that human touch.​",
+  //     "redesigned the core product page with a smart related-gigs algorithm—user engagement up 35%, bounce rate down.​",
+  //     "killed 95% of production bugs by enforcing fail-fast patterns, composition-based components, and server-side data resolution.​",
+  //     "slashed API response times by 60% and React bundle size by 25%, making the app fly for 12k+ monthly users.​",
+  //     "built a retention modal that cut churn by 22% and boosted downgrade conversions by 18%—every user matters.​",
+  //     "fixed a nasty data integrity bug that was ghosting stale locations across 2,000+ listings—admin tickets dropped 40%.​",
+  //     "engineered city-based filtering with fallback logic for 150+ cities, nailing candidate-job fit and boosting match metrics by 30%.​",
+  //     "leveled up an LLM evaluation pipeline using chain-of-thought prompting—accuracy jumped from 70% to 93%, false negatives gone.​",
+  //     "built admin tools that halved gig review time through role-based tracking and real-time validation.",
+  //   ],
+  // },
   {
     company: "SJ Telford",
     position: "Backend .NET Cloud Developer",
-    period: "August 2025 - Present",
+    period: "Jun 2025 - Nov 2025",
     location: "London, United Kingdom",
     highlights: [
       "built a new serverless .net 8 API from the ground up on azure functions, designed to handle over 12,000 concurrent players for 20+ games.",

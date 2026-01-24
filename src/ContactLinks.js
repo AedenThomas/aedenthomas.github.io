@@ -1,4 +1,5 @@
 // src/components/ContactLinks.js
+import { copyToClipboard } from "./utils";
 
 import { getCalApi } from "@calcom/embed-react";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
@@ -298,7 +299,7 @@ const ContactLinks = ({
   const handleCopyEmail = async (e) => {
     e.preventDefault();
     try {
-      await navigator.clipboard.writeText(email);
+      await copyToClipboard(email);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {

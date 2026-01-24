@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { copyToClipboard } from './utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   education,
@@ -276,11 +277,11 @@ function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
             isCopied
               ? 'bg-green-500 border-green-600 text-white'
               : isDarkMode 
-                ? 'bg-white/10 border-white/20 text-white hover:bg-white/20' 
-                : 'bg-black/5 border-black/10 text-black hover:bg-black/10'
+                ? 'bg-white text-black hover:bg-gray-200' 
+                : 'bg-black text-white hover:bg-gray-800'
           }`}
-          onClick={() => {
-            navigator.clipboard.writeText(markdownContent);
+          onClick={async () => {
+            await copyToClipboard(markdownContent);
             setIsCopied(true);
             setTimeout(() => setIsCopied(false), 2000);
           }}
