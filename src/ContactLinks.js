@@ -568,7 +568,7 @@ const ContactLinks = ({
             </svg>
             <motion.span layoutId="contact-github">github</motion.span>
             {isMobile && !githubTapped && (
-              <InformationCircleIcon className="w-3 h-3 ml-1 text-gray-400 animate-pulse" />
+              <InformationCircleIcon className="w-4 h-4 ml-1 text-gray-400 animate-pulse" />
             )}
           </a>
           {/* <a
