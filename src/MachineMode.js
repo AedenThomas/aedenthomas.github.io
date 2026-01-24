@@ -8,6 +8,7 @@ import {
   research,
   coursework,
   experience,
+  notableInteractions,
 } from './data';
 
 const renderDescription = (text) => {
@@ -67,7 +68,14 @@ function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
       lines.push(`${exp.location}`);
       lines.push(`${exp.description}`);
       exp.highlights.forEach(h => lines.push(`- ${h}`));
+      exp.highlights.forEach(h => lines.push(`- ${h}`));
       lines.push('');
+    });
+    lines.push('## Professional Development');
+    notableInteractions.forEach(interaction => {
+      lines.push(`### ${interaction.company}`);
+      lines.push(`*${interaction.period}*`);
+      lines.push(`${interaction.description}\n`);
     });
     lines.push('## Projects');
     projects.forEach(p => {
@@ -108,9 +116,9 @@ function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
         <section>
           <h2 className={`text-lg font-semibold mb-4 ${dimColor}`}>## Contact</h2>
           <motion.div variants={itemVariants} className="space-y-1 text-sm break-all">
-            <div>- Email: {email}</div>
-            <div>- LinkedIn: {linkedinUrl}</div>
-            <div>- GitHub: {githubUrl}</div>
+            <div>- Email: <motion.span layoutId="contact-email" className="inline-block">{email}</motion.span></div>
+            <div>- LinkedIn: <motion.span layoutId="contact-linkedin" className="inline-block">{linkedinUrl}</motion.span></div>
+            <div>- GitHub: <motion.span layoutId="contact-github" className="inline-block">{githubUrl}</motion.span></div>
             <div>- Website: https://aeden.me</div>
           </motion.div>
         </section>
@@ -166,6 +174,37 @@ function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
                     </motion.li>
                   ))}
                 </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Professional Development */}
+        <section>
+          <h2 className={`text-lg font-semibold mb-4 ${dimColor}`}>## Professional Development</h2>
+          <div className="space-y-6">
+            {notableInteractions.map((interaction, index) => (
+              <div key={index} className="space-y-1">
+                <div className="flex items-baseline gap-2">
+                  <span className={dimColor}>###</span>
+                  <motion.h3 
+                    layoutId={`prof-dev-company-${index}`} 
+                    className="font-bold text-lg inline-block"
+                  >
+                    {interaction.company}
+                  </motion.h3>
+                </div>
+                
+                <div className="flex flex-col md:flex-row md:items-baseline gap-2 text-sm">
+                   <motion.p layoutId={`prof-dev-period-${index}`} className="inline-block">{interaction.period}</motion.p>
+                </div>
+                
+                <motion.p 
+                  layoutId={`prof-dev-desc-${index}`}
+                  className={`text-sm mt-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                >
+                   {interaction.description.replace(/\*\*/g, '').replace(/\\n/g, ' ').replace(/•/g, ' ')}
+                </motion.p>
               </div>
             ))}
           </div>

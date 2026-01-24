@@ -1170,12 +1170,10 @@ function Home({
             {notableInteractions.map((interaction, index) => (
               <motion.div
                 key={index}
-                className={`mb-4 p-4 rounded-lg hover:bg-navy-800 dark:hover:bg-navy-900 transition-transform duration-200 ease-in-out 
-      ${interaction.image ? "custom-cursor-clickable" : ""}`} // Add custom cursor only if image exists
+                className={`mb-4 rounded-lg group ${interaction.image ? "custom-cursor-clickable" : ""}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.01 }}
                 onMouseEnter={() =>
                   interaction.image && handleClickableHover(true)
                 }
@@ -1186,56 +1184,67 @@ function Home({
                   interaction.image && openImageModal(interaction.image)
                 }
               >
-                <div className="flex items-start">
-                  {interaction.logo && (
-                    <img
-                      src={
-                        typeof interaction.logo === "string"
-                          ? interaction.logo
-                          : isDarkMode
-                          ? interaction.logo.dark
-                          : interaction.logo.light
-                      }
-                      alt={`${interaction.company} logo`}
-                      className="w-8 h-8 mr-3 mt-1"
-                    />
-                  )}
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm md:text-base font-semibold group-hover:text-white">
-                        {interaction.company}
-                      </h3>
-                      {interaction.url && (
-                        <a
-                          href={interaction.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-                        >
-                          <svg
-                            className="w-4 h-4 inline"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                            />
-                          </svg>
-                        </a>
+                  <div className="p-4 rounded-lg hover:bg-navy-800 dark:hover:bg-navy-900 transition-all duration-200 ease-in-out hover:scale-[1.01]">
+                    <div className="flex items-start">
+                      {interaction.logo && (
+                        <img
+                          src={
+                            typeof interaction.logo === "string"
+                              ? interaction.logo
+                              : isDarkMode
+                              ? interaction.logo.dark
+                              : interaction.logo.light
+                          }
+                          alt={`${interaction.company} logo`}
+                          className="w-8 h-8 mr-3 mt-1"
+                        />
                       )}
-                    </div>
-                    <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-2">
-                      {interaction.period}
-                    </p>
-                    <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400 prose prose-xs md:prose-sm dark:prose-invert max-w-none">
-                      <ReactMarkdown>{interaction.description}</ReactMarkdown>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <motion.h3 
+                            layoutId={`prof-dev-company-${index}`}
+                            className="text-sm md:text-base font-semibold group-hover:text-white"
+                          >
+                            {interaction.company}
+                          </motion.h3>
+                          {interaction.url && (
+                            <a
+                              href={interaction.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                            >
+                              <svg
+                                className="w-4 h-4 inline"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                />
+                              </svg>
+                            </a>
+                          )}
+                        </div>
+                        <motion.p 
+                          layoutId={`prof-dev-period-${index}`}
+                          className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-2 inline-block"
+                        >
+                          {interaction.period}
+                        </motion.p>
+                        <motion.p 
+                          layoutId={`prof-dev-desc-${index}`}
+                          className="text-xs md:text-sm text-gray-600 dark:text-gray-400"
+                        >
+                          {interaction.description.replace(/\*\*/g, '').replace(/\\n/g, ' ').replace(/•/g, ' ')}
+                        </motion.p>
+                      </div>
                     </div>
                   </div>
-                </div>
               </motion.div>
             ))}
           </div>
