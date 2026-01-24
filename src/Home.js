@@ -27,6 +27,7 @@ import LanguageIcon from "./LanguageIcon";
 import { useNavigate } from "react-router-dom";
 import ModeToggle from "./ModeToggle";
 import MachineMode from "./MachineMode";
+import LondonTime from "./components/LondonTime";
 
 // Add this near the top of the file, outside the component
 const AIPage = React.lazy(() => import("./AIPage"));
@@ -639,6 +640,8 @@ function Home({
         </>
       )}
 
+
+
       <div className="relative">
         <button
           onClick={toggleDarkMode}
@@ -852,13 +855,16 @@ function Home({
           }`}
         >
           <div className="mb-8">
-            <img
-              src="/Face.webp"
-              alt="Face"
-              width="45"
-              height="45"
-              className="text-4xl mb-7"
-            />
+            <div className="flex justify-between items-start mb-7">
+              <img
+                src="/Face.webp"
+                alt="Face"
+                width="45"
+                height="45"
+                className="text-4xl"
+              />
+              <LondonTime isDarkMode={isDarkMode} />
+            </div>
 
             <h1 className="text-2xl md:text-4xl font-bold mb-5 mt-5">
               <motion.span layoutId="hero-name" className="inline-block">
