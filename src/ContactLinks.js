@@ -8,7 +8,7 @@ import { Tooltip } from "react-tooltip";
 import { motion } from "framer-motion";
 import EmailPopup from "./EmailPopup";
 import QuickMessageModal from "./QuickMessageModal"; // <-- 1. IMPORT THE NEW MODAL
-import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid"; // <-- 2. IMPORT AN ICON FOR THE BUTTON
+import { ChatBubbleLeftRightIcon, InformationCircleIcon } from "@heroicons/react/24/solid"; // <-- 2. IMPORT AN ICON FOR THE BUTTON
 
 const ContactLinks = ({
   email,
@@ -325,6 +325,53 @@ const ContactLinks = ({
 
   const [isLinkedinHovered, setIsLinkedinHovered] = useState(false); // New state for hover animation
 
+  const [isMobile, setIsMobile] = useState(false);
+  const [githubTapped, setGithubTapped] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia("(pointer: coarse)").matches);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const handleGithubClick = (e) => {
+    if (isMobile) {
+      if (!githubTapped) {
+        e.preventDefault();
+        setGithubTapped(true);
+      } else {
+        // Allow navigation on second tap
+        setGithubTapped(false); // Reset for next time
+      }
+    }
+    // Desktop behaves normally (link works immediately)
+  };
+
+  const handleTooltipClick = () => {
+    if (isMobile) {
+      window.open(githubUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const formattedSummary = useMemo(() => {
+    const summaryList = Array.isArray(getContributionsSummary())
+    ? getContributionsSummary() 
+    : [getContributionsSummary()];
+
+    if (isMobile) {
+       return [
+         ...summaryList,
+         <div key="tap-hint" className="text-xs text-gray-400 mt-2 italic text-center font-normal">
+           (tap again to open)
+         </div>
+       ]
+    }
+    return summaryList;
+  }, [getContributionsSummary, isMobile]);
+
   return (
     <div className="mb-8">
       <div className="flex flex-wrap items-center justify-between mb-4">
@@ -496,9 +543,15 @@ const ContactLinks = ({
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={handleGithubClick}
             className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 mr-4 custom-cursor-clickable"
             onMouseEnter={() => handleClickableHover(true)}
-            onMouseLeave={() => handleClickableHover(false)}
+            onMouseLeave={() => {
+              handleClickableHover(false);
+              // Reset tapped state on mouse leave (mainly for desktop/mixed pointer devices, 
+              // or helping reset on mobile if they manage to "leave")
+              if (isMobile) setGithubTapped(false);
+            }}
             data-tooltip-id="github-tooltip"
           >
             <svg
@@ -514,6 +567,9 @@ const ContactLinks = ({
               ></path>
             </svg>
             <motion.span layoutId="contact-github">github</motion.span>
+            {isMobile && !githubTapped && (
+              <InformationCircleIcon className="w-3 h-3 ml-1 text-gray-400 animate-pulse" />
+            )}
           </a>
           {/* <a
             href="https://x.com/realaeden"
@@ -538,14 +594,15 @@ const ContactLinks = ({
             place="top"
             effect="solid"
             className="custom-tooltip"
+            openOnClick={isMobile} // Only rely on click on mobile
+            afterHide={() => { if(isMobile) setGithubTapped(false); }} // Reset state when tooltip hides
+            clickable={true}
           >
-            {Array.isArray(getContributionsSummary()) ? (
-              getContributionsSummary().map((line, index) => (
+            <div onClick={handleTooltipClick} className={isMobile ? "cursor-pointer" : ""}>
+                {formattedSummary.map((line, index) => (
                 <div key={index}>{line}</div>
-              ))
-            ) : (
-              <div>{getContributionsSummary()}</div>
-            )}
+                ))}
+            </div>
           </Tooltip>
 
           <button

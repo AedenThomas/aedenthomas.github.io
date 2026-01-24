@@ -336,7 +336,7 @@ function Home({
       width: "auto",
       x: 0,
       opacity: 1,
-      paddingLeft: "16px",
+      paddingLeft: "1rem",
       transition: {
         width: { duration: 1, ease: [0.4, 0, 0.2, 1] },
         x: { duration: 1, ease: [0.4, 0, 0.2, 1] },
@@ -346,7 +346,7 @@ function Home({
     },
     collapsed: {
       width: 0,
-      x: 40,
+      x: "2.5rem",
       opacity: 0,
       paddingLeft: 0,
       transition: {
@@ -433,7 +433,7 @@ function Home({
       },
     },
     collapsed: {
-      width: "40px",
+      width: "2.5rem",
       transition: {
         duration: 0.8,
         ease: [0.4, 0, 0.2, 1],
@@ -730,8 +730,8 @@ function Home({
         initial="collapsed"
         animate={isAIButtonHovered ? "expanded" : "collapsed"}
         style={{
-          minWidth: "40px",
-          maxWidth: "200px",
+          minWidth: "2.5rem",
+          maxWidth: "12.5rem",
           willChange: "width",
           transform: "translateZ(0)", // Force GPU acceleration
         }}
@@ -742,7 +742,7 @@ function Home({
         <div className="relative w-full h-full">
           {/* Static emoji container - positioned absolutely */}
           <div
-            className="absolute right-0 top-0 bottom-0 w-[40px] flex items-center justify-center"
+            className="absolute right-0 top-0 bottom-0 w-10 flex items-center justify-center"
             style={{
               transform: "none",
               transition: "none",
@@ -757,7 +757,7 @@ function Home({
           <div
             className="h-full flex items-center"
             style={{
-              paddingRight: "40px",
+              paddingRight: "2.5rem",
               transition: "none",
             }}
           >
