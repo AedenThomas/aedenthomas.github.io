@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense } from "react";
-import ReactMarkdown from "react-markdown"; // Add this import
+
+import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom"; // Add this import
 import {
@@ -67,6 +68,9 @@ function AIPage({
   toggleDarkMode,
   handleClickableHover,
   isMobile,
+  viewMode,
+  setViewMode,
+  triggerZoomAnimation,
 }) {
   // Add debug mount tracking
   useEffect(() => {
@@ -290,37 +294,43 @@ function AIPage({
   }, []);
 
   const handleHomeClick = () => {
-    // Remove immediate theme transition
-    // setThemeTransition(!isDarkMode);
-
-    updateButtonPosition();
-
-    // Update URL with hash routing
-    window.history.pushState({}, "", "/#/"); // Changed from '/' to '/#/'
+    console.log(`🏠 [AIPage.js] handleHomeClick | Time: ${Date.now()} | isDarkMode: ${isDarkMode}`);
+    
+    // Get button position - we can reuse the updateButtonPosition logic or get ref directly
+    // Ideally we pass ref, but since updateButtonPosition updates state, we might need to access state?
+    // Actually, triggerZoomAnimation needs a rect.
+    
+    // Let's create a dummy rect if buttonRef is not available, or get it from DOM?
+    // Or we rely on `buttonPosition` state? But triggerZoomAnimation expects a rect object.
+    
+    // Better:
+    const rect = { 
+      left: buttonPosition.x, 
+      top: buttonPosition.y,
+      width: 0, height: 0
+    };
+    
+    triggerZoomAnimation(rect, 'home');
 
     setIsNavigatingBack(true);
     setShouldNavigate(true);
 
-    // Delay theme transition by 1.9 seconds (1900ms)
+    // Navigate after animation completes (2s total)
     setTimeout(() => {
-      setThemeTransition(!isDarkMode);
-    }, 1900);
-
-    // Use setTimeout to allow animations to complete
-    setTimeout(() => {
-      window.dispatchEvent(new PopStateEvent("popstate"));
-    }, 3000);
+      console.log(`🏠 [AIPage.js] handleHomeClick | Time: ${Date.now()} | Navigating to /`);
+      navigate('/');
+    }, 2000);
   };
 
-  // Remove or modify the useEffect that was handling navigation
+  // Handle navigation state
   useEffect(() => {
     if (shouldNavigate) {
       const initiateNavigation = async () => {
         setIsNavigating(true);
 
         try {
-          // Just wait for animations, no navigation needed
-          await new Promise((resolve) => setTimeout(resolve, 3000));
+          // Wait for animation to complete
+          await new Promise((resolve) => setTimeout(resolve, 2000));
         } catch (error) {
           console.error("❌ [Home Transition] Error:", error);
         } finally {
@@ -584,88 +594,7 @@ function AIPage({
         </div>
       </motion.button>
 
-      <AnimatePresence mode="wait">
-        {isNavigating && (
-          <motion.div
-            initial={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              clipPath: `circle(0px at ${buttonPosition.x + 16}px ${
-                buttonPosition.y + 16
-              }px)`,
-              zIndex: 9999,
-              backgroundColor: "#F2F0E9", // Always start with light mode
-            }}
-            animate={{
-              clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${
-                buttonPosition.y + 16
-              }px)`,
-            }}
-            transition={{
-              duration: 2.5,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="w-screen h-screen overflow-hidden"
-          >
-            <Suspense
-              fallback={
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent" />
-                </div>
-              }
-            >
-              <motion.div
-                initial={{
-                  opacity: 1,
-                  backgroundColor: "#F2F0E9", // Always start with light mode
-                }}
-                animate={{
-                  backgroundColor: ["#F2F0E9", "#F2F0E9", "#000000"],
-                }}
-                transition={{
-                  duration: 3,
-                  times: [0, 0.5, 1], // Hold light mode longer
-                  ease: "easeInOut",
-                }}
-                className="w-full h-full"
-              >
-                <Home
-                  isDarkMode={!themeTransition}
-                  initialTransitionTheme={false} // Always start with light mode
-                  isMobile={isMobile}
-                  toggleDarkMode={toggleDarkMode}
-                  handleClickableHover={handleClickableHover}
-                  mousePosition={mousePosition}
-                  isHoveredClickable={isHoveredClickable}
-                  hoveredProjectIndex={null}
-                  isReachOutHovered={false}
-                  handleLanguageHover={() => {}}
-                  handleLanguageLeave={() => {}}
-                  hoveredLanguage={null}
-                  handleReachOutMouseEnter={() => {}}
-                  handleReachOutMouseLeave={() => {}}
-                  email={email}
-                  linkedinUrl={linkedinUrl}
-                  githubUrl={githubUrl}
-                  isLiveVisible={false}
-                  handleProjectHover={() => {}}
-                  skillsRef={null}
-                  isSkillsInView={false}
-                  educationRef={null}
-                  isEducationInView={false}
-                  publicationsRef={null}
-                  isPublicationsInView={false}
-                  courseworkRef={null}
-                  isCourseworkInView={false}
-                />
-              </motion.div>
-            </Suspense>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       {/* Main heading - show only if chat hasn't started */}
       {/* {!chatStarted && (

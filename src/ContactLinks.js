@@ -597,6 +597,8 @@ const ContactLinks = ({
             openOnClick={isMobile} // Only rely on click on mobile
             afterHide={() => { if(isMobile) setGithubTapped(false); }} // Reset state when tooltip hides
             clickable={true}
+            delayShow={50} // Slight delay to ensure proper positioning before showing
+            positionStrategy="fixed" // Use fixed positioning for more reliable placement
           >
             <div onClick={handleTooltipClick} className={isMobile ? "cursor-pointer" : ""}>
                 {formattedSummary.map((line, index) => (

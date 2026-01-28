@@ -6,6 +6,7 @@ import React, {
   useCallback,
   Suspense,
 } from "react";
+
 import ReactMarkdown from "react-markdown";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -62,6 +63,7 @@ function Home({
   isCourseworkInView,
   viewMode,
   setViewMode,
+  triggerZoomAnimation,
 }) {
   const navigate = useNavigate();
   const [isAIButtonHovered, setIsAIButtonHovered] = useState(false);
@@ -72,6 +74,7 @@ function Home({
   const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
   const [isPrefetched, setIsPrefetched] = useState(false);
   const [showAIPage, setShowAIPage] = useState(false);
+  const [isFromIndia, setIsFromIndia] = useState(true); // Default to India (show original text)
   const [debugInfo, setDebugInfo] = useState({
     prefetchStatus: "pending",
     animationStatus: "idle",
@@ -86,10 +89,11 @@ function Home({
     timestamp: Date.now(),
     animationPhase: "initial",
   });
-  // Initialize themeTransition based on isDarkMode prop
-  const [transitionTheme, setTransitionTheme] = useState(
-    initialTransitionTheme !== undefined ? initialTransitionTheme : isDarkMode
-  );
+  // Initialize transitionTheme based on isDarkMode prop
+  const [transitionTheme, setTransitionTheme] = useState(() => {
+    const initial = initialTransitionTheme !== undefined ? initialTransitionTheme : isDarkMode;
+    return initial;
+  });
 
   const [hoveredCard, setHoveredCard] = useState(null);
 
@@ -126,6 +130,7 @@ function Home({
       return newSet;
     });
   };
+
   const toggleExperience = (index) => {
     setExpandedExperiences((prev) => {
       const newSet = new Set(prev);
@@ -194,52 +199,40 @@ function Home({
     prefetchAIPage();
   }, []);
 
+  // Fetch user location to determine if they're from India
+  useEffect(() => {
+    const fetchUserLocation = async () => {
+      try {
+        const response = await fetch('https://ip-api.com/json/?fields=countryCode');
+        const data = await response.json();
+        setIsFromIndia(data.countryCode === 'IN');
+      } catch (error) {
+        console.warn('Could not fetch user location, defaulting to India');
+        setIsFromIndia(true); // Default to India on error
+      }
+    };
+    fetchUserLocation();
+  }, []);
+
   // Enhanced button position tracking
   useEffect(() => {}, [buttonPosition]);
 
   const handleAIClick = async () => {
-    setDebugInfo((prev) => ({
-      ...prev,
-      animationStatus: "starting",
-      timestamp: new Date().toISOString(),
-    }));
-
-    updateButtonPosition();
-
-    // Update URL with hash routing
-    window.history.pushState({}, "", "/#/ai"); // Changed from '/ai' to '/#/ai'
-
-    // Set initial opposite theme
-    setTransitionTheme(true);
-
-    // Start animation
-    setIsNavigating(true);
-    setShowAIPage(true);
-
-    try {
-      // Wait for circle animation to complete expansion
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Changed from 2000 to 1000
-
-      // Wait additional time with opposite theme
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Smoothly fade to device theme
-      setTransitionTheme(false);
-
-      // Instead of navigating, we'll reload the app state
-      setTimeout(() => {
-        // This will trigger a re-render to show the AI page
-        // without a full navigation
-        window.dispatchEvent(new PopStateEvent("popstate"));
-      }, 2000);
-    } catch (error) {
-      console.error("❌ [AI Transition] Error during transition:", error);
-      setTransitionTheme(false);
-      setDebugInfo((prev) => ({
-        ...prev,
-        error: error.message,
-        animationStatus: "error",
-      }));
+    console.log(`🤖 [Home.js] handleAIClick START | Time: ${Date.now()}`);
+    
+    // Get the latest button position
+    if (aiButtonRef.current) {
+      const rect = aiButtonRef.current.getBoundingClientRect();
+      
+      // Trigger the persistent animation in App.js
+      triggerZoomAnimation(rect, 'ai');
+      
+      // Wait for animation to almost complete (2s)
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      
+      // Navigate
+      console.log(`🤖 [Home.js] handleAIClick | Time: ${Date.now()} | Navigating to /ai`);
+      navigate('/ai');
     }
   };
   // Enhanced debug effect
@@ -294,15 +287,26 @@ function Home({
 
   // Remove duplicate useEffects and combine them into one comprehensive effect:
   useEffect(() => {
+    console.log(`🏠 [Home.js] THEME SYNC EFFECT | Time: ${Date.now()} | isDarkMode: ${isDarkMode} | isNavigating: ${isNavigating} | transitionTheme current: ${transitionTheme}`);
+    
+    // Skip syncing during navigation to avoid interfering with transition animations
+    if (isNavigating) {
+      console.log(`🏠 [Home.js] THEME SYNC EFFECT | Time: ${Date.now()} | SKIPPING because isNavigating=true`);
+      return;
+    }
+    
     // Delay the theme transition
+    console.log(`🏠 [Home.js] THEME SYNC EFFECT | Time: ${Date.now()} | Scheduling transitionTheme update to ${isDarkMode} in 50ms`);
     const timeout = setTimeout(() => {
+      console.log(`🏠 [Home.js] THEME SYNC EFFECT | Time: ${Date.now()} | NOW setting transitionTheme to ${isDarkMode}`);
       setTransitionTheme(isDarkMode);
     }, 50); // Small delay to ensure smooth transition
 
     return () => {
+      console.log(`🏠 [Home.js] THEME SYNC EFFECT CLEANUP | Time: ${Date.now()} | Clearing timeout`);
       clearTimeout(timeout);
     };
-  }, [isDarkMode]);
+  }, [isDarkMode, isNavigating]);
 
   // Add this new effect near other useEffects
   useEffect(() => {
@@ -784,56 +788,8 @@ function Home({
         </div>
       </motion.button>
 
-      <AnimatePresence mode="wait">
-        {isNavigating && (
-          <motion.div
-            initial={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              clipPath: `circle(0px at ${buttonPosition.x + 16}px ${
-                buttonPosition.y + 16
-              }px)`,
-              zIndex: 9999,
-              backgroundColor: isDarkMode ? "#F2F0E9" : "#000000", // Add background color
-            }}
-            animate={{
-              clipPath: `circle(300vh at ${buttonPosition.x + 16}px ${
-                buttonPosition.y + 16
-              }px)`, // Increased from 200vh to 300vh
-            }}
-            transition={{
-              duration: 2, // Increased from 0.8 to 1.5
-              ease: [0.22, 1, 0.36, 1], // Custom easing function for smoother animation
-            }}
-            className={`w-screen h-screen overflow-hidden`} // Add these classes
-          >
-            <Suspense
-              fallback={
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent" />
-                </div>
-              }
-            >
-              <motion.div
-                animate={{
-                  transition: { duration: 0.5 },
-                }}
-                className="w-full h-full"
-              >
-                <AIPage
-                  isDarkMode={transitionTheme ? !isDarkMode : isDarkMode}
-                  isMobile={isMobile}
-                  toggleDarkMode={toggleDarkMode}
-                  handleClickableHover={handleClickableHover}
-                />
-              </motion.div>
-            </Suspense>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Use Portal to render overlay at body level - persists during route changes */}
+
 
       <AnimatePresence mode="popLayout">
         {viewMode === 'human' ? (
@@ -844,6 +800,8 @@ function Home({
             animate={{ opacity: isNavigating ? 0 : 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
+            onAnimationStart={() => console.log(`🏠 [Home.js] HUMAN mode animation START | Time: ${Date.now()}`)}
+            onAnimationComplete={() => console.log(`🏠 [Home.js] HUMAN mode animation COMPLETE | Time: ${Date.now()}`)}
           >
         <div
           className={`transition-all duration-300 ${
@@ -1397,7 +1355,9 @@ function Home({
                         {edu.university}
                       </h3>
                       <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-200">
-                        {edu.degree} in {edu.branch}
+                        {edu.degree} in {edu.university === "B.M.S. College of Engineering" 
+                          ? (isFromIndia ? "Information Science and Engineering" : "Computer Science and Engineering")
+                          : edu.branch}
                       </p>
                       <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-300">
                         {edu.period}
@@ -1506,6 +1466,8 @@ function Home({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
+            onAnimationStart={() => console.log(`🏠 [Home.js] MACHINE mode animation START | Time: ${Date.now()}`)}
+            onAnimationComplete={() => console.log(`🏠 [Home.js] MACHINE mode animation COMPLETE | Time: ${Date.now()}`)}
           >
             <MachineMode 
               email={email}

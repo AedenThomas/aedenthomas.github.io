@@ -5,6 +5,17 @@ import { motion } from 'framer-motion';
 function ModeToggle({ viewMode, setViewMode, handleClickableHover, isDarkMode }) {
   // Use a portal to ensure the fixed positioning works relative to the viewport
   // even if parent components have transforms (which Framer Motion adds)
+  
+  const handleSetHuman = () => {
+    console.log(`🔀 [ModeToggle] HUMAN CLICKED | Time: ${Date.now()} | Current viewMode: ${viewMode} | isDarkMode: ${isDarkMode}`);
+    setViewMode('human');
+  };
+  
+  const handleSetMachine = () => {
+    console.log(`🔀 [ModeToggle] MACHINE CLICKED | Time: ${Date.now()} | Current viewMode: ${viewMode} | isDarkMode: ${isDarkMode}`);
+    setViewMode('machine');
+  };
+  
   return ReactDOM.createPortal(
     <motion.div 
       className="fixed bottom-8 left-1/2 z-[9999] -translate-x-1/2"
@@ -20,7 +31,7 @@ function ModeToggle({ viewMode, setViewMode, handleClickableHover, isDarkMode })
       >
         {/* Human Mode Button */}
         <button
-          onClick={() => setViewMode('human')}
+          onClick={handleSetHuman}
           onMouseEnter={() => handleClickableHover(true)}
           onMouseLeave={() => handleClickableHover(false)}
           className={`relative px-3 py-1.5 md:px-6 md:py-2.5 rounded-full text-xs md:text-sm font-semibold tracking-tight transition-all duration-300 ${
@@ -47,7 +58,7 @@ function ModeToggle({ viewMode, setViewMode, handleClickableHover, isDarkMode })
 
         {/* Machine Mode Button */}
         <button
-          onClick={() => setViewMode('machine')}
+          onClick={handleSetMachine}
           onMouseEnter={() => handleClickableHover(true)}
           onMouseLeave={() => handleClickableHover(false)}
           className={`relative px-3 py-1.5 md:px-6 md:py-2.5 rounded-full text-xs md:text-sm font-semibold tracking-tight transition-all duration-300 ${
