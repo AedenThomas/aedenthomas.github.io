@@ -38,7 +38,7 @@ if (configs.length === 0) {
     process.exit(1);
 }
 
-// Helper for https requests
+// Helper for https GET requests
 function azRequest(url, pat) {
     return new Promise((resolve, reject) => {
         const options = {
@@ -64,6 +64,84 @@ function azRequest(url, pat) {
             });
         }).on('error', (err) => reject(err));
     });
+}
+
+// Helper for https POST requests (for internal APIs)
+function azPostRequest(url, pat, body) {
+    return new Promise((resolve, reject) => {
+        const urlObj = new URL(url);
+        const postData = JSON.stringify(body);
+        
+        const options = {
+            hostname: urlObj.hostname,
+            path: urlObj.pathname + urlObj.search,
+            method: 'POST',
+            headers: {
+                'Authorization': `Basic ${Buffer.from(':' + pat).toString('base64')}`,
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(postData)
+            }
+        };
+
+        const req = https.request(options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => data += chunk);
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    try {
+                        resolve(JSON.parse(data));
+                    } catch (e) {
+                        // Return raw data if not JSON
+                        resolve(data);
+                    }
+                } else {
+                    reject(new Error(`Request failed with status ${res.statusCode}: ${data}`));
+                }
+            });
+        });
+
+        req.on('error', (err) => reject(err));
+        req.write(postData);
+        req.end();
+    });
+}
+
+// Get line diff stats using internal API
+async function getFileDiffStats(baseUrl, project, repoId, pat, originalPath, modifiedPath, originalVersion, modifiedVersion) {
+    try {
+        const diffUrl = `${baseUrl}/${project}/_api/_versioncontrol/fileDiff?__v=5`;
+        const body = {
+            repositoryId: repoId,
+            originalPath: originalPath,
+            modifiedPath: modifiedPath,
+            originalVersion: originalVersion,
+            modifiedVersion: modifiedVersion,
+            diffOptions: { skipInlineDownloading: true }
+        };
+        
+        const resp = await azPostRequest(diffUrl, pat, body);
+        
+        if (resp && resp.blocks) {
+            let added = 0;
+            let deleted = 0;
+            
+            for (const block of resp.blocks) {
+                if (block.changeType === 1) { // Added
+                    added += block.mLinesCount || 0;
+                } else if (block.changeType === 2) { // Deleted
+                    deleted += block.oLinesCount || 0;
+                } else if (block.changeType === 3) { // Modified
+                    added += block.mLinesCount || 0;
+                    deleted += block.oLinesCount || 0;
+                }
+            }
+            
+            return { added, deleted };
+        }
+        return null;
+    } catch (err) {
+        return null;
+    }
 }
 
 async function fetchContributions() {
@@ -122,35 +200,49 @@ async function fetchContributions() {
                                     if (commitDetail && commitDetail.parents && commitDetail.parents.length > 0) {
                                         const parentId = commitDetail.parents[0];
                                         
-                                        // Get diff between parent and this commit
-                                        const diffUrl = `${baseUrl}/${project.name}/_apis/git/repositories/${repo.id}/diffs/commits?baseVersion=${parentId}&targetVersion=${commit.commitId}&api-version=6.0`;
-                                        const diffResp = await azRequest(diffUrl, pat);
+                                        // Get list of changed files
+                                        const changesUrl = `${baseUrl}/${project.name}/_apis/git/repositories/${repo.id}/commits/${commit.commitId}/changes?api-version=6.0`;
+                                        const changesResp = await azRequest(changesUrl, pat);
                                         
-                                        if (diffResp && diffResp.changes) {
-                                            // Count lines from each changed item
-                                            for (const change of diffResp.changes) {
+                                        if (changesResp && changesResp.changes) {
+                                            // For each changed file, get line diff using internal API
+                                            for (const change of changesResp.changes) {
                                                 if (!change.item || change.item.isFolder) continue;
                                                 
-                                                // ADO diff response includes changeCounts at the diff level
-                                                // For each file change, estimate based on change type
+                                                const filePath = change.item.path;
                                                 const changeType = change.changeType;
                                                 
-                                                if (changeType === 'add' && change.item.contentMetadata) {
-                                                    // New file - count all lines as added
-                                                    contributions[dateStr].linesAdded += change.item.contentMetadata.lineCount || 50;
-                                                } else if (changeType === 'delete') {
-                                                    // Deleted file
-                                                    contributions[dateStr].linesDeleted += 50; // Estimate
-                                                } else if (changeType === 'edit' || changeType === 'rename,edit') {
-                                                    // Modified file - rough estimate based on typical changes
-                                                    contributions[dateStr].linesAdded += 15;
-                                                    contributions[dateStr].linesDeleted += 10;
+                                                // Use internal API to get accurate line counts
+                                                const stats = await getFileDiffStats(
+                                                    baseUrl,
+                                                    project.name,
+                                                    repo.id,
+                                                    pat,
+                                                    changeType === 'add' ? null : filePath, // original path (null for new files)
+                                                    filePath,
+                                                    changeType === 'add' ? null : parentId, // original version
+                                                    commit.commitId
+                                                );
+                                                
+                                                if (stats) {
+                                                    contributions[dateStr].linesAdded += stats.added;
+                                                    contributions[dateStr].linesDeleted += stats.deleted;
+                                                } else {
+                                                    // Fallback to estimates if internal API fails
+                                                    if (changeType === 'add') {
+                                                        contributions[dateStr].linesAdded += 50;
+                                                    } else if (changeType === 'delete') {
+                                                        contributions[dateStr].linesDeleted += 50;
+                                                    } else {
+                                                        contributions[dateStr].linesAdded += 15;
+                                                        contributions[dateStr].linesDeleted += 10;
+                                                    }
                                                 }
                                             }
                                         }
                                     } else {
-                                        // First commit (no parent) - count as all adds
-                                        contributions[dateStr].linesAdded += 100; // Rough estimate for initial commits
+                                        // First commit (no parent) - use estimate
+                                        contributions[dateStr].linesAdded += 100;
                                     }
                                 } catch (detailErr) {
                                     // If we can't get detailed diff, use a rough estimate per commit
