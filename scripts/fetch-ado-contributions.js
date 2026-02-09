@@ -145,7 +145,41 @@ async function getFileDiffStats(baseUrl, project, repoId, pat, originalPath, mod
 }
 
 async function fetchContributions() {
-    const contributions = {}; // date -> { count: number, prs: number, linesAdded: number, linesDeleted: number }
+    const outputPath = path.join(__dirname, '..', 'public', 'ado-contributions.json');
+    
+    // Try to load existing data for incremental updates
+    let existingData = null;
+    let existingContributions = {};
+    let lastUpdateDate = null;
+    
+    try {
+        if (fs.existsSync(outputPath)) {
+            const rawData = fs.readFileSync(outputPath, 'utf8');
+            existingData = JSON.parse(rawData);
+            
+            // Convert existing contributions array to object for merging
+            if (existingData.contributions && Array.isArray(existingData.contributions)) {
+                for (const contrib of existingData.contributions) {
+                    existingContributions[contrib.date] = {
+                        count: contrib.count || 0,
+                        prs: contrib.prs || 0,
+                        linesAdded: contrib.linesAdded || 0,
+                        linesDeleted: contrib.linesDeleted || 0
+                    };
+                }
+            }
+            
+            lastUpdateDate = existingData.updatedAt ? new Date(existingData.updatedAt) : null;
+            if (lastUpdateDate) {
+                console.log(`Found existing data from ${lastUpdateDate.toISOString()}, running incremental update...`);
+            }
+        }
+    } catch (e) {
+        console.log('No existing data found or error reading, running full fetch...');
+    }
+    
+    // Start with existing contributions (will be merged/updated)
+    const contributions = { ...existingContributions };
 
     for (const config of configs) {
         const { org, pat, email } = config;
@@ -164,10 +198,22 @@ async function fetchContributions() {
             const projects = projectsResp.value || [];
             console.log(`  Found ${projects.length} projects.`);
 
+            // For incremental: use last update date if within past year, otherwise use 1 year ago
             const oneYearAgo = new Date();
             oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-            const fromDate = oneYearAgo.toISOString();
-            console.log(`  Fetching contribution from date: ${fromDate}`);
+            
+            // Use the later of: 1 year ago OR 2 days before last update (to catch any edge cases)
+            let fromDate;
+            if (lastUpdateDate && lastUpdateDate > oneYearAgo) {
+                // Incremental: go back 2 days from last update to catch stragglers
+                const incrementalDate = new Date(lastUpdateDate);
+                incrementalDate.setDate(incrementalDate.getDate() - 2);
+                fromDate = incrementalDate > oneYearAgo ? incrementalDate.toISOString() : oneYearAgo.toISOString();
+                console.log(`  Incremental update from: ${fromDate}`);
+            } else {
+                fromDate = oneYearAgo.toISOString();
+                console.log(`  Full fetch from date: ${fromDate}`);
+            }
 
             for (const project of projects) {
                  // console.log(`    Processing project: ${project.name}`); // Reduce spam
@@ -327,7 +373,6 @@ async function fetchContributions() {
     console.log(`Total lines added: ${result.totalLinesAdded}`);
     console.log(`Total lines deleted: ${result.totalLinesDeleted}`);
 
-    const outputPath = path.join(__dirname, '../public/ado-contributions.json');
     fs.writeFileSync(outputPath, JSON.stringify(result, null, 2));
     console.log(`Successfully wrote ${result.contributions.length} days of contributions to ${outputPath}`);
 }
