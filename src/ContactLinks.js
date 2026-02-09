@@ -230,126 +230,105 @@ const ContactLinks = ({
     if (!combinedPastYearContributions) return ["Loading contributions..."];
 
     const currentStreak = calculateCurrentStreak(combinedPastYearContributions);
-    const longestStreak = calculateLongestStreak(combinedPastYearContributions);
     const todayCount = getTodayContributions(combinedPastYearContributions);
     const pastWeekCount = getPastWeekContributions(combinedPastYearContributions);
 
-    const summary = [];
+    // Format large numbers with commas
+    const formatNumber = (num) => num.toLocaleString();
+    
+    // Flame SVG icon component (Lucide-style)
+    const FlameIcon = () => (
+      <svg className={`w-3 h-3 ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/>
+      </svg>
+    );
 
-    // Only show today's contributions if > 0
-    if (todayCount > 0) {
-      summary.push(
-        <div className="flex justify-between items-center w-full gap-8">
-          <span className="text-left">
-            <b>past 24h:</b>
-          </span>
-          <span className="text-right">{todayCount} contributions</span>
+    // Lock SVG icon component (Lucide-style)
+    const LockIcon = () => (
+      <svg className="w-2.5 h-2.5 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    );
+
+    return (
+      <div className={`w-[280px] text-sm font-mono select-none ${isDarkMode ? 'text-zinc-400' : 'text-zinc-600'}`}>
+        <div className="space-y-3">
+          {/* Past 24h / Past week section */}
+          <div className={`pb-3 border-b ${isDarkMode ? 'border-zinc-800' : 'border-zinc-300'}`}>
+            {todayCount > 0 && (
+              <div className="flex justify-between items-baseline">
+                <span>past 24h</span>
+                <div>
+                  <span className={isDarkMode ? 'text-zinc-200' : 'text-zinc-900'}>{todayCount}</span>
+                  <span className="text-[10px] ml-1 opacity-60">commits</span>
+                </div>
+              </div>
+            )}
+            <div className={`flex justify-between items-baseline ${todayCount > 0 ? 'mt-1' : ''}`}>
+              <span>past week</span>
+              <div>
+                <span className={isDarkMode ? 'text-zinc-200' : 'text-zinc-900'}>{pastWeekCount}</span>
+                <span className="text-[10px] ml-1 opacity-60">commits</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Past year section */}
+          <div className="space-y-1">
+            <div className={`flex justify-between items-baseline ${isDarkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>
+              <span>past year</span>
+              <div>
+                <span>{totalPastYearContributions}</span>
+                <span className="text-[10px] ml-1 opacity-60">commits</span>
+              </div>
+            </div>
+            
+            {/* Breakdown */}
+            <div className="pl-2 flex flex-col gap-1 text-xs pt-1 opacity-80">
+              {contributionBreakdown && contributionBreakdown.ado > 0 && (
+                <>
+                  <div className="flex justify-between">
+                    <span>↳ personal</span>
+                    <span>{contributionBreakdown.github}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="flex items-center gap-1">↳ work <LockIcon /></span>
+                    <span>{contributionBreakdown.ado}</span>
+                  </div>
+                </>
+              )}
+              {lineStats && (lineStats.totalAdded > 0 || lineStats.totalDeleted > 0) && (
+                <div className={`flex justify-between pt-1 mt-1 border-t border-dashed ${isDarkMode ? 'border-zinc-700' : 'border-zinc-400'}`}>
+                  <span>↳ lines</span>
+                  <span>
+                    +{formatNumber(lineStats.totalAdded)} / -{formatNumber(lineStats.totalDeleted)}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Streak Section */}
+          {currentStreak > 0 && (
+            <div className={`pt-3 mt-2 border-t ${isDarkMode ? 'border-zinc-800' : 'border-zinc-300'} flex justify-between items-center text-xs opacity-90`}>
+              <div className="flex items-center gap-1.5">
+                <FlameIcon />
+                <span>current streak:</span>
+              </div>
+              <span className={isDarkMode ? 'text-zinc-200' : 'text-zinc-900'}>{currentStreak} days</span>
+            </div>
+          )}
         </div>
-      );
-    }
-
-    // Always show past week
-    summary.push(
-      // <div className="flex flex-col w-full">
-      <div className="flex justify-between items-center w-full gap-8">
-        <span className="text-left">
-          <b>past week:</b>
-        </span>
-        <span className="text-right">{pastWeekCount} contributions</span>
       </div>
-        // {contributionBreakdown && contributionBreakdown.adoPrs > 0 && (
-        //   <div className="flex justify-end w-full">
-        //     <span className="text-right text-xs text-gray-400">
-        //       {contributionBreakdown.adoPrs} merged PRs (🔒)
-        //     </span>
-        //   </div>
-        // )}
-      // </div>
     );
-
-    // Always show past year total
-    summary.push(
-        <div className="flex justify-between items-center w-full gap-8">
-          <span className="text-left">
-            <b>past year:</b>
-          </span>
-          <span className="text-right">
-            {totalPastYearContributions} contributions
-          </span>
-        </div>
-    );
-
-    // Add breakdown if ADO data exists
-    if (contributionBreakdown && contributionBreakdown.ado > 0) {
-      summary.push(
-        <span>
-          {contributionBreakdown.github} personal commits ● {contributionBreakdown.ado} work commits (🔒)
-        </span>
-      );
-    }
-
-    // Add line stats if available
-    if (lineStats && (lineStats.totalAdded > 0 || lineStats.totalDeleted > 0)) {
-      summary.push(
-        <div className="flex justify-between items-center w-full gap-8">
-          <span className="text-left">
-            <b>lines changed:</b>
-          </span>
-          <span className="text-right">
-            +{lineStats.totalAdded.toLocaleString()} / -{lineStats.totalDeleted.toLocaleString()}
-          </span>
-        </div>
-      );
-    }
-
-    // Show streaks
-    // Show streaks
-    if (currentStreak > 0) {
-      if (currentStreak === longestStreak) {
-        summary.push(
-          <div className="flex justify-between items-center w-full gap-8">
-            <span className="text-left">
-              <b>current & longest streak:</b>
-            </span>
-            <span className="text-right">{currentStreak} days</span>
-          </div>
-        );
-      } else {
-        summary.push(
-          <div className="flex justify-between items-center w-full gap-8">
-            <span className="text-left">
-              <b>current streak:</b>
-            </span>
-            <span className="text-right">{currentStreak} days</span>
-          </div>
-        );
-        summary.push(
-          <div className="flex justify-between items-center w-full gap-8">
-            <span className="text-left">
-              <b>longest streak:</b>
-            </span>
-            <span className="text-right">{longestStreak} days</span>
-          </div>
-        );
-      }
-    } else {
-      summary.push(
-        <div className="flex justify-between items-center w-full gap-8">
-          <span className="text-left">
-            <b>longest streak:</b>
-          </span>
-          <span className="text-right">{longestStreak} days</span>
-        </div>
-      );
-    }
-
-    return summary;
   }, [
     error,
     combinedPastYearContributions,
     totalPastYearContributions,
     contributionBreakdown,
     lineStats,
+    isDarkMode // Added dependency
   ]);
 
   const handleCopyEmail = async (e) => {
@@ -413,19 +392,18 @@ const ContactLinks = ({
   };
 
   const formattedSummary = useMemo(() => {
-    const summaryList = Array.isArray(getContributionsSummary())
-    ? getContributionsSummary() 
-    : [getContributionsSummary()];
-
-    if (isMobile) {
-       return [
-         ...summaryList,
-         <div key="tap-hint" className="text-xs text-gray-400 mt-2 italic text-center font-normal">
-           (tap again to open)
-         </div>
-       ]
-    }
-    return summaryList;
+    const summary = getContributionsSummary();
+    
+    return (
+      <div>
+        {summary}
+        {isMobile && (
+          <div className="text-xs text-zinc-400 mt-3 italic text-center font-normal border-t border-zinc-700 pt-2">
+            (tap again to open)
+          </div>
+        )}
+      </div>
+    );
   }, [getContributionsSummary, isMobile]);
 
   return (
@@ -623,9 +601,8 @@ const ContactLinks = ({
               ></path>
             </svg>
             <motion.span layoutId="contact-github">github</motion.span>
-            {isMobile && !githubTapped && (
-              <InformationCircleIcon className="w-4 h-4 ml-1 text-gray-400 animate-pulse" />
-            )}
+            {/* Always show the info icon now, not just on mobile */}
+            <InformationCircleIcon className="w-4 h-4 ml-1 text-gray-400 animate-pulse" />
           </a>
           {/* <a
             href="https://x.com/realaeden"
@@ -650,16 +627,14 @@ const ContactLinks = ({
             place="top"
             effect="solid"
             className="custom-tooltip"
-            openOnClick={isMobile} // Only rely on click on mobile
+            openOnClick={isMobile} // Hover on desktop, click on mobile
             afterHide={() => { if(isMobile) setGithubTapped(false); }} // Reset state when tooltip hides
             clickable={true}
             delayShow={50} // Slight delay to ensure proper positioning before showing
             positionStrategy="fixed" // Use fixed positioning for more reliable placement
           >
-            <div onClick={handleTooltipClick} className={isMobile ? "cursor-pointer" : ""}>
-                {formattedSummary.map((line, index) => (
-                <div key={index}>{line}</div>
-                ))}
+            <div onClick={handleTooltipClick} className="cursor-pointer">
+              {formattedSummary}
             </div>
           </Tooltip>
 

@@ -195,9 +195,39 @@ code {
   cursor: none !important;
 }
 
+/* Tooltip fade-in animation */
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Fix for tooltip z-index issue and smooth transition */
 .custom-tooltip {
   z-index: 9999 !important;
-  /* Add smooth transition for opacity */
-  transition: opacity 0.2s ease-in-out !important;
+  padding: 16px 20px !important;
+  border-radius: 12px !important;
+  min-width: 260px !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+  /* Fully opaque page background */
+  background: #f2f0e9 !important;
+  opacity: 1 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  /* Fade animation */
+  animation: tooltipFadeIn 0.25s ease-out !important;
+}
+
+/* Dark mode tooltip background */
+html.dark .custom-tooltip {
+  background: #000000 !important;
+  opacity: 1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
 }
