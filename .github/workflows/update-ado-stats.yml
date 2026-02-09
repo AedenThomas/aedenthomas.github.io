@@ -29,11 +29,17 @@ jobs:
           ADO_PAT_SJ: ${{ secrets.ADO_PAT_SJ }}
         run: node scripts/fetch-ado-contributions.js
 
+      - name: Fetch GitHub Stats
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: AedenThomas
+        run: node scripts/fetch-github-stats.js
+
       - name: Commit and Push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "chore: update ado contributions [skip ci]"
-          file_pattern: public/ado-contributions.json
+          commit_message: "chore: update contribution stats [skip ci]"
+          file_pattern: public/ado-contributions.json public/github-stats.json
 
       - name: Install dependencies
         run: npm ci

@@ -1,0 +1,186 @@
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
+
+// GitHub configuration
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'AedenThomas';
+
+// Additional accounts to aggregate (username -> repos to check, or null for all)
+const ADDITIONAL_ACCOUNTS = [
+    { username: 'AedenThomasIntryc', repos: null }
+];
+
+if (!GITHUB_TOKEN) {
+    console.error('Error: GITHUB_TOKEN environment variable is required');
+    process.exit(1);
+}
+
+// Helper for GitHub API requests
+function githubRequest(url) {
+    return new Promise((resolve, reject) => {
+        const options = {
+            headers: {
+                'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'aedenthomas-stats-fetcher'
+            }
+        };
+
+        https.get(url, options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => data += chunk);
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    try {
+                        resolve(JSON.parse(data));
+                    } catch (e) {
+                        reject(new Error('Failed to parse JSON'));
+                    }
+                } else if (res.statusCode === 404) {
+                    resolve(null); // Not found, return null
+                } else {
+                    reject(new Error(`GitHub API request failed with status ${res.statusCode}: ${data}`));
+                }
+            });
+        }).on('error', (err) => reject(err));
+    });
+}
+
+// Paginated fetch helper
+async function fetchAllPages(baseUrl, maxPages = 10) {
+    const results = [];
+    let page = 1;
+    
+    while (page <= maxPages) {
+        const separator = baseUrl.includes('?') ? '&' : '?';
+        const url = `${baseUrl}${separator}per_page=100&page=${page}`;
+        const data = await githubRequest(url);
+        
+        if (!data || data.length === 0) break;
+        results.push(...data);
+        
+        if (data.length < 100) break; // Last page
+        page++;
+    }
+    
+    return results;
+}
+
+async function fetchUserStats(username) {
+    console.log(`\nFetching stats for user: ${username}`);
+    const stats = { linesAdded: 0, linesDeleted: 0, byDate: {} };
+    
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    const fromDateStr = oneYearAgo.toISOString().split('T')[0];
+    
+    try {
+        // Fetch user's repos
+        const repos = await fetchAllPages(`https://api.github.com/users/${username}/repos`);
+        console.log(`  Found ${repos.length} repositories`);
+        
+        for (const repo of repos) {
+            // Skip forks unless you want to include them
+            if (repo.fork) continue;
+            
+            try {
+                // Fetch commits by this user in the past year
+                const commitsUrl = `https://api.github.com/repos/${repo.full_name}/commits?author=${username}&since=${oneYearAgo.toISOString()}`;
+                const commits = await fetchAllPages(commitsUrl, 5);
+                
+                if (commits.length === 0) continue;
+                console.log(`    ${repo.name}: ${commits.length} commits`);
+                
+                // For each commit, get the detailed stats
+                for (const commit of commits) {
+                    try {
+                        const commitDetails = await githubRequest(`https://api.github.com/repos/${repo.full_name}/commits/${commit.sha}`);
+                        
+                        if (commitDetails && commitDetails.stats) {
+                            const dateStr = commit.commit.author.date.split('T')[0];
+                            
+                            // Only count if within past year
+                            if (dateStr >= fromDateStr) {
+                                stats.linesAdded += commitDetails.stats.additions || 0;
+                                stats.linesDeleted += commitDetails.stats.deletions || 0;
+                                
+                                if (!stats.byDate[dateStr]) {
+                                    stats.byDate[dateStr] = { linesAdded: 0, linesDeleted: 0 };
+                                }
+                                stats.byDate[dateStr].linesAdded += commitDetails.stats.additions || 0;
+                                stats.byDate[dateStr].linesDeleted += commitDetails.stats.deletions || 0;
+                            }
+                        }
+                    } catch (err) {
+                        // Skip individual commit errors
+                    }
+                }
+            } catch (err) {
+                console.error(`    Failed to fetch commits for ${repo.name}: ${err.message}`);
+            }
+        }
+    } catch (err) {
+        console.error(`  Failed to fetch repos for ${username}: ${err.message}`);
+    }
+    
+    return stats;
+}
+
+async function fetchGitHubStats() {
+    const allStats = { linesAdded: 0, linesDeleted: 0, byDate: {} };
+    
+    // Fetch main account
+    const mainStats = await fetchUserStats(GITHUB_USERNAME);
+    allStats.linesAdded += mainStats.linesAdded;
+    allStats.linesDeleted += mainStats.linesDeleted;
+    
+    // Merge byDate
+    for (const [date, data] of Object.entries(mainStats.byDate)) {
+        if (!allStats.byDate[date]) {
+            allStats.byDate[date] = { linesAdded: 0, linesDeleted: 0 };
+        }
+        allStats.byDate[date].linesAdded += data.linesAdded;
+        allStats.byDate[date].linesDeleted += data.linesDeleted;
+    }
+    
+    // Fetch additional accounts
+    for (const account of ADDITIONAL_ACCOUNTS) {
+        const accountStats = await fetchUserStats(account.username);
+        allStats.linesAdded += accountStats.linesAdded;
+        allStats.linesDeleted += accountStats.linesDeleted;
+        
+        for (const [date, data] of Object.entries(accountStats.byDate)) {
+            if (!allStats.byDate[date]) {
+                allStats.byDate[date] = { linesAdded: 0, linesDeleted: 0 };
+            }
+            allStats.byDate[date].linesAdded += data.linesAdded;
+            allStats.byDate[date].linesDeleted += data.linesDeleted;
+        }
+    }
+    
+    // Build output
+    const result = {
+        updatedAt: new Date().toISOString(),
+        totalLinesAdded: allStats.linesAdded,
+        totalLinesDeleted: allStats.linesDeleted,
+        contributions: Object.entries(allStats.byDate)
+            .map(([date, data]) => ({
+                date,
+                linesAdded: data.linesAdded,
+                linesDeleted: data.linesDeleted
+            }))
+            .sort((a, b) => a.date.localeCompare(b.date))
+    };
+    
+    console.log(`\n=== Summary ===`);
+    console.log(`Total lines added: ${result.totalLinesAdded}`);
+    console.log(`Total lines deleted: ${result.totalLinesDeleted}`);
+    console.log(`Total changes: ${result.totalLinesAdded + result.totalLinesDeleted}`);
+    
+    const outputPath = path.join(__dirname, '../public/github-stats.json');
+    fs.writeFileSync(outputPath, JSON.stringify(result, null, 2));
+    console.log(`Successfully wrote stats to ${outputPath}`);
+}
+
+fetchGitHubStats();

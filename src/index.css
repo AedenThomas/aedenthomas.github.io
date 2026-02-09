@@ -198,17 +198,6 @@ code {
 /* Fix for tooltip z-index issue and smooth transition */
 .custom-tooltip {
   z-index: 9999 !important;
-  /* Smooth transition for opacity and transform */
-  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out !important;
-}
-
-/* Override react-tooltip's default opacity behavior for smooth transitions */
-.custom-tooltip.react-tooltip {
-  opacity: 0;
-  transform: translateY(8px);
-}
-
-.custom-tooltip.react-tooltip.react-tooltip__show {
-  opacity: 1 !important;
-  transform: translateY(0);
+  /* Add smooth transition for opacity */
+  transition: opacity 0.2s ease-in-out !important;
 }

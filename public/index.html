@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -38,13 +38,19 @@
       rel="preload"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
       as="style"
-      onload="this.onload=null;this.rel='stylesheet'"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
     />
     <link
       rel="preload"
       href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
       as="style"
-      onload="this.onload=null;this.rel='stylesheet'"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
     />
     <link
       href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,400..900;1,400..900&family=Montagu+Slab:opsz,wght@16..144,100..700&display=swap"
@@ -54,6 +60,52 @@
       href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <script>
+      ((window.faitracker =
+        window.faitracker ||
+        (function () {
+          this.q = [];
+          var t = new CustomEvent("FAITRACKER_QUEUED_EVENT");
+          return (
+            (this.init = function (t, e, a) {
+              ((this.TOKEN = t),
+                (this.INIT_PARAMS = e),
+                (this.INIT_CALLBACK = a),
+                window.dispatchEvent(new CustomEvent("FAITRACKER_INIT_EVENT")));
+            }),
+            (this.call = function () {
+              var e = { k: "", a: [] };
+              if (arguments && arguments.length >= 1) {
+                for (var a = 1; a < arguments.length; a++)
+                  e.a.push(arguments[a]);
+                e.k = arguments[0];
+              }
+              (this.q.push(e), window.dispatchEvent(t));
+            }),
+            (this.message = function () {
+              window.addEventListener("message", function (t) {
+                "faitracker" === t.data.origin &&
+                  this.call("message", t.data.type, t.data.message);
+              });
+            }),
+            this.message(),
+            this.init("9gh0a5wpkctddmdn5us43u24rnowq6tf", {
+              host: "https://api.factors.ai",
+            }),
+            this
+          );
+        })()),
+        (function () {
+          var t = document.createElement("script");
+          ((t.type = "text/javascript"),
+            (t.src = "https://app.factors.ai/assets/factors.js"),
+            (t.async = !0),
+            (d =
+              document.getElementsByTagName(
+                "script",
+              )[0]).parentNode.insertBefore(t, d));
+        })());
+    </script>
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <style>
       .handwritten-font {
@@ -72,7 +124,7 @@
       function initApollo() {
         var n = Math.random().toString(36).substring(7),
           o = document.createElement("script");
-        (o.src =
+        ((o.src =
           "https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache=" +
           n),
           (o.async = !0),
@@ -82,7 +134,7 @@
               appId: "6863e38e21e95e0019bd9098",
             });
           }),
-          document.head.appendChild(o);
+          document.head.appendChild(o));
       }
       initApollo();
     </script>
@@ -123,7 +175,7 @@
           .getElementsByTagName("script")[0]
           .parentNode.insertBefore(
             s,
-            document.getElementsByTagName("script")[0]
+            document.getElementsByTagName("script")[0],
           );
       })("EN4M0H1933OM");
     </script>
