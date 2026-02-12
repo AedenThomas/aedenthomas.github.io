@@ -181,6 +181,9 @@ async function fetchContributions() {
     // Start with existing contributions (will be merged/updated)
     const contributions = { ...existingContributions };
 
+    // Track per-extension stats
+    const extensionStats = {};
+
     for (const config of configs) {
         const { org, pat, email } = config;
         
@@ -256,42 +259,45 @@ async function fetchContributions() {
                                                 if (!change.item || change.item.isFolder) continue;
                                                 
                                                 const filePath = change.item.path;
-                                                // Filter out JSON, lock files, and other non-code artifacts
-                                                if (filePath.match(/\.(json|lock|map|min\.js|min\.css)$/i)) continue;
+                                                const isIgnored = filePath.match(/\.(json|lock|map|min\.js|min\.css)$/i);
 
                                                 const changeType = change.changeType;
                                                 
                                                 // Use internal API to get accurate line counts
-                                                const stats = await getFileDiffStats(
-                                                    baseUrl,
-                                                    project.name,
-                                                    repo.id,
-                                                    pat,
-                                                    changeType === 'add' ? null : filePath, // original path (null for new files)
-                                                    filePath,
-                                                    changeType === 'add' ? null : parentId, // original version
-                                                    commit.commitId
-                                                );
+                                                const stats = await getFileDiffStats(baseUrl, project.name, repo.id, pat, change.originalPath || filePath, filePath, parentId, commit.commitId);
                                                 
                                                 if (stats) {
-                                                    contributions[dateStr].linesAdded += stats.added;
-                                                    contributions[dateStr].linesDeleted += stats.deleted;
-                                                } else {
-                                                    // Fallback to estimates if internal API fails
-                                                    if (changeType === 'add') {
-                                                        contributions[dateStr].linesAdded += 50;
-                                                    } else if (changeType === 'delete') {
-                                                        contributions[dateStr].linesDeleted += 50;
-                                                    } else {
-                                                        contributions[dateStr].linesAdded += 15;
-                                                        contributions[dateStr].linesDeleted += 10;
+                                                    // Update extension stats (track everything to see where lines come from)
+                                                    const ext = path.extname(filePath).toLowerCase() || '(no-ext)';
+                                                    if (!extensionStats[ext]) extensionStats[ext] = { added: 0, deleted: 0 };
+                                                    extensionStats[ext].added += stats.added;
+                                                    extensionStats[ext].deleted += stats.deleted;
+
+                                                    // Only add to user contributions if NOT ignored
+                                                    if (!isIgnored) {
+                                                        contributions[dateStr].linesAdded += stats.added;
+                                                        contributions[dateStr].linesDeleted += stats.deleted;
                                                     }
+                                                } else {
+                                                    // Fallback estimates if internal API fails
+                                                    let added = 0;
+                                                    let deleted = 0;
+                                                    if (changeType === 'add') {
+                                                        added = 25; // Estimate
+                                                    } else if (changeType === 'edit') {
+                                                        added = 10;
+                                                        deleted = 5;
+                                                    } else if (changeType === 'delete') {
+                                                        deleted = 25;
+                                                    }
+                                                    contributions[dateStr].linesAdded += added;
+                                                    contributions[dateStr].linesDeleted += deleted;
                                                 }
                                             }
                                         }
                                     } else {
-                                        // First commit (no parent) - use estimate
-                                        contributions[dateStr].linesAdded += 100;
+                                        // First commit? Just estimate
+                                        contributions[dateStr].linesAdded += 50; 
                                     }
                                 } catch (detailErr) {
                                     // If we can't get detailed diff, use a rough estimate per commit
@@ -371,6 +377,16 @@ async function fetchContributions() {
     const totalCount = result.contributions.reduce((acc, curr) => acc + curr.count, 0);
     const totalPrs = result.contributions.reduce((acc, curr) => acc + (curr.prs || 0), 0);
     
+    console.log(`\n=== Extension Stats (ADO) ===`);
+    const sortedExts = Object.keys(extensionStats).sort((a, b) => extensionStats[b].added - extensionStats[a].added);
+    for (const ext of sortedExts) {
+        const s = extensionStats[ext];
+        if (s.added > 0 || s.deleted > 0) {
+            console.log(`${ext.padEnd(10)}: ${s.added}+ / ${s.deleted}-`);
+        }
+    }
+    console.log(`=============================\n`);
+
     console.log(`Total contributions found: ${totalCount} (Commits + PRs)`);
     console.log(`Total PRs found: ${totalPrs}`);
     console.log(`Total lines added: ${result.totalLinesAdded}`);

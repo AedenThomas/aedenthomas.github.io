@@ -67,7 +67,7 @@ async function fetchAllPages(baseUrl, maxPages = 10) {
     return results;
 }
 
-async function fetchUserStats(username) {
+async function fetchUserStats(username, globalExtensionStats) {
     console.log(`\nFetching stats for user: ${username}`);
     const stats = { linesAdded: 0, linesDeleted: 0, byDate: {} };
     
@@ -106,12 +106,21 @@ async function fetchUserStats(username) {
 
                                 if (commitDetails.files && Array.isArray(commitDetails.files)) {
                                     for (const file of commitDetails.files) {
-                                        // Filter out JSON, lock files, and other non-code artifacts
-                                        if (file.filename && file.filename.match(/\.(json|lock|map|min\.js|min\.css)$/i)) {
-                                            continue;
+                                        const isIgnored = file.filename && file.filename.match(/\.(json|lock|map|min\.js|min\.css)$/i);
+                                        
+                                        // Track all extensions
+                                        if (file.filename) {
+                                            const ext = path.extname(file.filename).toLowerCase() || '(no-ext)';
+                                            if (!globalExtensionStats[ext]) globalExtensionStats[ext] = { added: 0, deleted: 0 };
+                                            globalExtensionStats[ext].added += file.additions || 0;
+                                            globalExtensionStats[ext].deleted += file.deletions || 0;
                                         }
-                                        added += file.additions || 0;
-                                        deleted += file.deletions || 0;
+
+                                        // Only add to user stats if NOT ignored
+                                        if (!isIgnored) {
+                                            added += file.additions || 0;
+                                            deleted += file.deletions || 0;
+                                        }
                                     }
                                 } else {
                                     // Fallback to overall stats if files are not available
@@ -146,8 +155,10 @@ async function fetchUserStats(username) {
 async function fetchGitHubStats() {
     const allStats = { linesAdded: 0, linesDeleted: 0, byDate: {} };
     
+    const globalExtensionStats = {};
+    
     // Fetch main account
-    const mainStats = await fetchUserStats(GITHUB_USERNAME);
+    const mainStats = await fetchUserStats(GITHUB_USERNAME, globalExtensionStats);
     allStats.linesAdded += mainStats.linesAdded;
     allStats.linesDeleted += mainStats.linesDeleted;
     
@@ -162,7 +173,7 @@ async function fetchGitHubStats() {
     
     // Fetch additional accounts
     for (const account of ADDITIONAL_ACCOUNTS) {
-        const accountStats = await fetchUserStats(account.username);
+        const accountStats = await fetchUserStats(account.username, globalExtensionStats);
         allStats.linesAdded += accountStats.linesAdded;
         allStats.linesDeleted += accountStats.linesDeleted;
         
@@ -189,6 +200,16 @@ async function fetchGitHubStats() {
             .sort((a, b) => a.date.localeCompare(b.date))
     };
     
+    console.log(`\n=== Extension Stats (GitHub) ===`);
+    const sortedExts = Object.keys(globalExtensionStats).sort((a, b) => globalExtensionStats[b].added - globalExtensionStats[a].added);
+    for (const ext of sortedExts) {
+        const s = globalExtensionStats[ext];
+        if (s.added > 0 || s.deleted > 0) {
+            console.log(`${ext.padEnd(10)}: ${s.added}+ / ${s.deleted}-`);
+        }
+    }
+    console.log(`================================\n`);
+
     console.log(`\n=== Summary ===`);
     console.log(`Total lines added: ${result.totalLinesAdded}`);
     console.log(`Total lines deleted: ${result.totalLinesDeleted}`);
