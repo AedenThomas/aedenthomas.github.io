@@ -266,22 +266,14 @@ async function fetchContributions() {
                                                 // Use internal API to get accurate line counts
                                                 const stats = await getFileDiffStats(baseUrl, project.name, repo.id, pat, change.originalPath || filePath, filePath, parentId, commit.commitId);
                                                 
-                                                if (stats) {
-                                                    // Update extension stats (track everything to see where lines come from)
-                                                    const ext = path.extname(filePath).toLowerCase() || '(no-ext)';
-                                                    if (!extensionStats[ext]) extensionStats[ext] = { added: 0, deleted: 0 };
-                                                    extensionStats[ext].added += stats.added;
-                                                    extensionStats[ext].deleted += stats.deleted;
+                                                let added = 0;
+                                                let deleted = 0;
 
-                                                    // Only add to user contributions if NOT ignored
-                                                    if (!isIgnored) {
-                                                        contributions[dateStr].linesAdded += stats.added;
-                                                        contributions[dateStr].linesDeleted += stats.deleted;
-                                                    }
+                                                if (stats) {
+                                                    added = stats.added;
+                                                    deleted = stats.deleted;
                                                 } else {
                                                     // Fallback estimates if internal API fails
-                                                    let added = 0;
-                                                    let deleted = 0;
                                                     if (changeType === 'add') {
                                                         added = 25; // Estimate
                                                     } else if (changeType === 'edit') {
@@ -290,6 +282,16 @@ async function fetchContributions() {
                                                     } else if (changeType === 'delete') {
                                                         deleted = 25;
                                                     }
+                                                }
+
+                                                // Update extension stats (track everything)
+                                                const ext = path.extname(filePath).toLowerCase() || '(no-ext)';
+                                                if (!extensionStats[ext]) extensionStats[ext] = { added: 0, deleted: 0 };
+                                                extensionStats[ext].added += added;
+                                                extensionStats[ext].deleted += deleted;
+
+                                                // Only add to user contributions if NOT ignored
+                                                if (!isIgnored) {
                                                     contributions[dateStr].linesAdded += added;
                                                     contributions[dateStr].linesDeleted += deleted;
                                                 }
