@@ -1,15 +1,385 @@
 {
-  "totalContributions": 0,
-  "weeks": [],
-  "currentStreak": {
-    "days": 0,
-    "start": "",
-    "end": ""
+  "updatedAt": "2026-02-12T15:36:26.914Z",
+  "totalLinesAdded": 98220,
+  "totalLinesDeleted": 27003,
+  "extensionStats": {
+    ".md": {
+      "added": 6234,
+      "deleted": 1603
+    },
+    ".json": {
+      "added": 96492,
+      "deleted": 11482
+    },
+    ".js": {
+      "added": 26834,
+      "deleted": 11218
+    },
+    ".css": {
+      "added": 4714,
+      "deleted": 2752
+    },
+    ".yml": {
+      "added": 294,
+      "deleted": 15
+    },
+    ".html": {
+      "added": 512,
+      "deleted": 35
+    },
+    ".jpg": {
+      "added": 0,
+      "deleted": 0
+    },
+    ".mp4": {
+      "added": 0,
+      "deleted": 0
+    },
+    ".py": {
+      "added": 8087,
+      "deleted": 3046
+    },
+    ".tsx": {
+      "added": 7535,
+      "deleted": 504
+    },
+    "(no-ext)": {
+      "added": 1425,
+      "deleted": 200
+    },
+    ".lockb": {
+      "added": 0,
+      "deleted": 0
+    },
+    ".ts": {
+      "added": 5323,
+      "deleted": 1195
+    },
+    ".example": {
+      "added": 9,
+      "deleted": 0
+    },
+    ".ini": {
+      "added": 147,
+      "deleted": 0
+    },
+    ".mako": {
+      "added": 28,
+      "deleted": 0
+    },
+    ".txt": {
+      "added": 45,
+      "deleted": 0
+    },
+    ".xml": {
+      "added": 77,
+      "deleted": 19
+    },
+    ".png": {
+      "added": 0,
+      "deleted": 0
+    },
+    ".ahap": {
+      "added": 2566,
+      "deleted": 0
+    },
+    ".yaml": {
+      "added": 37,
+      "deleted": 3
+    },
+    ".plist": {
+      "added": 130,
+      "deleted": 48
+    },
+    ".xcconfig": {
+      "added": 8,
+      "deleted": 0
+    },
+    ".lock": {
+      "added": 594,
+      "deleted": 29
+    },
+    ".pbxproj": {
+      "added": 965,
+      "deleted": 5
+    },
+    ".xcscheme": {
+      "added": 13,
+      "deleted": 2
+    },
+    ".xcworkspacedata": {
+      "added": 10,
+      "deleted": 0
+    },
+    ".swift": {
+      "added": 28300,
+      "deleted": 4904
+    },
+    ".storyboard": {
+      "added": 11,
+      "deleted": 4
+    },
+    ".dart": {
+      "added": 1632,
+      "deleted": 239
+    },
+    ".cc": {
+      "added": 10,
+      "deleted": 0
+    },
+    ".cmake": {
+      "added": 3,
+      "deleted": 0
+    },
+    ".ico": {
+      "added": 0,
+      "deleted": 0
+    },
+    ".csv": {
+      "added": 517,
+      "deleted": 146
+    },
+    ".sh": {
+      "added": 359,
+      "deleted": 105
+    },
+    ".gz": {
+      "added": 0,
+      "deleted": 0
+    },
+    ".analysis": {
+      "added": 15,
+      "deleted": 0
+    },
+    ".client": {
+      "added": 16,
+      "deleted": 0
+    },
+    ".sfu": {
+      "added": 20,
+      "deleted": 0
+    },
+    ".signaling": {
+      "added": 12,
+      "deleted": 0
+    },
+    ".test": {
+      "added": 29,
+      "deleted": 0
+    },
+    ".entitlements": {
+      "added": 39,
+      "deleted": 0
+    },
+    ".resolved": {
+      "added": 106,
+      "deleted": 1
+    },
+    ".toml": {
+      "added": 6,
+      "deleted": 0
+    },
+    ".pdf": {
+      "added": 0,
+      "deleted": 0
+    },
+    ".svg": {
+      "added": 9,
+      "deleted": 1
+    },
+    ".jsx": {
+      "added": 2143,
+      "deleted": 958
+    },
+    ".joblib": {
+      "added": 0,
+      "deleted": 0
+    },
+    ".pkl": {
+      "added": 0,
+      "deleted": 0
+    }
   },
-  "longestStreak": {
-    "days": 0,
-    "start": "",
-    "end": ""
-  },
-  "extensionStats": {}
+  "contributions": [
+    {
+      "date": "2025-03-05",
+      "linesAdded": 171,
+      "linesDeleted": 0
+    },
+    {
+      "date": "2025-03-25",
+      "linesAdded": 2535,
+      "linesDeleted": 0
+    },
+    {
+      "date": "2025-04-11",
+      "linesAdded": 3885,
+      "linesDeleted": 2291
+    },
+    {
+      "date": "2025-04-12",
+      "linesAdded": 5882,
+      "linesDeleted": 0
+    },
+    {
+      "date": "2025-04-16",
+      "linesAdded": 7288,
+      "linesDeleted": 3172
+    },
+    {
+      "date": "2025-04-17",
+      "linesAdded": 9477,
+      "linesDeleted": 10131
+    },
+    {
+      "date": "2025-04-19",
+      "linesAdded": 47,
+      "linesDeleted": 35
+    },
+    {
+      "date": "2025-04-21",
+      "linesAdded": 3,
+      "linesDeleted": 0
+    },
+    {
+      "date": "2025-07-14",
+      "linesAdded": 1412,
+      "linesDeleted": 293
+    },
+    {
+      "date": "2025-07-20",
+      "linesAdded": 55,
+      "linesDeleted": 64
+    },
+    {
+      "date": "2025-07-24",
+      "linesAdded": 133,
+      "linesDeleted": 140
+    },
+    {
+      "date": "2025-08-11",
+      "linesAdded": 5524,
+      "linesDeleted": 822
+    },
+    {
+      "date": "2025-08-12",
+      "linesAdded": 6135,
+      "linesDeleted": 340
+    },
+    {
+      "date": "2025-08-13",
+      "linesAdded": 579,
+      "linesDeleted": 289
+    },
+    {
+      "date": "2025-08-14",
+      "linesAdded": 2388,
+      "linesDeleted": 8
+    },
+    {
+      "date": "2025-08-16",
+      "linesAdded": 3299,
+      "linesDeleted": 505
+    },
+    {
+      "date": "2025-08-17",
+      "linesAdded": 9511,
+      "linesDeleted": 1516
+    },
+    {
+      "date": "2025-08-19",
+      "linesAdded": 374,
+      "linesDeleted": 116
+    },
+    {
+      "date": "2025-08-22",
+      "linesAdded": 6546,
+      "linesDeleted": 2079
+    },
+    {
+      "date": "2025-08-24",
+      "linesAdded": 15,
+      "linesDeleted": 15
+    },
+    {
+      "date": "2025-08-29",
+      "linesAdded": 7117,
+      "linesDeleted": 203
+    },
+    {
+      "date": "2025-09-07",
+      "linesAdded": 655,
+      "linesDeleted": 86
+    },
+    {
+      "date": "2025-09-20",
+      "linesAdded": 34,
+      "linesDeleted": 0
+    },
+    {
+      "date": "2025-10-27",
+      "linesAdded": 1138,
+      "linesDeleted": 425
+    },
+    {
+      "date": "2025-10-28",
+      "linesAdded": 543,
+      "linesDeleted": 48
+    },
+    {
+      "date": "2025-10-30",
+      "linesAdded": 10,
+      "linesDeleted": 9
+    },
+    {
+      "date": "2026-01-03",
+      "linesAdded": 3730,
+      "linesDeleted": 0
+    },
+    {
+      "date": "2026-01-04",
+      "linesAdded": 3281,
+      "linesDeleted": 1313
+    },
+    {
+      "date": "2026-01-05",
+      "linesAdded": 39,
+      "linesDeleted": 14
+    },
+    {
+      "date": "2026-01-18",
+      "linesAdded": 463,
+      "linesDeleted": 86
+    },
+    {
+      "date": "2026-01-23",
+      "linesAdded": 882,
+      "linesDeleted": 282
+    },
+    {
+      "date": "2026-01-24",
+      "linesAdded": 335,
+      "linesDeleted": 117
+    },
+    {
+      "date": "2026-01-28",
+      "linesAdded": 279,
+      "linesDeleted": 225
+    },
+    {
+      "date": "2026-02-09",
+      "linesAdded": 736,
+      "linesDeleted": 211
+    },
+    {
+      "date": "2026-02-10",
+      "linesAdded": 13473,
+      "linesDeleted": 2096
+    },
+    {
+      "date": "2026-02-12",
+      "linesAdded": 246,
+      "linesDeleted": 72
+    }
+  ]
 }
