@@ -5,10 +5,14 @@ import { getCalApi } from "@calcom/embed-react";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import EmailPopup from "./EmailPopup";
 import QuickMessageModal from "./QuickMessageModal"; // <-- 1. IMPORT THE NEW MODAL
 import { ChatBubbleLeftRightIcon, InformationCircleIcon } from "@heroicons/react/24/solid"; // <-- 2. IMPORT AN ICON FOR THE BUTTON
+import { 
+  SiSwift, SiJavascript, SiPython, SiTypescript, SiReact, SiMarkdown, SiCss3, SiHtml5, SiDart, SiCplusplus, SiDotnet, SiTerraform, SiJson
+} from "react-icons/si";
+import { VscFileCode, VscFileBinary, VscTerminal } from "react-icons/vsc";
 
 const ContactLinks = ({
   email,
@@ -27,6 +31,7 @@ const ContactLinks = ({
   const [copied, setCopied] = useState(false);
   const [isEmailPopupOpen, setIsEmailPopupOpen] = useState(false);
   const [isQuickMessageOpen, setIsQuickMessageOpen] = useState(false); // <-- 3. ADD STATE FOR THE NEW MODAL
+  const [isLinesExpanded, setIsLinesExpanded] = useState(false); // <-- NEW STATE FOR LINES EXPANSION
 
   useEffect(() => {
     const fetchContributions = async (url, setter) => {
@@ -207,9 +212,9 @@ const ContactLinks = ({
         .slice(-365)
         .reduce((s, d) => s + d.contributionCount, 0) || 0);
     const adoTotal =
-      adoContributionData?.contributions.reduce((s, d) => s + d.count, 0) || 0;
+      adoContributionData?.contributions?.reduce((s, d) => s + d.count, 0) || 0;
     const adoPrs =
-      adoContributionData?.contributions.reduce((s, d) => s + (d.prs || 0), 0) || 0;
+      adoContributionData?.contributions?.reduce((s, d) => s + (d.prs || 0), 0) || 0;
     return { github: githubTotal, ado: adoTotal, adoPrs };
   }, [contributionData, intrycContributionData, adoContributionData]);
 
@@ -219,11 +224,46 @@ const ContactLinks = ({
     const githubDeleted = githubStatsData?.totalLinesDeleted || 0;
     const adoAdded = adoContributionData?.totalLinesAdded || 0;
     const adoDeleted = adoContributionData?.totalLinesDeleted || 0;
+
+    // Aggregate extension stats
+    const combinedExtensions = {};
+    
+    // Helper to merge stats
+    const mergeStats = (sourceStats) => {
+      if (!sourceStats) return;
+      Object.entries(sourceStats).forEach(([ext, stats]) => {
+        if (!combinedExtensions[ext]) {
+          combinedExtensions[ext] = { added: 0, deleted: 0 };
+        }
+        combinedExtensions[ext].added += stats.added || 0;
+        combinedExtensions[ext].deleted += stats.deleted || 0;
+      });
+    };
+
+    mergeStats(githubStatsData?.extensionStats);
+    mergeStats(adoContributionData?.extensionStats);
+
+    // Aggregated extensions sorting
+    // Filter out extensions with 0 changes and sort by lines added (descending)
+    // Also logic to filter by whitelist for display could be here or in render.
+    // Let's filter here for cleaner render logic, but keep raw for total calculation? 
+    // Wait, total calculation is separate.
+    
+    const sortedExtensions = Object.entries(combinedExtensions)
+      .filter(([_, stats]) => stats.added > 0 || stats.deleted > 0)
+      .sort((a, b) => b[1].added - a[1].added);
+
     return {
       totalAdded: githubAdded + adoAdded,
-      totalDeleted: githubDeleted + adoDeleted
+      totalDeleted: githubDeleted + adoDeleted,
+      extensions: sortedExtensions
     };
   }, [githubStatsData, adoContributionData]);
+  
+  const ALLOWED_EXTENSIONS = new Set([
+     '.swift', '.js', '.py', '.tsx', '.md', '.ts', '.css', 
+     '.jsx', '.dart', '.sh'
+  ]);
 
   const getContributionsSummary = useCallback(() => {
     if (error) return [error];
@@ -248,6 +288,38 @@ const ContactLinks = ({
       <svg className="w-2.5 h-2.5 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    );
+
+    // File Icon Component
+    const FileIcon = ({ ext }) => {
+      const className = "w-3 h-3 opacity-70";
+      switch (ext) {
+        case '.swift': return <SiSwift className={className} color="#F05138" />;
+        case '.js': return <SiJavascript className={className} color="#F7DF1E" />;
+        case '.py': return <SiPython className={className} color="#3776AB" />;
+        case '.tsx': 
+        case '.jsx': return <SiReact className={className} color="#61DAFB" />;
+        case '.ts': return <SiTypescript className={className} color="#3178C6" />;
+        case '.css': return <SiCss3 className={className} color="#1572B6" />;
+        case '.html': return <SiHtml5 className={className} color="#E34F26" />;
+        case '.md': return <SiMarkdown className={className} />;
+        case '.json': return <SiJson className={className} />;
+        case '.dart': return <SiDart className={className} color="#0175C2" />;
+        case '.cpp': 
+        case '.cc': return <SiCplusplus className={className} color="#00599C" />;
+        case '.cs': return <SiDotnet className={className} color="#512BD4" />;
+        case '.tf': return <SiTerraform className={className} color="#623CE4" />;
+        case '.sh': return <VscTerminal className={className} />;
+        case '.lock': return <VscFileBinary className={className} />;
+        default: return <VscFileCode className={className} />;
+      }
+    };
+
+    // Chevron Down SVG icon
+    const ChevronDownIcon = ({ className }) => (
+      <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m6 9 6 6 6-6"/>
       </svg>
     );
 
@@ -284,7 +356,7 @@ const ContactLinks = ({
               </div>
             </div>
             
-            {/* Breakdown */}
+          {/* Breakdown */}
             <div className="pl-2 flex flex-col gap-1 text-xs pt-1 opacity-80">
               {contributionBreakdown && contributionBreakdown.ado > 0 && (
                 <>
@@ -299,16 +371,60 @@ const ContactLinks = ({
                 </>
               )}
               {lineStats && (lineStats.totalAdded > 0 || lineStats.totalDeleted > 0) && (
-                <div className={`flex justify-between pt-1 mt-1 border-t border-dashed ${isDarkMode ? 'border-zinc-700' : 'border-zinc-400'}`}>
-                  <span>↳ lines</span>
-                  <span>
-                    +{formatNumber(lineStats.totalAdded)} / -{formatNumber(lineStats.totalDeleted)}
-                  </span>
-                </div>
+                <>
+                  <div 
+                    className={`flex justify-between items-center pt-1 mt-1 border-t border-dashed ${isDarkMode ? 'border-zinc-700' : 'border-zinc-400'} cursor-pointer hover:opacity-100 transition-opacity`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsLinesExpanded(!isLinesExpanded);
+                    }}
+                  >
+                    <span className="flex items-center gap-1">
+                      ↳ lines
+                      <ChevronDownIcon className={`w-4 h-4 transition-transform duration-200 ${isLinesExpanded ? 'rotate-180' : ''}`} />
+                    </span>
+                    <span>
+                      +{formatNumber(lineStats.totalAdded)} / -{formatNumber(lineStats.totalDeleted)}
+                    </span>
+                  </div>
+                  
+                  {/* Expanded Extension Stats */}
+                  <AnimatePresence>
+                    {isLinesExpanded && lineStats.extensions && lineStats.extensions.length > 0 && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }} // Apple-like ease
+                        className="overflow-hidden"
+                      >
+                        <div className="pl-2 flex flex-col gap-0.5 pt-1 border-l-2 border-zinc-700/20 dark:border-zinc-500/20 ml-1 my-1 max-h-[150px] overflow-y-auto pr-1">
+                          {lineStats.extensions
+                            .filter(([ext]) => ALLOWED_EXTENSIONS.has(ext)) // Filter by whitelist
+                            .map(([ext, stats]) => (
+                            <div key={ext} className="flex justify-between items-center text-xs"> {/* Match usage of text-xs from parent/lines row */}
+                              <span className="font-mono flex items-center gap-1.5">
+                                <FileIcon ext={ext} />
+                                {ext}
+                              </span>
+                              <span className="font-mono">
+                                {formatNumber(stats.added)}+ / {formatNumber(stats.deleted)}-
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        {/* Scroll indicator (Inverted V) */}
+                        <div className="flex justify-center -mt-1 pb-1 opacity-50">
+                          <ChevronDownIcon className="w-5 h-5 animate-bounce" />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </>
               )}
             </div>
           </div>
-
+          
           {/* Streak Section */}
           {currentStreak > 0 && (
             <div className={`pt-3 mt-2 border-t ${isDarkMode ? 'border-zinc-800' : 'border-zinc-300'} flex justify-between items-center text-xs opacity-90`}>
@@ -328,7 +444,8 @@ const ContactLinks = ({
     totalPastYearContributions,
     contributionBreakdown,
     lineStats,
-    isDarkMode // Added dependency
+    isDarkMode,
+    isLinesExpanded // Added dependency
   ]);
 
   const handleCopyEmail = async (e) => {
@@ -624,14 +741,13 @@ const ContactLinks = ({
           </a> */}
           <Tooltip
             id="github-tooltip"
-            place="top"
-            effect="solid"
+            place="bottom"
             className="custom-tooltip"
             openOnClick={isMobile} // Hover on desktop, click on mobile
             afterHide={() => { if(isMobile) setGithubTapped(false); }} // Reset state when tooltip hides
             clickable={true}
-            delayShow={50} // Slight delay to ensure proper positioning before showing
-            positionStrategy="fixed" // Use fixed positioning for more reliable placement
+            delayShow={200} // Increased delay to prevent positioning flash
+            delayHide={300} // Prevent accidental closing during layout shifts
           >
             <div onClick={handleTooltipClick} className="cursor-pointer">
               {formattedSummary}

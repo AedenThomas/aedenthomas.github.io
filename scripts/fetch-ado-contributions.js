@@ -366,6 +366,7 @@ async function fetchContributions() {
         updatedAt: new Date().toISOString(),
         totalLinesAdded: Object.values(contributions).reduce((acc, curr) => acc + (curr.linesAdded || 0), 0),
         totalLinesDeleted: Object.values(contributions).reduce((acc, curr) => acc + (curr.linesDeleted || 0), 0),
+        extensionStats: extensionStats, // Add extension stats to output
         contributions: Object.entries(contributions).map(([date, data]) => ({ 
             date, 
             count: data.count,

@@ -191,6 +191,7 @@ async function fetchGitHubStats() {
         updatedAt: new Date().toISOString(),
         totalLinesAdded: allStats.linesAdded,
         totalLinesDeleted: allStats.linesDeleted,
+        extensionStats: globalExtensionStats, // Add extension stats to output
         contributions: Object.entries(allStats.byDate)
             .map(([date, data]) => ({
                 date,
