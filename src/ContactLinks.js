@@ -262,7 +262,7 @@ const ContactLinks = ({
   
   const ALLOWED_EXTENSIONS = new Set([
      '.swift', '.js', '.py', '.tsx', '.md', '.ts', '.css', 
-     '.jsx', '.dart', '.sh'
+     '.jsx', '.dart', '.sh', '.cs'
   ]);
 
   const getContributionsSummary = useCallback(() => {
