@@ -97,21 +97,37 @@ async function fetchUserStats(username) {
                     try {
                         const commitDetails = await githubRequest(`https://api.github.com/repos/${repo.full_name}/commits/${commit.sha}`);
                         
-                        if (commitDetails && commitDetails.stats) {
                             const dateStr = commit.commit.author.date.split('T')[0];
                             
                             // Only count if within past year
                             if (dateStr >= fromDateStr) {
-                                stats.linesAdded += commitDetails.stats.additions || 0;
-                                stats.linesDeleted += commitDetails.stats.deletions || 0;
+                                let added = 0;
+                                let deleted = 0;
+
+                                if (commitDetails.files && Array.isArray(commitDetails.files)) {
+                                    for (const file of commitDetails.files) {
+                                        // Filter out JSON, lock files, and other non-code artifacts
+                                        if (file.filename && file.filename.match(/\.(json|lock|map|min\.js|min\.css)$/i)) {
+                                            continue;
+                                        }
+                                        added += file.additions || 0;
+                                        deleted += file.deletions || 0;
+                                    }
+                                } else {
+                                    // Fallback to overall stats if files are not available
+                                    added = commitDetails.stats.additions || 0;
+                                    deleted = commitDetails.stats.deletions || 0;
+                                }
+
+                                stats.linesAdded += added;
+                                stats.linesDeleted += deleted;
                                 
                                 if (!stats.byDate[dateStr]) {
                                     stats.byDate[dateStr] = { linesAdded: 0, linesDeleted: 0 };
                                 }
-                                stats.byDate[dateStr].linesAdded += commitDetails.stats.additions || 0;
-                                stats.byDate[dateStr].linesDeleted += commitDetails.stats.deletions || 0;
+                                stats.byDate[dateStr].linesAdded += added;
+                                stats.byDate[dateStr].linesDeleted += deleted;
                             }
-                        }
                     } catch (err) {
                         // Skip individual commit errors
                     }

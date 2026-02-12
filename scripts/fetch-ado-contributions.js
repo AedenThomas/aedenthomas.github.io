@@ -256,6 +256,9 @@ async function fetchContributions() {
                                                 if (!change.item || change.item.isFolder) continue;
                                                 
                                                 const filePath = change.item.path;
+                                                // Filter out JSON, lock files, and other non-code artifacts
+                                                if (filePath.match(/\.(json|lock|map|min\.js|min\.css)$/i)) continue;
+
                                                 const changeType = change.changeType;
                                                 
                                                 // Use internal API to get accurate line counts
