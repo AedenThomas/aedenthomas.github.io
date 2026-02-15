@@ -284,8 +284,9 @@ const ContactLinks = ({
     );
 
     // Lock SVG icon component (Lucide-style)
+    // Lock SVG icon component (Lucide-style)
     const LockIcon = () => (
-      <svg className="w-2.5 h-2.5 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-[11px] h-[11px] opacity-70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
       </svg>
@@ -384,7 +385,7 @@ const ContactLinks = ({
                       <ChevronDownIcon className={`w-4 h-4 transition-transform duration-200 ${isLinesExpanded ? 'rotate-180' : ''}`} />
                     </span>
                     <span>
-                      +{formatNumber(lineStats.totalAdded)} / -{formatNumber(lineStats.totalDeleted)}
+                      <span className="text-green-600 dark:text-green-400">+{formatNumber(lineStats.totalAdded)}</span> / <span className="text-red-600 dark:text-red-400">-{formatNumber(lineStats.totalDeleted)}</span>
                     </span>
                   </div>
                   
@@ -408,7 +409,7 @@ const ContactLinks = ({
                                 {ext}
                               </span>
                               <span className="font-mono">
-                                {formatNumber(stats.added)}+ / {formatNumber(stats.deleted)}-
+                                <span className="text-green-600 dark:text-green-400">+{formatNumber(stats.added)}</span> / <span className="text-red-600 dark:text-red-400">-{formatNumber(stats.deleted)}</span>
                               </span>
                             </div>
                           ))}
