@@ -106,6 +106,29 @@ function azPostRequest(url, pat, body) {
     });
 }
 
+// Helper for paginated ADO API requests
+async function fetchAllAdoPages(baseUrl, pat) {
+    const results = [];
+    let skip = 0;
+    const top = 1000; // ADO generally allows up to 100-500 depending on API, some 1000. Let's ask for 1000 and paginate accordingly.
+    
+    while (true) {
+        const separator = baseUrl.includes('?') ? '&' : '?';
+        const url = `${baseUrl}${separator}$top=${top}&$skip=${skip}`;
+        const resp = await azRequest(url, pat);
+        
+        const items = resp.value || [];
+        if (items.length === 0) break;
+        
+        results.push(...items);
+        
+        if (items.length < top) break;
+        skip += top;
+    }
+    
+    return results;
+}
+
 // Get line diff stats using internal API
 async function getFileDiffStats(baseUrl, project, repoId, pat, originalPath, modifiedPath, originalVersion, modifiedVersion) {
     try {
@@ -240,8 +263,7 @@ async function fetchContributions() {
                         const commitsUrl = `${baseUrl}/${project.name}/_apis/git/repositories/${repo.id}/commits?searchCriteria.author=${encodeURIComponent(email)}&searchCriteria.fromDate=${fromDate}&api-version=6.0`;
                         
                         try {
-                            const commitsResp = await azRequest(commitsUrl, pat);
-                            const commits = commitsResp.value || [];
+                            const commits = await fetchAllAdoPages(commitsUrl, pat);
                             
                             if (commits.length > 0) {
                                 console.log(`      Found ${commits.length} commits in ${repo.name} for ${email}`);
@@ -332,8 +354,7 @@ async function fetchContributions() {
                         const prsUrl = `${baseUrl}/${project.name}/_apis/git/repositories/${repo.id}/pullrequests?searchCriteria.status=completed&searchCriteria.minTime=${fromDate}&api-version=6.0`;
 
                         try {
-                            const prsResp = await azRequest(prsUrl, pat);
-                            const prs = prsResp.value || [];
+                            const prs = await fetchAllAdoPages(prsUrl, pat);
                             
                             // Filter by creator email and ensure it was merged (not abandoned)
                             // Note: 'closedDate' is when it was closed.
