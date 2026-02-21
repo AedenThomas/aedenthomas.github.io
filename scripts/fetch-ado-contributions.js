@@ -151,6 +151,8 @@ async function fetchContributions() {
     let existingData = null;
     let existingContributions = {};
     let lastUpdateDate = null;
+    let processedCommitIds = new Set();
+    let processedPrIds = new Set();
     
     try {
         if (fs.existsSync(outputPath)) {
@@ -169,6 +171,13 @@ async function fetchContributions() {
                 }
             }
             
+            if (existingData.processedCommitIds) {
+                processedCommitIds = new Set(existingData.processedCommitIds);
+            }
+            if (existingData.processedPrIds) {
+                processedPrIds = new Set(existingData.processedPrIds);
+            }
+            
             lastUpdateDate = existingData.updatedAt ? new Date(existingData.updatedAt) : null;
             if (lastUpdateDate) {
                 console.log(`Found existing data from ${lastUpdateDate.toISOString()}, running incremental update...`);
@@ -182,7 +191,9 @@ async function fetchContributions() {
     const contributions = { ...existingContributions };
 
     // Track per-extension stats
-    const extensionStats = {};
+    const extensionStats = existingData && existingData.extensionStats 
+        ? JSON.parse(JSON.stringify(existingData.extensionStats)) 
+        : {};
 
     for (const config of configs) {
         const { org, pat, email } = config;
@@ -237,6 +248,9 @@ async function fetchContributions() {
                             }
 
                             for (const commit of commits) {
+                                if (processedCommitIds.has(commit.commitId)) continue;
+                                processedCommitIds.add(commit.commitId);
+                                
                                 const dateStr = commit.author.date.split('T')[0]; // YYYY-MM-DD
                                 if (!contributions[dateStr]) contributions[dateStr] = { count: 0, prs: 0, linesAdded: 0, linesDeleted: 0 };
                                 contributions[dateStr].count += 1;
@@ -342,6 +356,10 @@ async function fetchContributions() {
                             }
 
                             for (const pr of myMergedPrs) {
+                                const prIdStr = pr.pullRequestId.toString();
+                                if (processedPrIds.has(prIdStr)) continue;
+                                processedPrIds.add(prIdStr);
+                                
                                 const dateStr = pr.closedDate.split('T')[0];
                                 if (!contributions[dateStr]) contributions[dateStr] = { count: 0, prs: 0, linesAdded: 0, linesDeleted: 0 };
                                 contributions[dateStr].count += 1; // Count PR as a contribution
@@ -367,6 +385,8 @@ async function fetchContributions() {
         totalLinesAdded: Object.values(contributions).reduce((acc, curr) => acc + (curr.linesAdded || 0), 0),
         totalLinesDeleted: Object.values(contributions).reduce((acc, curr) => acc + (curr.linesDeleted || 0), 0),
         extensionStats: extensionStats, // Add extension stats to output
+        processedCommitIds: Array.from(processedCommitIds),
+        processedPrIds: Array.from(processedPrIds),
         contributions: Object.entries(contributions).map(([date, data]) => ({ 
             date, 
             count: data.count,
