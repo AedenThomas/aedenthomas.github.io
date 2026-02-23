@@ -685,7 +685,7 @@ const ContactLinks = ({
                     }}
                     transform="rotate(-2, 105, 55)"
                   >
-                    should i update it? hmmm...
+                    not active here...
                   </text>
                 </svg>
               </div>
