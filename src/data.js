@@ -81,7 +81,7 @@ export const experience = [
     position: "Full-Stack Engineer",
     period: "Nov 2025 - Present",
     url: "https://www.shoutt.ai",
-    logo: "/shoutt.jpg",
+    logo: "/Shoutt1.jpg",
     location: "London, United Kingdom",
     highlights: [
       "jumped in as the first engineering hire right after a $700k seed round, spearheading the technical roadmap and shipping full-stack features to scale the platform.​",
