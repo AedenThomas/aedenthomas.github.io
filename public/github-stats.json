@@ -1,35 +1,35 @@
 {
-  "updatedAt": "2026-04-11T01:56:54.380Z",
-  "totalLinesAdded": 95590,
-  "totalLinesDeleted": 27036,
+  "updatedAt": "2026-04-12T02:10:46.483Z",
+  "totalLinesAdded": 91705,
+  "totalLinesDeleted": 24745,
   "extensionStats": {
     ".md": {
-      "added": 6222,
-      "deleted": 1603
+      "added": 6152,
+      "deleted": 1596
     },
     ".json": {
-      "added": 93566,
-      "deleted": 12629
+      "added": 77152,
+      "deleted": 10528
     },
     ".js": {
-      "added": 26705,
-      "deleted": 11249
+      "added": 23663,
+      "deleted": 10539
     },
     ".jpg": {
       "added": 0,
       "deleted": 0
     },
     ".css": {
-      "added": 4011,
-      "deleted": 2754
+      "added": 3303,
+      "deleted": 2280
     },
     ".yml": {
       "added": 294,
       "deleted": 15
     },
     ".html": {
-      "added": 499,
-      "deleted": 35
+      "added": 456,
+      "deleted": 22
     },
     ".mp4": {
       "added": 0,
@@ -44,8 +44,8 @@
       "deleted": 504
     },
     "(no-ext)": {
-      "added": 1118,
-      "deleted": 200
+      "added": 1099,
+      "deleted": 72
     },
     ".lockb": {
       "added": 0,
@@ -68,7 +68,7 @@
       "deleted": 0
     },
     ".txt": {
-      "added": 45,
+      "added": 42,
       "deleted": 0
     },
     ".xml": {
@@ -185,11 +185,11 @@
     },
     ".svg": {
       "added": 7,
-      "deleted": 1
+      "deleted": 0
     },
     ".jsx": {
       "added": 679,
-      "deleted": 958
+      "deleted": 0
     },
     ".joblib": {
       "added": 0,
@@ -201,11 +201,6 @@
     }
   },
   "contributions": [
-    {
-      "date": "2025-04-11",
-      "linesAdded": 3885,
-      "linesDeleted": 2291
-    },
     {
       "date": "2025-04-12",
       "linesAdded": 5882,
