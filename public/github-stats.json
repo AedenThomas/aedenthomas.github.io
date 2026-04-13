@@ -1,18 +1,18 @@
 {
-  "updatedAt": "2026-04-12T02:10:46.483Z",
-  "totalLinesAdded": 91705,
+  "updatedAt": "2026-04-13T02:14:20.038Z",
+  "totalLinesAdded": 85823,
   "totalLinesDeleted": 24745,
   "extensionStats": {
     ".md": {
-      "added": 6152,
+      "added": 6091,
       "deleted": 1596
     },
     ".json": {
-      "added": 77152,
+      "added": 70109,
       "deleted": 10528
     },
     ".js": {
-      "added": 23663,
+      "added": 18874,
       "deleted": 10539
     },
     ".jpg": {
@@ -20,7 +20,7 @@
       "deleted": 0
     },
     ".css": {
-      "added": 3303,
+      "added": 3012,
       "deleted": 2280
     },
     ".yml": {
@@ -28,7 +28,7 @@
       "deleted": 15
     },
     ".html": {
-      "added": 456,
+      "added": 424,
       "deleted": 22
     },
     ".mp4": {
@@ -44,7 +44,7 @@
       "deleted": 504
     },
     "(no-ext)": {
-      "added": 1099,
+      "added": 1075,
       "deleted": 72
     },
     ".lockb": {
@@ -183,14 +183,6 @@
       "added": 0,
       "deleted": 0
     },
-    ".svg": {
-      "added": 7,
-      "deleted": 0
-    },
-    ".jsx": {
-      "added": 679,
-      "deleted": 0
-    },
     ".joblib": {
       "added": 0,
       "deleted": 0
@@ -198,14 +190,13 @@
     ".pkl": {
       "added": 0,
       "deleted": 0
+    },
+    ".svg": {
+      "added": 1,
+      "deleted": 0
     }
   },
   "contributions": [
-    {
-      "date": "2025-04-12",
-      "linesAdded": 5882,
-      "linesDeleted": 0
-    },
     {
       "date": "2025-04-16",
       "linesAdded": 7288,
