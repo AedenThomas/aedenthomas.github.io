@@ -69,7 +69,7 @@ async function fetchAllPages(baseUrl, maxPages = 10) {
 
 async function fetchUserStats(username, globalExtensionStats) {
     console.log(`\nFetching stats for user: ${username}`);
-    const stats = { linesAdded: 0, linesDeleted: 0, byDate: {} };
+    const stats = { linesAdded: 0, linesDeleted: 0, byDate: {}, automatedByDate: {} };
     
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
@@ -85,6 +85,28 @@ async function fetchUserStats(username, globalExtensionStats) {
             if (repo.fork) continue;
             
             try {
+                // Count automated "update contribution stats" commits (the nightly
+                // GitHub Action) per day, so they can be subtracted from contribution
+                // counts/streaks at render time. These are committed by
+                // github-actions[bot] and authored with a noreply email that the
+                // ?author= filter below does NOT match — yet they still register on the
+                // contribution graph — so we scan the repo unfiltered and match by
+                // message/committer. Runs before the author-filtered fetch so it is not
+                // skipped when the user has no manual commits in this repo.
+                const allCommitsUrl = `https://api.github.com/repos/${repo.full_name}/commits?since=${oneYearAgo.toISOString()}`;
+                const allCommits = await fetchAllPages(allCommitsUrl, 10);
+                for (const c of allCommits) {
+                    const message = c.commit?.message || '';
+                    const isAutomated =
+                        message.startsWith('chore: update contribution stats') ||
+                        c.committer?.login === 'github-actions[bot]';
+                    if (!isAutomated) continue;
+                    const dateStr = c.commit.author.date.split('T')[0];
+                    if (dateStr >= fromDateStr) {
+                        stats.automatedByDate[dateStr] = (stats.automatedByDate[dateStr] || 0) + 1;
+                    }
+                }
+
                 // Fetch commits by this user in the past year
                 const commitsUrl = `https://api.github.com/repos/${repo.full_name}/commits?author=${username}&since=${oneYearAgo.toISOString()}`;
                 const commits = await fetchAllPages(commitsUrl, 5);
@@ -153,15 +175,22 @@ async function fetchUserStats(username, globalExtensionStats) {
 }
 
 async function fetchGitHubStats() {
-    const allStats = { linesAdded: 0, linesDeleted: 0, byDate: {} };
-    
+    const allStats = { linesAdded: 0, linesDeleted: 0, byDate: {}, automatedByDate: {} };
+
     const globalExtensionStats = {};
-    
+
+    // Merge a user's automated-commit-per-day counts into the aggregate
+    const mergeAutomated = (automatedByDate) => {
+        for (const [date, count] of Object.entries(automatedByDate)) {
+            allStats.automatedByDate[date] = (allStats.automatedByDate[date] || 0) + count;
+        }
+    };
+
     // Fetch main account
     const mainStats = await fetchUserStats(GITHUB_USERNAME, globalExtensionStats);
     allStats.linesAdded += mainStats.linesAdded;
     allStats.linesDeleted += mainStats.linesDeleted;
-    
+
     // Merge byDate
     for (const [date, data] of Object.entries(mainStats.byDate)) {
         if (!allStats.byDate[date]) {
@@ -170,13 +199,14 @@ async function fetchGitHubStats() {
         allStats.byDate[date].linesAdded += data.linesAdded;
         allStats.byDate[date].linesDeleted += data.linesDeleted;
     }
-    
+    mergeAutomated(mainStats.automatedByDate);
+
     // Fetch additional accounts
     for (const account of ADDITIONAL_ACCOUNTS) {
         const accountStats = await fetchUserStats(account.username, globalExtensionStats);
         allStats.linesAdded += accountStats.linesAdded;
         allStats.linesDeleted += accountStats.linesDeleted;
-        
+
         for (const [date, data] of Object.entries(accountStats.byDate)) {
             if (!allStats.byDate[date]) {
                 allStats.byDate[date] = { linesAdded: 0, linesDeleted: 0 };
@@ -184,6 +214,7 @@ async function fetchGitHubStats() {
             allStats.byDate[date].linesAdded += data.linesAdded;
             allStats.byDate[date].linesDeleted += data.linesDeleted;
         }
+        mergeAutomated(accountStats.automatedByDate);
     }
     
     // Build output
@@ -192,6 +223,7 @@ async function fetchGitHubStats() {
         totalLinesAdded: allStats.linesAdded,
         totalLinesDeleted: allStats.linesDeleted,
         extensionStats: globalExtensionStats, // Add extension stats to output
+        automatedContributionsByDate: allStats.automatedByDate, // { 'YYYY-MM-DD': count } of nightly stats commits
         contributions: Object.entries(allStats.byDate)
             .map(([date, data]) => ({
                 date,

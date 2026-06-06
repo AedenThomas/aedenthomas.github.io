@@ -38,9 +38,32 @@ if (configs.length === 0) {
     process.exit(1);
 }
 
+// Helper for exponential backoff on 429 Too Many Requests
+async function withRetry(operation, maxRetries = 5) {
+    let retries = 0;
+    while (true) {
+        try {
+            return await operation();
+        } catch (error) {
+            if (error.status === 429 && retries < maxRetries) {
+                retries++;
+                // Check if ADO sent a Retry-After header
+                const retryAfter = error.headers && error.headers['retry-after'];
+                // Use header value (seconds), or exponential backoff: 2s, 4s, 8s, 16s...
+                const waitTimeMs = retryAfter ? parseInt(retryAfter) * 1000 : Math.pow(2, retries) * 1000;
+                
+                console.log(`[Rate Limit] 429 Too Many Requests. Retrying in ${waitTimeMs / 1000}s... (Attempt ${retries}/${maxRetries})`);
+                await new Promise(resolve => setTimeout(resolve, waitTimeMs));
+            } else {
+                throw error;
+            }
+        }
+    }
+}
+
 // Helper for https GET requests
 function azRequest(url, pat) {
-    return new Promise((resolve, reject) => {
+    return withRetry(() => new Promise((resolve, reject) => {
         const options = {
             headers: {
                 'Authorization': `Basic ${Buffer.from(':' + pat).toString('base64')}`,
@@ -59,16 +82,19 @@ function azRequest(url, pat) {
                         reject(new Error('Failed to parse JSON'));
                     }
                 } else {
-                    reject(new Error(`Request failed with status ${res.statusCode}: ${data}`));
+                    const err = new Error(`Request failed with status ${res.statusCode}: ${data}`);
+                    err.status = res.statusCode;
+                    err.headers = res.headers;
+                    reject(err);
                 }
             });
         }).on('error', (err) => reject(err));
-    });
+    }));
 }
 
 // Helper for https POST requests (for internal APIs)
 function azPostRequest(url, pat, body) {
-    return new Promise((resolve, reject) => {
+    return withRetry(() => new Promise((resolve, reject) => {
         const urlObj = new URL(url);
         const postData = JSON.stringify(body);
         
@@ -95,7 +121,10 @@ function azPostRequest(url, pat, body) {
                         resolve(data);
                     }
                 } else {
-                    reject(new Error(`Request failed with status ${res.statusCode}: ${data}`));
+                    const err = new Error(`Request failed with status ${res.statusCode}: ${data}`);
+                    err.status = res.statusCode;
+                    err.headers = res.headers;
+                    reject(err);
                 }
             });
         });
@@ -103,7 +132,7 @@ function azPostRequest(url, pat, body) {
         req.on('error', (err) => reject(err));
         req.write(postData);
         req.end();
-    });
+    }));
 }
 
 // Helper for paginated ADO API requests
@@ -269,79 +298,94 @@ async function fetchContributions() {
                                 console.log(`      Found ${commits.length} commits in ${repo.name} for ${email}`);
                             }
 
-                            for (const commit of commits) {
-                                if (processedCommitIds.has(commit.commitId)) continue;
-                                processedCommitIds.add(commit.commitId);
+                            // Process commits in chunks to speed up the script
+                            const CHUNK_SIZE = 10;
+                            for (let i = 0; i < commits.length; i += CHUNK_SIZE) {
+                                const chunk = commits.slice(i, i + CHUNK_SIZE);
                                 
-                                const dateStr = commit.author.date.split('T')[0]; // YYYY-MM-DD
-                                if (!contributions[dateStr]) contributions[dateStr] = { count: 0, prs: 0, linesAdded: 0, linesDeleted: 0 };
-                                contributions[dateStr].count += 1;
-                                
-                                // Fetch full commit details including parents
-                                try {
-                                    const commitDetailUrl = `${baseUrl}/${project.name}/_apis/git/repositories/${repo.id}/commits/${commit.commitId}?api-version=6.0`;
-                                    const commitDetail = await azRequest(commitDetailUrl, pat);
+                                await Promise.all(chunk.map(async (commit) => {
+                                    if (processedCommitIds.has(commit.commitId)) return;
+                                    processedCommitIds.add(commit.commitId);
                                     
-                                    if (commitDetail && commitDetail.parents && commitDetail.parents.length > 0) {
-                                        const parentId = commitDetail.parents[0];
+                                    const dateStr = commit.author.date.split('T')[0]; // YYYY-MM-DD
+                                    // Use a lock-free or safe way to increment overall contributions? 
+                                    // JS is single threaded so synchronous increments are safe, but async object init is not
+                                    if (!contributions[dateStr]) contributions[dateStr] = { count: 0, prs: 0, linesAdded: 0, linesDeleted: 0 };
+                                    contributions[dateStr].count += 1;
+                                    
+                                    let commitAdded = 0;
+                                    let commitDeleted = 0;
+                                    
+                                    // Fetch full commit details including parents
+                                    try {
+                                        const commitDetailUrl = `${baseUrl}/${project.name}/_apis/git/repositories/${repo.id}/commits/${commit.commitId}?api-version=6.0`;
+                                        const commitDetail = await azRequest(commitDetailUrl, pat);
                                         
-                                        // Get list of changed files
-                                        const changesUrl = `${baseUrl}/${project.name}/_apis/git/repositories/${repo.id}/commits/${commit.commitId}/changes?api-version=6.0`;
-                                        const changesResp = await azRequest(changesUrl, pat);
-                                        
-                                        if (changesResp && changesResp.changes) {
-                                            // For each changed file, get line diff using internal API
-                                            for (const change of changesResp.changes) {
-                                                if (!change.item || change.item.isFolder) continue;
-                                                
-                                                const filePath = change.item.path;
-                                                const isIgnored = filePath.match(/\.(json|lock|map|min\.js|min\.css)$/i);
-
-                                                const changeType = change.changeType;
-                                                
-                                                // Use internal API to get accurate line counts
-                                                const stats = await getFileDiffStats(baseUrl, project.name, repo.id, pat, change.originalPath || filePath, filePath, parentId, commit.commitId);
-                                                
-                                                let added = 0;
-                                                let deleted = 0;
-
-                                                if (stats) {
-                                                    added = stats.added;
-                                                    deleted = stats.deleted;
-                                                } else {
-                                                    // Fallback estimates if internal API fails
-                                                    if (changeType === 'add') {
-                                                        added = 25; // Estimate
-                                                    } else if (changeType === 'edit') {
-                                                        added = 10;
-                                                        deleted = 5;
-                                                    } else if (changeType === 'delete') {
-                                                        deleted = 25;
+                                        if (commitDetail && commitDetail.parents && commitDetail.parents.length > 0) {
+                                            const parentId = commitDetail.parents[0];
+                                            
+                                            // Get list of changed files
+                                            const changesUrl = `${baseUrl}/${project.name}/_apis/git/repositories/${repo.id}/commits/${commit.commitId}/changes?api-version=6.0`;
+                                            const changesResp = await azRequest(changesUrl, pat);
+                                            
+                                            if (changesResp && changesResp.changes) {
+                                                // Get stats for each file sequentially or in parallel?
+                                                // Parallelizing this inner loop might overwhelm the internal diff API, so keep sequential within the commit
+                                                for (const change of changesResp.changes) {
+                                                    if (!change.item || change.item.isFolder) continue;
+                                                    
+                                                    const filePath = change.item.path;
+                                                    const isIgnored = filePath.match(/\.(json|lock|map|min\.js|min\.css)$/i);
+    
+                                                    const changeType = change.changeType;
+                                                    
+                                                    // Use internal API to get accurate line counts
+                                                    const stats = await getFileDiffStats(baseUrl, project.name, repo.id, pat, change.originalPath || filePath, filePath, parentId, commit.commitId);
+                                                    
+                                                    let added = 0;
+                                                    let deleted = 0;
+    
+                                                    if (stats) {
+                                                        added = stats.added;
+                                                        deleted = stats.deleted;
+                                                    } else {
+                                                        // Fallback estimates if internal API fails
+                                                        if (changeType === 'add') {
+                                                            added = 25; // Estimate
+                                                        } else if (changeType === 'edit') {
+                                                            added = 10;
+                                                            deleted = 5;
+                                                        } else if (changeType === 'delete') {
+                                                            deleted = 25;
+                                                        }
+                                                    }
+    
+                                                    // Update extension stats (track everything)
+                                                    const ext = path.extname(filePath).toLowerCase() || '(no-ext)';
+                                                    if (!extensionStats[ext]) extensionStats[ext] = { added: 0, deleted: 0 };
+                                                    extensionStats[ext].added += added;
+                                                    extensionStats[ext].deleted += deleted;
+    
+                                                    // Only add to user contributions if NOT ignored
+                                                    if (!isIgnored) {
+                                                        commitAdded += added;
+                                                        commitDeleted += deleted;
                                                     }
                                                 }
-
-                                                // Update extension stats (track everything)
-                                                const ext = path.extname(filePath).toLowerCase() || '(no-ext)';
-                                                if (!extensionStats[ext]) extensionStats[ext] = { added: 0, deleted: 0 };
-                                                extensionStats[ext].added += added;
-                                                extensionStats[ext].deleted += deleted;
-
-                                                // Only add to user contributions if NOT ignored
-                                                if (!isIgnored) {
-                                                    contributions[dateStr].linesAdded += added;
-                                                    contributions[dateStr].linesDeleted += deleted;
-                                                }
                                             }
+                                        } else {
+                                            // First commit? Just estimate
+                                            commitAdded += 50; 
                                         }
-                                    } else {
-                                        // First commit? Just estimate
-                                        contributions[dateStr].linesAdded += 50; 
+                                    } catch (detailErr) {
+                                        // If we can't get detailed diff, use a rough estimate per commit
+                                        commitAdded += 25;
+                                        commitDeleted += 10;
                                     }
-                                } catch (detailErr) {
-                                    // If we can't get detailed diff, use a rough estimate per commit
-                                    contributions[dateStr].linesAdded += 25;
-                                    contributions[dateStr].linesDeleted += 10;
-                                }
+                                    
+                                    contributions[dateStr].linesAdded += commitAdded;
+                                    contributions[dateStr].linesDeleted += commitDeleted;
+                                }));
                             }
                         } catch (err) {
                             console.error(`      Failed to fetch commits for ${repo.name}: ${err.message}`);

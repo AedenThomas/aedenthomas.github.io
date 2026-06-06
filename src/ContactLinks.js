@@ -95,11 +95,16 @@ const ContactLinks = ({
       intrycContributionData?.contributions.flat().slice(-365) || [];
     const adoContributions = adoContributionData?.contributions || [];
 
+    // Per-day count of automated "update contribution stats" commits (the nightly
+    // GitHub Action), so we can subtract them and not inflate streaks/counts.
+    const automatedByDate = githubStatsData?.automatedContributionsByDate || {};
+
     // Create a map to combine contributions by date
     const contributionsByDate = new Map();
 
     mainContributions.forEach((day) => {
-      contributionsByDate.set(day.date, day.contributionCount);
+      const real = Math.max(0, day.contributionCount - (automatedByDate[day.date] || 0));
+      contributionsByDate.set(day.date, real);
     });
 
     intrycContributions.forEach((day) => {
@@ -120,7 +125,7 @@ const ContactLinks = ({
         contributionCount: count,
       }))
       .sort((a, b) => new Date(a.date) - new Date(b.date));
-  }, [contributionData, intrycContributionData, adoContributionData]);
+  }, [contributionData, intrycContributionData, adoContributionData, githubStatsData]);
 
   const totalPastYearContributions = useMemo(() => {
     if (!combinedPastYearContributions) return 0;
@@ -202,11 +207,12 @@ const ContactLinks = ({
   const contributionBreakdown = useMemo(() => {
     if (!contributionData && !intrycContributionData && !adoContributionData)
       return null;
+    const automatedByDate = githubStatsData?.automatedContributionsByDate || {};
     const githubTotal =
       (contributionData?.contributions
         .flat()
         .slice(-365)
-        .reduce((s, d) => s + d.contributionCount, 0) || 0) +
+        .reduce((s, d) => s + Math.max(0, d.contributionCount - (automatedByDate[d.date] || 0)), 0) || 0) +
       (intrycContributionData?.contributions
         .flat()
         .slice(-365)
@@ -216,7 +222,7 @@ const ContactLinks = ({
     const adoPrs =
       adoContributionData?.contributions?.reduce((s, d) => s + (d.prs || 0), 0) || 0;
     return { github: githubTotal, ado: adoTotal, adoPrs };
-  }, [contributionData, intrycContributionData, adoContributionData]);
+  }, [contributionData, intrycContributionData, adoContributionData, githubStatsData]);
 
   // Aggregate line stats from both GitHub and ADO
   const lineStats = useMemo(() => {
