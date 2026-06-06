@@ -216,7 +216,17 @@ async function fetchGitHubStats() {
         }
         mergeAutomated(accountStats.automatedByDate);
     }
-    
+
+    // Account for the automated commit THIS run is about to create. The workflow
+    // runs this script and then commits the regenerated stats as a single
+    // "chore: update contribution stats" commit dated today — which the scan above
+    // cannot see because it doesn't exist yet. (github-stats.json's updatedAt
+    // changes every run, so that commit is always made.) Without this, today's own
+    // bot commit would inflate the contribution count/streak until tomorrow's run
+    // catches it.
+    const todayStr = new Date().toISOString().split('T')[0];
+    allStats.automatedByDate[todayStr] = (allStats.automatedByDate[todayStr] || 0) + 1;
+
     // Build output
     const result = {
         updatedAt: new Date().toISOString(),
