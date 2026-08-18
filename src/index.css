@@ -195,6 +195,249 @@ code {
   cursor: none !important;
 }
 
+/* ── Visitor peek ───────────────────────────────────────────────────────── */
+
+/* ── The Peek ──────────────────────────────────────────────────────────────
+   The corporate-visitor knock: memoji and a question in the bottom-left
+   corner. Everything is namespaced under .knock so it stays a drop-in block.
+
+   The widget is portalled to <body>, out of reach of Tailwind's `dark` class,
+   so the theme arrives on data-theme. The bubble is deliberately inverted
+   against the page — cream on the black site, near-black on the cream one. */
+.knock {
+  position: fixed;
+  left: 26px;
+  bottom: 24px;
+  z-index: 9998;
+
+  --knock-page: #000;              /* page behind it, for the live-dot ring */
+  --knock-bubble: #f2f0e9;         /* bubble surface */
+  --knock-text: #0a0a0a;           /* text on the bubble */
+  --knock-sub: rgba(0, 0, 0, 0.55);
+  --knock-faint: rgba(0, 0, 0, 0.45);
+  --knock-faint-hi: rgba(0, 0, 0, 0.72);
+  --knock-dot: rgba(0, 0, 0, 0.4);
+  --knock-plate: rgba(255, 255, 255, 0.08);
+  --knock-plate-line: rgba(255, 255, 255, 0.12);
+}
+
+.knock[data-theme="light"] {
+  --knock-page: #f2f0e9;
+  --knock-bubble: #14120f;
+  --knock-text: #f2f0e9;
+  --knock-sub: rgba(255, 255, 255, 0.6);
+  --knock-faint: rgba(255, 255, 255, 0.5);
+  --knock-faint-hi: rgba(255, 255, 255, 0.85);
+  --knock-dot: rgba(255, 255, 255, 0.5);
+  --knock-plate: rgba(20, 18, 15, 0.05);
+  --knock-plate-line: rgba(20, 18, 15, 0.1);
+}
+
+/* The widget reaches 440px in from the left; the HUMAN/MACHINE toggle is
+   ~180px wide and centred on this same bottom edge, so the two close in on
+   each other below ~1180px. Sit above the toggle rather than beside it. */
+@media (max-width: 1180px) {
+  .knock {
+    bottom: 92px;
+  }
+}
+
+.knock-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+/* the memoji, whole — fitted rather than cropped, so the wave survives */
+.knock-face {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--knock-plate);
+  box-shadow: inset 0 0 0 1px var(--knock-plate-line);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.knock-face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  user-select: none;
+}
+
+.knock:hover .knock-face,
+.knock:focus-within .knock-face,
+.knock.is-open .knock-face {
+  transform: translateY(-4px) rotate(-9deg);
+}
+
+.knock-live {
+  position: absolute;
+  right: -1px;
+  bottom: 1px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #3fb950;
+  box-shadow: 0 0 0 2.5px var(--knock-page);
+  animation: aedenKnockPulse 2s ease-in-out infinite;
+}
+
+.knock-bubble {
+  position: relative;
+  width: 328px;
+  padding: 14px 18px 16px;
+  border-radius: 21px 21px 21px 6px;
+  background: var(--knock-bubble);
+  color: var(--knock-text);
+  font-size: 17.5px;
+  line-height: 1.38;
+  letter-spacing: -0.003em;
+  box-shadow: 0 18px 44px -22px rgba(0, 0, 0, 0.5);
+}
+
+/* The right padding keeps the last line clear of the tell's corner, whatever
+   the company name is, and stays put when the bubble opens so nothing re-wraps. */
+.knock-q {
+  margin: 0;
+  padding-right: 21px;
+}
+
+/* The second line and the actions. Only the height animates, so the question
+   above never re-wraps as the bubble opens. */
+.knock-more {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.knock-more > div {
+  overflow: hidden;
+}
+
+.knock:hover .knock-more,
+.knock:focus-within .knock-more,
+.knock.is-open .knock-more {
+  grid-template-rows: 1fr;
+}
+
+.knock-sub {
+  margin: 9px 0 0;
+  font-size: 15.75px;
+  color: var(--knock-sub);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease 0.06s,
+              transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.06s;
+}
+
+.knock-acts {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease 0.14s,
+              transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.14s;
+}
+
+.knock:hover .knock-sub,
+.knock:focus-within .knock-sub,
+.knock.is-open .knock-sub,
+.knock:hover .knock-acts,
+.knock:focus-within .knock-acts,
+.knock.is-open .knock-acts {
+  opacity: 1;
+  transform: none;
+}
+
+.knock-go {
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  padding: 9px 14px;
+  border: none;
+  border-radius: 9px;
+  background: var(--knock-text);
+  color: var(--knock-bubble);
+  transition: opacity 0.15s ease;
+}
+
+.knock-go:hover {
+  opacity: 0.84;
+}
+
+.knock-no {
+  font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+  font-size: 12.5px;
+  padding: 5px 3px;
+  border: none;
+  background: none;
+  color: var(--knock-faint);
+  transition: color 0.15s ease;
+}
+
+.knock-no:hover {
+  color: var(--knock-faint-hi);
+  text-decoration: underline;
+}
+
+/* the "there's more here" tell, gone the moment it opens */
+.knock-tell {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.25s ease;
+}
+
+.knock-tell i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--knock-dot);
+  animation: aedenKnockHop 1.35s infinite;
+}
+
+.knock-tell i:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.knock-tell i:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+.knock:hover .knock-tell,
+.knock:focus-within .knock-tell,
+.knock.is-open .knock-tell {
+  opacity: 0;
+}
+
+@keyframes aedenKnockHop {
+  0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+  30%           { opacity: 1; transform: translateY(-3px); }
+}
+
+@keyframes aedenKnockPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .knock,
+  .knock * {
+    animation: none !important;
+    transition-duration: 0.001s !important;
+  }
+}
+
 /* Tooltip fade-in animation */
 @keyframes tooltipFadeIn {
   from {

@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import ModeToggle from "./ModeToggle";
 import MachineMode from "./MachineMode";
 import LondonTime from "./components/LondonTime";
+import VisitorPeek from "./components/VisitorPeek";
 
 // Add this near the top of the file, outside the component
 const AIPage = React.lazy(() => import("./AIPage"));
@@ -1480,11 +1481,17 @@ function Home({
       </AnimatePresence>
 
       {/* Mode Toggle - Always visible */}
-      <ModeToggle 
-        viewMode={viewMode} 
-        setViewMode={setViewMode} 
+      <ModeToggle
+        viewMode={viewMode}
+        setViewMode={setViewMode}
         handleClickableHover={handleClickableHover}
         isDarkMode={isDarkMode}
+      />
+
+      {/* Greets visitors arriving from a corporate network. Silent otherwise. */}
+      <VisitorPeek
+        isDarkMode={isDarkMode}
+        handleClickableHover={handleClickableHover}
       />
     </motion.div>
   );

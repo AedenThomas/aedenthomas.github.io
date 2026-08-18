@@ -1,0 +1,27 @@
+name = "aeden-visitor"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+# Serves at https://aeden.me/api/visitor. Requires the aeden.me DNS record to be
+# proxied (orange cloud) — Workers do not run on DNS-only records.
+# Trailing * matters: Cloudflare matches route patterns against the full URL
+# including the query string, so a bare /api/visitor would miss ?debug=1.
+[[routes]]
+pattern = "aeden.me/api/visitor*"
+zone_name = "aeden.me"
+
+# Answers cache per /24 — 24h for a hit, 6h for a miss. Also holds the
+# once-per-company-per-day alert dedupe keys.
+[[kv_namespaces]]
+binding = "VISITOR_CACHE"
+id = "6c3ee61f096a44e5b63296ef011ecb69"
+
+# Log of company visits, readable at /api/visitor/log?debug=<DEBUG_TOKEN>
+[[d1_databases]]
+binding = "DB"
+database_name = "aeden-visitors"
+database_id = "5ff8d775-73e5-41c3-b8f6-f3b24b119ac4"
+
+# Optional fallback provider. Set with:
+#   npx wrangler secret put IPREGISTRY_KEY
+# Skipped entirely when unset.

@@ -47,6 +47,81 @@ function githubRequest(url) {
     });
 }
 
+// GraphQL request helper — used for the contribution calendar, which the REST
+// API doesn't expose. Replaces the old github-contributions-api.deno.dev proxy
+// (Deno Deploy Classic, sunset 2026-07-20 — that endpoint now 404s permanently).
+function githubGraphQL(query, variables) {
+    return new Promise((resolve, reject) => {
+        const body = JSON.stringify({ query, variables });
+        const options = {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                'Content-Type': 'application/json',
+                'User-Agent': 'aedenthomas-stats-fetcher'
+            }
+        };
+
+        const req = https.request('https://api.github.com/graphql', options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => data += chunk);
+            res.on('end', () => {
+                try {
+                    const parsed = JSON.parse(data);
+                    if (parsed.errors) {
+                        reject(new Error(JSON.stringify(parsed.errors)));
+                    } else {
+                        resolve(parsed.data);
+                    }
+                } catch (e) {
+                    reject(new Error('Failed to parse GraphQL response'));
+                }
+            });
+        });
+
+        req.on('error', (err) => reject(err));
+        req.write(body);
+        req.end();
+    });
+}
+
+const CONTRIBUTION_CALENDAR_QUERY = `
+    query($login: String!) {
+        user(login: $login) {
+            contributionsCollection {
+                contributionCalendar {
+                    weeks {
+                        contributionDays {
+                            date
+                            contributionCount
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
+// Returns { 'YYYY-MM-DD': count } for the past year, straight from GitHub's own
+// contribution graph — the same numbers shown on the profile page, no scraping
+// or third party involved.
+async function fetchContributionCalendar(username) {
+    try {
+        const data = await githubGraphQL(CONTRIBUTION_CALENDAR_QUERY, { login: username });
+        const weeks = data?.user?.contributionsCollection?.contributionCalendar?.weeks || [];
+        const byDate = {};
+        for (const week of weeks) {
+            for (const day of week.contributionDays) {
+                byDate[day.date] = day.contributionCount;
+            }
+        }
+        return byDate;
+    } catch (err) {
+        console.error(`  Failed to fetch contribution calendar for ${username}: ${err.message}`);
+        return {};
+    }
+}
+
 // Paginated fetch helper
 async function fetchAllPages(baseUrl, maxPages = 10) {
     const results = [];
@@ -217,6 +292,21 @@ async function fetchGitHubStats() {
         mergeAutomated(accountStats.automatedByDate);
     }
 
+    // Contribution calendar (commit/PR/issue/review counts as shown on the
+    // profile page) — replaces the old github-contributions-api.deno.dev proxy.
+    console.log(`\nFetching contribution calendar for ${GITHUB_USERNAME}`);
+    const calendarByDate = {};
+    const mergeCalendar = (byDate) => {
+        for (const [date, count] of Object.entries(byDate)) {
+            calendarByDate[date] = (calendarByDate[date] || 0) + count;
+        }
+    };
+    mergeCalendar(await fetchContributionCalendar(GITHUB_USERNAME));
+    for (const account of ADDITIONAL_ACCOUNTS) {
+        console.log(`Fetching contribution calendar for ${account.username}`);
+        mergeCalendar(await fetchContributionCalendar(account.username));
+    }
+
     // Account for the automated commit THIS run is about to create. The workflow
     // runs this script and then commits the regenerated stats as a single
     // "chore: update contribution stats" commit dated today — which the scan above
@@ -227,6 +317,11 @@ async function fetchGitHubStats() {
     const todayStr = new Date().toISOString().split('T')[0];
     allStats.automatedByDate[todayStr] = (allStats.automatedByDate[todayStr] || 0) + 1;
 
+    // Union of every date either side has anything for, since a day can carry
+    // a calendar count with no tracked line stats (e.g. a PR review) or vice
+    // versa (a commit to an ignored/binary file).
+    const allDates = new Set([...Object.keys(allStats.byDate), ...Object.keys(calendarByDate)]);
+
     // Build output
     const result = {
         updatedAt: new Date().toISOString(),
@@ -234,12 +329,18 @@ async function fetchGitHubStats() {
         totalLinesDeleted: allStats.linesDeleted,
         extensionStats: globalExtensionStats, // Add extension stats to output
         automatedContributionsByDate: allStats.automatedByDate, // { 'YYYY-MM-DD': count } of nightly stats commits
-        contributions: Object.entries(allStats.byDate)
-            .map(([date, data]) => ({
-                date,
-                linesAdded: data.linesAdded,
-                linesDeleted: data.linesDeleted
-            }))
+        contributions: Array.from(allDates)
+            .map((date) => {
+                const lines = allStats.byDate[date] || { linesAdded: 0, linesDeleted: 0 };
+                const rawCount = calendarByDate[date] || 0;
+                const automated = allStats.automatedByDate[date] || 0;
+                return {
+                    date,
+                    count: Math.max(0, rawCount - automated),
+                    linesAdded: lines.linesAdded,
+                    linesDeleted: lines.linesDeleted
+                };
+            })
             .sort((a, b) => a.date.localeCompare(b.date))
     };
     
