@@ -6,7 +6,7 @@
  * to "no analytics" rather than a broken page: the whole file runs inside one
  * try/catch, every listener is guarded, and nothing awaits the network.
  *
- * What it records, all batched and flushed to /api/visitor/collect:
+ * What it records, all batched and flushed to /api/visitor/journal:
  *   - page views on load and on SPA route changes (hash and pushState)
  *   - engagement: scroll depth, active vs hidden time, clicks with a selector
  *     and text, rage clicks, dead clicks, text copy, outbound links, résumé
@@ -15,9 +15,9 @@
  *     box (never raw pixels), mouse sampled at ~10 Hz only while moving,
  *     aggregated into 1 % cells before they leave the browser
  *
- * Session replay is rrweb, self-hosted at /vendor/rrweb-record.min.js and
- * loaded lazily after the page is idle. Inputs are masked. Chunks go to
- * /api/visitor/replay and land in R2.
+ * Session replay is rrweb, self-hosted at /vendor/scene.min.js and loaded
+ * lazily after the page is idle. Inputs are masked. Chunks go to
+ * /api/visitor/frames and land in R2.
  *
  * Identity: the Worker owns an HttpOnly `aeden_vid` cookie. This script keeps
  * a `cid` in localStorage only so the very first batch — before the cookie
@@ -31,9 +31,13 @@
 (function () {
   "use strict";
 
-  var COLLECT = "/api/visitor/collect";
-  var REPLAY = "/api/visitor/replay";
-  var RECORDER = "/vendor/rrweb-record.min.js";
+  // Neutral names on purpose. EasyPrivacy and friends block URLs by pattern —
+  // "/rrweb-record.min.js" is in the list verbatim, and "collect", "track" and
+  // "replay" are well-worn tracker vocabulary — so a visitor running uBlock
+  // would lose the recorder, or this whole script, under the obvious names.
+  var COLLECT = "/api/visitor/journal";
+  var REPLAY = "/api/visitor/frames";
+  var RECORDER = "/vendor/scene.min.js";
 
   var SESSION_MS = 30 * 60 * 1000;   // inactivity timeout
   var FLUSH_MS = 5000;               // event batch cadence
