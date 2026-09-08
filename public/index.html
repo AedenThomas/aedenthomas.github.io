@@ -107,6 +107,12 @@
         })());
     </script>
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <!-- First-party analytics: page views, engagement, heatmaps and session
+         replay, all to /api/visitor on this domain. See public/aeden.js and
+         worker/README.md. `defer` keeps it off the critical path; the script
+         never blocks and swallows its own errors. Named after the site, not
+         "track.js", because content blockers match generic tracker names. -->
+    <script defer src="%PUBLIC_URL%/aeden.js"></script>
     <style>
       .handwritten-font {
         font-family: "Great Vibes", cursive;

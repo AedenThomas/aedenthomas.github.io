@@ -1,0 +1,2479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="dark light">
+<title>visitor console · aeden.me</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* ============================================================================
+   visitor console — amber-phosphor ops panel for aeden.me/api/visitor
+   Five views: the original lookup overview (map, feed, log) plus visitors,
+   engagement, heatmaps and replays from the self-hosted analytics tracker.
+   Two themes: dark (default, amber on near-black) and light (the site's cream).
+   `hot` is reserved for one meaning only — a lookup that resolved to an
+   employer. Nothing decorative is ever amber.
+   ========================================================================== */
+:root{
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',SFMono-Regular,Menlo,Consolas,monospace;
+
+  --bg:#08090b; --pane:#0c0e11; --pane2:#101317; --pane3:#151a20;
+  --rule:#1a1e24; --rule2:#242a32;
+  --ink:#e4e8ee; --dim:#79828f; --dimmer:#4d5663;
+  --hot:#f0a93c; --hot-ink:#ffc165; --hot-dim:#7a5620; --hot-wash:rgba(240,169,60,.11);
+  --cool:#5b7488; --cool-dim:#2b3945;
+  --land:#1e2731; --grat:rgba(120,150,175,.07);
+  --up:#6fb98a; --down:#c9724f;
+  --shadow:0 18px 44px -18px rgba(0,0,0,.8);
+  --mk-hot:rgba(240,169,60,.85); --mk-cool:rgba(91,116,136,.6);
+  --mk-hot-glow:0 0 0 3px rgba(240,169,60,.13),0 0 11px 2px rgba(240,169,60,.32);
+  --mk-cool-glow:0 0 0 2px rgba(91,116,136,.12);
+}
+:root[data-theme=light]{
+  --bg:#f2f0e9; --pane:#f8f7f2; --pane2:#eae7dc; --pane3:#e3dfd2;
+  --rule:#ddd9cb; --rule2:#c3bca9;
+  --ink:#17150f; --dim:#6d6860; --dimmer:#9a9488;
+  --hot:#9a4a12; --hot-ink:#7d3a0c; --hot-dim:#d3b48f; --hot-wash:rgba(154,74,18,.1);
+  --cool:#5f7383; --cool-dim:#c0c7ce;
+  --land:#cdc7b6; --grat:rgba(23,21,15,.06);
+  --up:#3f7a55; --down:#9a3324;
+  --shadow:0 18px 44px -22px rgba(23,21,15,.28);
+  --mk-hot:#9a4a12; --mk-cool:rgba(95,115,131,.55);
+  --mk-hot-glow:0 0 0 3px rgba(154,74,18,.12); --mk-cool-glow:0 0 0 2px rgba(95,115,131,.1);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--mono);font-size:12px;line-height:1.45;
+  font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column;min-height:100vh;
+}
+/* body is only a flex column so the footer can sit at the bottom of a short
+   page. Nothing in it may shrink to pay for that. */
+body>*{flex:0 0 auto}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--hot);text-decoration:none}
+a:hover{text-decoration:underline}
+:where(button,a,input,[tabindex]):focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+::selection{background:var(--hot-wash);color:var(--ink)}
+.lbl{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dimmer)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------------------------------------------------------------- top bar */
+.top{
+  display:flex;align-items:center;gap:14px;padding:10px 16px;
+  border-bottom:1px solid var(--rule);background:var(--pane);
+  position:sticky;top:0;z-index:40;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:9px;font-size:12.5px;letter-spacing:.02em}
+.brand b{font-weight:600}
+.brand s{text-decoration:none;color:var(--dimmer)}
+.live{width:6px;height:6px;border-radius:50%;background:var(--hot);flex:none;
+  box-shadow:0 0 0 3px rgba(240,169,60,.14)}
+.live.off{background:var(--dimmer);box-shadow:none}
+@media (prefers-reduced-motion:no-preference){
+  .live:not(.off){animation:pulse 2.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 2px rgba(240,169,60,.18)}
+    50%{box-shadow:0 0 0 5px rgba(240,169,60,.05)}}
+}
+.seg{display:flex;border:1px solid var(--rule2);border-radius:4px;overflow:hidden;flex:none}
+.seg button{background:transparent;border:0;border-left:1px solid var(--rule2);
+  color:var(--dim);font-size:11px;letter-spacing:.06em;padding:5px 10px}
+.seg button:first-child{border-left:0}
+.seg button:hover{color:var(--ink);background:var(--pane2)}
+.seg button[aria-pressed=true]{background:var(--hot-wash);color:var(--hot)}
+.search{display:flex;align-items:center;gap:7px;border:1px solid var(--rule2);border-radius:4px;
+  padding:0 9px;background:var(--bg);min-width:150px;flex:1 1 190px;max-width:300px}
+.search svg{width:11px;height:11px;flex:none;stroke:var(--dimmer);fill:none;stroke-width:1.7}
+.search input{background:none;border:0;outline:0;color:var(--ink);font:inherit;font-size:11.5px;
+  padding:5px 0;width:100%;min-width:0}
+.search input::placeholder{color:var(--dimmer)}
+.search kbd{font:inherit;font-size:9.5px;color:var(--dimmer);border:1px solid var(--rule2);
+  border-radius:3px;padding:0 4px;flex:none}
+.search:focus-within{border-color:var(--hot-dim)}
+.search:focus-within kbd{opacity:0}
+.spacer{margin-left:auto}
+.tog{background:transparent;border:1px solid var(--rule2);border-radius:4px;color:var(--dim);
+  font-size:11px;padding:5px 9px;display:flex;align-items:center;gap:7px;flex:none}
+.tog:hover{color:var(--ink)}
+.tog i{width:7px;height:7px;border-radius:1px;background:var(--rule2);display:block;flex:none}
+.tog[aria-pressed=true]{color:var(--ink);border-color:var(--hot-dim)}
+.tog[aria-pressed=true] i{background:var(--hot)}
+.icon{background:transparent;border:1px solid var(--rule2);border-radius:4px;color:var(--dim);
+  padding:5px 8px;font-size:11px;flex:none;line-height:1.2}
+.icon:hover{color:var(--ink);background:var(--pane2)}
+.icon[disabled]{opacity:.4;cursor:default}
+@media (prefers-reduced-motion:no-preference){
+  .icon.spin svg{animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+}
+.icon svg{width:12px;height:12px;display:block;stroke:currentColor;fill:none;stroke-width:1.7}
+
+/* ------------------------------------------------------------ filter bar */
+.chips{display:flex;align-items:center;gap:7px;padding:8px 16px;border-bottom:1px solid var(--rule);
+  flex-wrap:wrap;background:var(--pane2);font-size:11px}
+.chips[hidden]{display:none}
+.chips>.lbl{margin-right:2px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--hot-dim);
+  background:var(--hot-wash);color:var(--hot);border-radius:3px;padding:2px 4px 2px 7px;font-size:10.5px}
+.chip em{font-style:normal;color:var(--dim)}
+.chip button{background:none;border:0;color:inherit;padding:0 3px;font-size:12px;line-height:1;opacity:.75}
+.chip button:hover{opacity:1}
+.chips .clear{background:none;border:0;color:var(--dim);font-size:10.5px;text-decoration:underline;
+  text-underline-offset:2px;padding:2px 4px}
+.chips .clear:hover{color:var(--ink)}
+
+/* ------------------------------------------------------------------ kpis */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--rule)}
+.kpi{padding:12px 16px 14px;border-left:1px solid var(--rule);min-width:0}
+.kpi:first-child{border-left:0}
+.kpi .val{font-size:26px;line-height:1.1;margin-top:7px;letter-spacing:-.02em;font-weight:500;
+  display:flex;align-items:baseline;gap:7px}
+.kpi.hot .val{color:var(--hot)}
+.kpi .val small{font-size:11px;color:var(--dim);letter-spacing:0;font-weight:400}
+.delta{font-size:10px;letter-spacing:.02em;display:inline-flex;align-items:center;gap:3px}
+.delta.u{color:var(--up)} .delta.d{color:var(--down)} .delta.f{color:var(--dimmer)}
+.kpi .sub{font-size:10px;color:var(--dimmer);margin-top:8px;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+.meter{height:2px;background:var(--rule);margin-top:9px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--hot)}
+.spark{display:flex;align-items:flex-end;gap:1px;height:18px;margin-top:7px}
+.spark i{flex:1;min-width:1px;background:var(--cool-dim);align-self:flex-end}
+.spark i.s{background:var(--hot-dim)}
+
+/* ------------------------------------------------------------------ panes */
+.phead{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--rule);
+  min-height:33px}
+.phead h2{margin:0;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);
+  font-weight:500}
+.phead .r{margin-left:auto;display:flex;gap:12px;align-items:center;font-size:10px;color:var(--dimmer)}
+.legend{display:flex;gap:12px;font-size:10px;color:var(--dimmer);flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:6px;height:6px;border-radius:50%;display:block;flex:none}
+
+.body{display:grid;grid-template-columns:minmax(0,1fr) 320px;border-bottom:1px solid var(--rule)}
+.mapcol{border-right:1px solid var(--rule);min-width:0;display:flex;flex-direction:column}
+.map{position:relative;flex:1;min-height:340px;background:var(--bg)}
+.map canvas{position:absolute;inset:0;width:100%;height:100%}
+.mk{position:absolute;transform:translate(-50%,-50%);border-radius:50%;cursor:pointer;
+  border:1px solid transparent;padding:0;background:var(--mk-cool);box-shadow:var(--mk-cool-glow)}
+.mk.s{background:var(--mk-hot);box-shadow:var(--mk-hot-glow)}
+.mk:hover,.mk:focus-visible{border-color:var(--ink);outline:none;z-index:5}
+.mk.sel{border-color:var(--ink);z-index:6}
+.tip{position:absolute;transform:translate(-50%,-118%);background:var(--pane3);
+  border:1px solid var(--rule2);border-radius:4px;padding:7px 9px;font-size:10.5px;
+  pointer-events:none;z-index:9;white-space:nowrap;color:var(--ink);opacity:0;
+  transition:opacity .12s;box-shadow:var(--shadow)}
+.tip b{color:var(--hot);font-weight:500}
+.tip s{text-decoration:none;color:var(--dim);display:block;margin-top:2px}
+.tip.on{opacity:1}
+
+/* ------------------------------------------------------------- right rail */
+.rail{display:flex;flex-direction:column;min-width:0;min-height:0}
+.tabs{display:flex;border-bottom:1px solid var(--rule);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--dimmer);
+  font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:10px 8px;white-space:nowrap}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-selected=true]{color:var(--hot);border-bottom-color:var(--hot)}
+.tabs .n{color:var(--dimmer);margin-left:4px;letter-spacing:0;font-size:8.5px}
+.tabpanel{overflow-y:auto;flex:1;min-height:0;max-height:392px}
+.tabpanel[hidden]{display:none}
+
+.fr{display:grid;grid-template-columns:9px minmax(0,1fr);gap:9px;padding:9px 14px 9px 9px;
+  border-bottom:1px solid var(--rule);width:100%;background:none;border-left:0;border-right:0;
+  border-top:0;text-align:left;font:inherit}
+.fr:hover{background:var(--pane2)}
+.fr .stripe{width:2px;border-radius:1px;background:var(--cool-dim);margin-left:5px}
+.fr.s .stripe{background:var(--hot)}
+.fr .t1{display:flex;gap:8px;align-items:baseline}
+.fr .who{color:var(--dim);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fr.s .who{color:var(--hot)}
+.fr .ago{margin-left:auto;color:var(--dimmer);font-size:10px;flex:none}
+.fr .t2{color:var(--dim);font-size:10.5px;margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.fr .t2 em{font-style:normal;color:var(--dimmer)}
+.fr .t2 em.rep{color:var(--hot)}
+.lnk{background:none;border:0;padding:0;font:inherit;color:var(--dim);text-decoration:underline dotted;cursor:pointer}
+.lnk:hover{color:var(--hot)}
+
+.rank{list-style:none;margin:0;padding:6px 0}
+.rank li{padding:0 14px}
+.rank button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:baseline;
+  width:100%;background:none;border:0;padding:7px 0 6px;text-align:left;font:inherit;
+  border-bottom:1px solid var(--rule)}
+.rank li:last-child button{border-bottom:0}
+.rank button:hover .nm{color:var(--hot)}
+.rank .nm{color:var(--ink);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank .nm em{font-style:normal;color:var(--dimmer);margin-left:6px;font-size:10px}
+.rank .n{color:var(--dim);font-size:11px}
+.rank .bar{grid-column:1/-1;height:3px;background:var(--rule);margin-top:5px}
+.rank .bar i{display:block;height:100%;background:var(--cool)}
+.rank.hot .bar i{background:var(--hot)}
+.rank button[aria-pressed=true] .nm{color:var(--hot)}
+
+/* --------------------------------------------------------------- activity */
+.activity{display:grid;grid-template-columns:minmax(0,1fr) 320px;border-bottom:1px solid var(--rule)}
+.barcol{border-right:1px solid var(--rule);min-width:0}
+.barwrap{padding:12px 16px 14px}
+.bars{display:flex;align-items:flex-end;gap:2px;height:64px;margin-top:10px}
+/* a week's worth of daily bins would otherwise stretch into 100px slabs */
+.bars .b{flex:1;min-width:2px;max-width:46px;display:flex;flex-direction:column;justify-content:flex-end;gap:1px;
+  height:100%;background:none;border:0;padding:0}
+.bars .b i{display:block;background:var(--cool-dim);width:100%}
+.bars .b i.s{background:var(--hot)}
+.bars .b:hover i{background:var(--cool)}
+.bars .b:hover i.s{background:var(--hot-ink)}
+.axis{display:flex;justify-content:space-between;margin-top:7px;color:var(--dimmer);font-size:9.5px}
+.heat{padding:12px 16px 14px;overflow-x:auto}
+.heatgrid{display:grid;grid-template-columns:22px repeat(24,1fr);gap:2px;margin-top:10px;min-width:270px}
+.heatgrid .hl{font-size:9px;color:var(--dimmer);align-self:center;letter-spacing:.04em}
+.heatgrid .c{aspect-ratio:1;background:var(--rule);border-radius:1px;min-height:8px}
+.heatax{display:grid;grid-template-columns:22px repeat(24,1fr);gap:2px;margin-top:4px;min-width:270px;
+  font-size:8.5px;color:var(--dimmer)}
+.heatax span{text-align:center}
+
+/* ------------------------------------------------------------------ table */
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:920px}
+th{text-align:left;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dimmer);
+  font-weight:500;border-bottom:1px solid var(--rule);background:var(--pane);
+  position:sticky;top:0;z-index:10;padding:0}
+th button{background:none;border:0;padding:9px 12px;width:100%;text-align:left;font:inherit;
+  color:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap;
+  text-transform:inherit;letter-spacing:inherit}
+th button:hover{color:var(--ink)}
+th button u{text-decoration:none;opacity:0;font-size:8px}
+th[aria-sort] button{color:var(--hot)}
+th[aria-sort] button u{opacity:1}
+td{padding:8px 12px;border-bottom:1px solid var(--rule);color:var(--dim);font-size:11.5px;
+  white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--pane2)}
+tbody tr.sel td{background:var(--hot-wash)}
+td.co{color:var(--ink)}
+tr.s td.co{color:var(--hot)}
+td.first{border-left:2px solid transparent;padding-left:14px}
+tr.s td.first{border-left-color:var(--hot)}
+td .dom{color:var(--dimmer)}
+.tag{border:1px solid var(--rule2);border-radius:3px;padding:1px 6px;font-size:10px;color:var(--dim);
+  display:inline-block}
+.tag.ok{border-color:var(--hot-dim);color:var(--hot)}
+.more{display:block;width:100%;background:none;border:0;border-bottom:1px solid var(--rule);
+  padding:11px;color:var(--dim);font-size:11px;letter-spacing:.04em}
+/* a bare [hidden] loses to the display above it — both need the explicit win */
+.more[hidden]{display:none}
+.more:hover{color:var(--ink);background:var(--pane2)}
+
+/* ----------------------------------------------------------------- footer */
+.foot{padding:10px 16px;color:var(--dimmer);font-size:10.5px;display:flex;gap:16px;flex-wrap:wrap;
+  margin-top:auto;border-top:1px solid var(--rule)}
+.foot .spacer{margin-left:auto}
+
+/* ----------------------------------------------------------------- drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;opacity:0;pointer-events:none;
+  transition:opacity .16s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);background:var(--pane);
+  border-left:1px solid var(--rule2);z-index:51;transform:translateX(100%);
+  transition:transform .18s cubic-bezier(.3,.8,.4,1);display:flex;flex-direction:column;
+  box-shadow:var(--shadow)}
+.drawer[hidden]{display:none}
+.drawer.on{transform:none}
+@media (prefers-reduced-motion:reduce){.drawer{transition:none}.scrim{transition:none}}
+.drawer .dh{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;
+  border-bottom:1px solid var(--rule)}
+.drawer .dh .co{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.drawer .dh .co.none{color:var(--dim);font-weight:500;font-size:13.5px}
+.drawer .dh .where{font-size:10.5px;color:var(--hot);margin-top:3px}
+.drawer .dh .x{margin-left:auto;background:none;border:0;color:var(--dimmer);font-size:17px;
+  line-height:1;padding:2px 5px;flex:none}
+.drawer .dh .x:hover{color:var(--ink)}
+.drawer .db{overflow-y:auto;padding:14px 16px 22px;flex:1}
+.drawer dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;margin:0;font-size:11px}
+.drawer dt{color:var(--dimmer);letter-spacing:.04em}
+.drawer dd{margin:0;color:var(--ink);text-align:right;overflow-wrap:anywhere}
+.drawer .note{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);font-size:11.5px;
+  color:var(--dim);line-height:1.5}
+.drawer h3{font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dimmer);
+  font-weight:500;margin:20px 0 8px}
+.drawer .hist{list-style:none;margin:0;padding:0;font-size:11px}
+.drawer .hist li{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--rule);
+  color:var(--dim)}
+.drawer .hist li b{color:var(--ink);font-weight:400;margin-left:auto}
+.drawer .acts{display:flex;gap:7px;margin-top:16px;flex-wrap:wrap}
+.drawer .acts button{background:none;border:1px solid var(--rule2);border-radius:4px;color:var(--dim);
+  font-size:10.5px;padding:5px 9px}
+.drawer .acts button:hover{color:var(--ink);border-color:var(--hot-dim)}
+
+/* ------------------------------------------------------- states + loading */
+.empty{padding:34px 16px;text-align:center;color:var(--dimmer);font-size:11.5px}
+.empty b{color:var(--dim);display:block;font-size:12.5px;font-weight:500;margin-bottom:5px}
+.err{margin:0;padding:9px 16px;background:var(--hot-wash);border-bottom:1px solid var(--hot-dim);
+  color:var(--hot);font-size:11px;display:flex;gap:10px;align-items:center}
+.err[hidden]{display:none}
+.err button{margin-left:auto;background:none;border:1px solid var(--hot-dim);border-radius:3px;
+  color:inherit;font-size:10.5px;padding:3px 8px}
+body.loading .kpi .val,body.loading .kpi .sub{opacity:.25}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,14px);background:var(--pane3);
+  border:1px solid var(--rule2);border-radius:5px;padding:8px 14px;font-size:11px;z-index:60;
+  opacity:0;pointer-events:none;transition:opacity .16s,transform .16s;box-shadow:var(--shadow)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ------------------------------------------------------------- responsive */
+@media (max-width:1180px){
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .kpi:nth-child(4){border-left:0}
+  .kpi:nth-child(-n+3){border-bottom:1px solid var(--rule)}
+}
+@media (max-width:960px){
+  .body,.activity{grid-template-columns:minmax(0,1fr)}
+  .mapcol,.barcol{border-right:0;border-bottom:1px solid var(--rule)}
+  .tabpanel{max-height:340px}
+}
+@media (max-width:620px){
+  .top{gap:9px;padding:9px 12px}
+  .brand{width:100%}
+  .search{max-width:none;order:5;flex-basis:100%}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpi{border-left:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .kpi:nth-child(odd){border-left:0}
+  .kpi .val{font-size:22px}
+  .map{min-height:250px}
+}
+@media print{
+  .top,.chips,.drawer,.scrim,.toast,.tabs{display:none}
+  body{background:#fff;color:#000}
+}
+
+/* ================================================================ views ===
+   The analytics views added on top of the lookup console. Same tokens, same
+   rules: amber only for an employer; everything else cool or grey. */
+.view[hidden]{display:none}
+body:not([data-view=overview]) #kinds{display:none}
+.seg.views button{letter-spacing:.08em;text-transform:uppercase;font-size:9px;padding:6px 8px}
+@media (min-width:621px){.top .search{flex:1 1 150px;max-width:230px}}
+.split{display:grid;grid-template-columns:minmax(0,1fr) 440px;border-bottom:1px solid var(--rule)}
+.split>.listcol{border-right:1px solid var(--rule);min-width:0}
+.split>.detail{min-width:0;display:flex;flex-direction:column;max-height:calc(100vh - 86px);
+  position:sticky;top:42px;background:var(--pane)}
+.detail .dbody{overflow-y:auto;flex:1;min-height:0}
+table.tight{min-width:760px}
+table.tight td{padding:6px 10px;font-size:11px}
+table.tight th button,table.tight th span{padding:8px 10px}
+.kpis.k4{grid-template-columns:repeat(4,1fr)}
+.kpis.k5{grid-template-columns:repeat(5,1fr)}
+.pill{display:inline-block;border:1px solid var(--rule2);border-radius:9px;padding:0 6px;font-size:9px;
+  color:var(--dim);letter-spacing:.06em;text-transform:uppercase;line-height:1.5;vertical-align:middle}
+.pill.hot{border-color:var(--hot-dim);color:var(--hot)}
+.pill.new{border-color:var(--up);color:var(--up)}
+.pill.grp{border-color:var(--cool);color:var(--cool)}
+.pill.bad{border-color:var(--down);color:var(--down)}
+.funnel{display:inline-flex;gap:2px;align-items:flex-end;height:14px;vertical-align:middle;margin-right:6px}
+.funnel i{width:8px;background:var(--cool-dim);display:block;min-height:1px}
+.funnel i.s{background:var(--cool)}
+.mono{color:var(--dimmer)}
+tr.on td{background:var(--hot-wash)}
+.tl{list-style:none;margin:0;padding:0}
+.tl>li{padding:10px 14px;border-bottom:1px solid var(--rule)}
+.tl .h{display:flex;gap:8px;align-items:baseline;font-size:11px;color:var(--ink);flex-wrap:wrap}
+.tl .h b{font-weight:500;color:var(--hot)}
+.tl .h .ago{margin-left:auto;color:var(--dimmer);font-size:10px}
+.tl .m{color:var(--dim);font-size:10.5px;margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.tl .pages{margin:6px 0 0;padding:0;list-style:none;font-size:10.5px;color:var(--dim)}
+.tl .pages li{display:flex;gap:8px;padding:2px 0}
+.tl .pages li b{color:var(--ink);font-weight:400}
+.tl .pages li span{margin-left:auto;color:var(--dimmer);white-space:nowrap}
+.tl .acts{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.tl .acts button,.vhead .acts button{background:none;border:1px solid var(--rule2);border-radius:3px;color:var(--dim);
+  font-size:10px;padding:2px 7px}
+.tl .acts button:hover,.vhead .acts button:hover{color:var(--ink);border-color:var(--hot-dim)}
+.vhead{padding:12px 14px;border-bottom:1px solid var(--rule)}
+.vhead .co{font-size:14px;font-weight:600}
+.vhead .co.none{color:var(--dim);font-weight:500;font-size:12.5px}
+.vhead .sub{color:var(--dim);font-size:10.5px;margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.vhead .acts{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--rule);
+  border-bottom:1px solid var(--rule)}
+.groups .g{background:var(--pane);padding:10px 14px;font-size:11px;color:var(--dim)}
+.groups .g b{color:var(--hot);font-weight:500}
+.groups .g .k{color:var(--ink)}
+.groups .chips2{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.groups .chips2 button{background:none;border:1px solid var(--rule2);border-radius:3px;color:var(--dim);
+  font-size:10px;padding:1px 6px}
+.groups .chips2 button:hover{color:var(--hot);border-color:var(--hot-dim)}
+.groups .empty{grid-column:1/-1;background:var(--pane)}
+
+/* --------------------------------------------------------------- heat -- */
+.hbar{display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--rule);
+  flex-wrap:wrap;background:var(--pane2)}
+.sel{background:var(--bg);color:var(--ink);border:1px solid var(--rule2);border-radius:4px;font:inherit;
+  font-size:11px;padding:4px 8px;max-width:360px}
+.hstage{position:relative;overflow:auto;max-height:calc(100vh - 170px);background:var(--bg);
+  border-bottom:1px solid var(--rule);padding:16px}
+.hframe{position:relative;transform-origin:top left;margin:0 auto}
+.hframe iframe{display:block;border:1px solid var(--rule2);background:#fff;width:100%;height:100%}
+.hframe canvas{position:absolute;inset:0;pointer-events:none}
+.hcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:16px;
+  border-bottom:1px solid var(--rule)}
+.hcard{border:1px solid var(--rule);background:var(--pane);padding:8px}
+.hcard .lbl{margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-transform:none;
+  letter-spacing:0;font-size:10px;color:var(--dim)}
+.hcard canvas{display:block;width:100%;background:var(--pane2)}
+.hnote{padding:7px 16px;color:var(--dimmer);font-size:10.5px;border-bottom:1px solid var(--rule)}
+.hscale{display:inline-flex;align-items:center;gap:6px}
+.hscale i{width:70px;height:6px;display:block;border-radius:2px;
+  background:linear-gradient(90deg,rgba(91,116,136,.6),#f0a93c 55%,#fff5e6)}
+
+/* ------------------------------------------------------------- replay -- */
+.rplayer{padding:10px;min-height:120px;background:var(--bg);border-bottom:1px solid var(--rule)}
+.rplayer .rr-player{margin:0 auto;box-shadow:none!important;border:1px solid var(--rule2);
+  background:var(--pane)!important;float:none!important}
+.rplayer .rr-player__frame{background:#fff}
+.rplayer .rr-controller{background:var(--pane2)!important;color:var(--ink)!important;
+  border-top:1px solid var(--rule);font-family:var(--mono)!important;font-size:11px}
+.rplayer .rr-timeline__time{color:var(--dim)!important}
+.rplayer .rr-progress{background:var(--rule)!important;border-color:var(--rule)!important}
+.rplayer .rr-progress__step{background:var(--hot)!important}
+.rplayer .rr-progress__handler{background:var(--hot)!important}
+.rplayer .rr-controller__btns button{color:var(--ink)!important}
+.rplayer .rr-controller__btns button.active{background:var(--hot-wash)!important;color:var(--hot)!important}
+.rplayer .rr-controller__btns button:hover{background:var(--pane3)!important}
+.rplayer .switch .label{color:var(--dim)!important}
+.rplayer .rr-progress__tag{width:2px}
+.rtimeline{list-style:none;margin:0;padding:0;overflow-y:auto;flex:1;min-height:0;max-height:320px}
+.rtimeline li{display:flex;gap:8px;padding:5px 14px;border-bottom:1px solid var(--rule);font-size:10.5px;
+  color:var(--dim);cursor:pointer}
+.rtimeline li:hover{background:var(--pane2)}
+.rtimeline li .t{color:var(--dimmer);flex:none;width:52px;text-align:right}
+.rtimeline li .k{color:var(--ink);flex:none;width:82px}
+.rtimeline li.hot .k{color:var(--hot)}
+.rtimeline li.bad .k{color:var(--down)}
+.rtimeline li .d{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rplayer .empty,.rtimeline .empty{padding:24px 14px}
+.chk{display:inline-flex;align-items:center;gap:5px;color:var(--dim);font-size:10px;cursor:pointer}
+.chk input{accent-color:var(--hot);margin:0}
+
+/* --------------------------------------------------------------- lock -- */
+.lock{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:70;display:flex;align-items:center;
+  justify-content:center}
+.lock[hidden]{display:none}
+.lock form{background:var(--pane);border:1px solid var(--rule2);padding:18px 20px;width:min(360px,92vw);
+  box-shadow:var(--shadow)}
+.lock p{margin:0 0 4px;color:var(--dim);font-size:11px;line-height:1.5}
+.lock input{width:100%;margin:10px 0;background:var(--bg);border:1px solid var(--rule2);color:var(--ink);
+  font:inherit;padding:6px 8px;border-radius:3px}
+.lock button{background:var(--hot-wash);border:1px solid var(--hot-dim);color:var(--hot);padding:5px 10px;
+  border-radius:3px}
+.foot button.link{background:none;border:0;color:var(--dimmer);font:inherit;font-size:10.5px;padding:0;
+  text-decoration:underline;text-underline-offset:2px}
+.foot button.link:hover{color:var(--ink)}
+.foot button.link[aria-pressed=true]{color:var(--hot)}
+
+@media (max-width:960px){
+  .split{grid-template-columns:minmax(0,1fr)}
+  .split>.listcol{border-right:0;border-bottom:1px solid var(--rule)}
+  .split>.detail{position:static;max-height:none}
+  .kpis.k4,.kpis.k5{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body class="loading">
+
+<header class="top">
+  <div class="brand">
+    <i class="live" id="livedot"></i><b>visitor console</b><s>aeden.me</s>
+  </div>
+
+  <div class="seg views" id="views" role="group" aria-label="View"></div>
+
+  <div class="seg" id="ranges" role="group" aria-label="Time range"></div>
+
+  <label class="search">
+    <svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="6" cy="6" r="4.2"/><path d="M9.2 9.2 13 13"/></svg>
+    <input id="q" type="search" placeholder="company, network, city, ASN…"
+           aria-label="Filter rows" autocomplete="off" spellcheck="false">
+    <kbd>/</kbd>
+  </label>
+
+  <div class="seg" id="kinds" role="group" aria-label="Outcome"></div>
+
+  <div class="spacer"></div>
+
+  <button class="tog" id="testtog" type="button" aria-pressed="false"><i></i>test rows</button>
+
+  <button class="tog" id="livetog" type="button" aria-pressed="true" title="Auto-refresh every 60s">
+    <i></i>live</button>
+
+  <button class="icon" id="refresh" type="button" title="Refresh now (r)" aria-label="Refresh now">
+    <svg viewBox="0 0 14 14" aria-hidden="true">
+      <path d="M12.2 7a5.2 5.2 0 1 1-1.6-3.7"/><path d="M12.4 1.4v2.6h-2.6"/></svg>
+  </button>
+
+  <button class="icon" id="export" type="button" title="Download filtered rows as CSV"
+          aria-label="Download CSV">
+    <svg viewBox="0 0 14 14" aria-hidden="true">
+      <path d="M7 1.6v7.2"/><path d="M4.2 6.4 7 9.2l2.8-2.8"/><path d="M1.8 11.4h10.4"/></svg>
+  </button>
+
+  <button class="icon" id="theme" type="button" title="Toggle theme (d)" aria-label="Toggle theme">
+    <svg viewBox="0 0 14 14" aria-hidden="true">
+      <circle cx="7" cy="7" r="3.1"/><path d="M7 .9v1.7M7 11.4v1.7M.9 7h1.7M11.4 7h1.7
+        M2.7 2.7l1.2 1.2M10.1 10.1l1.2 1.2M11.3 2.7l-1.2 1.2M3.9 10.1l-1.2 1.2"/></svg>
+  </button>
+</header>
+
+<p class="err" id="err" hidden role="alert">
+  <span id="errmsg"></span><button type="button" id="errretry">retry</button>
+</p>
+
+<div class="chips" id="chips" hidden>
+  <span class="lbl">filters</span>
+  <span id="chiplist"></span>
+  <button class="clear" type="button" id="clearall">clear all</button>
+</div>
+
+<main class="view" data-view="overview">
+<section class="kpis" id="kpis" aria-label="Summary"></section>
+
+<div class="body">
+  <div class="mapcol">
+    <div class="phead">
+      <h2>origin</h2>
+      <div class="r">
+        <div class="legend">
+          <span><i style="background:var(--mk-hot)"></i>employer</span>
+          <span><i style="background:var(--mk-cool)"></i>suppressed</span>
+          <span>size = lookups</span>
+        </div>
+      </div>
+    </div>
+    <div class="map" id="map"><canvas></canvas></div>
+  </div>
+
+  <div class="rail">
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="tabpanel" id="tab-feed"     role="tabpanel" aria-labelledby="t-feed"></div>
+    <div class="tabpanel" id="tab-companies" role="tabpanel" aria-labelledby="t-companies" hidden></div>
+    <div class="tabpanel" id="tab-places"  role="tabpanel" aria-labelledby="t-places" hidden></div>
+    <div class="tabpanel" id="tab-reasons" role="tabpanel" aria-labelledby="t-reasons" hidden></div>
+    <div class="tabpanel" id="tab-networks" role="tabpanel" aria-labelledby="t-networks" hidden></div>
+  </div>
+</div>
+
+<div class="activity">
+  <div class="barcol">
+    <div class="phead"><h2 id="barh2">lookups per day</h2>
+      <div class="r"><span id="barn"></span></div></div>
+    <div class="barwrap">
+      <div class="bars" id="bars"></div>
+      <div class="axis" id="axis"></div>
+    </div>
+  </div>
+  <div>
+    <div class="phead"><h2>when they arrive</h2>
+      <div class="r"><span id="heatn"></span></div></div>
+    <div class="heat">
+      <div class="legend"><span>utc · darker = more lookups</span></div>
+      <div class="heatgrid" id="heatgrid"></div>
+      <div class="heatax" id="heatax"></div>
+    </div>
+  </div>
+</div>
+
+<div class="phead"><h2>log</h2><div class="r"><span id="tablen"></span></div></div>
+<div class="tablewrap">
+  <table>
+    <thead><tr id="thead"></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+<button class="more" id="more" type="button" hidden></button>
+</main>
+
+<!-- =================================================================== -->
+<!-- visitors: new vs returning, a timeline per visitor, and the browsers  -->
+<!-- that were probably the same person.                                  -->
+<main class="view" data-view="visitors" hidden>
+  <section class="kpis" id="vkpis" aria-label="Visitor summary"></section>
+  <div class="split">
+    <div class="listcol">
+      <div class="phead"><h2>visitors</h2><div class="r"><span id="vcount"></span></div></div>
+      <div class="tablewrap">
+        <table class="tight"><thead><tr id="vthead"></tr></thead><tbody id="vtbody"></tbody></table>
+      </div>
+    </div>
+    <aside class="detail" id="vdetail" aria-label="Visitor timeline">
+      <div class="phead"><h2>timeline</h2><div class="r"><span id="vdetailn"></span></div></div>
+      <div class="dbody" id="vtimeline"><div class="empty"><b>pick a visitor</b>every session, page and lookup for one cookie</div></div>
+    </aside>
+  </div>
+  <div class="phead"><h2>likely the same person</h2>
+    <div class="r"><span>different cookies · same company and /24 · sessions within an hour</span></div></div>
+  <div class="groups" id="vgroups"></div>
+</main>
+
+<!-- =================================================================== -->
+<!-- engagement: how far people scroll, how long they stay, what they    -->
+<!-- click — and where they click in vain.                                -->
+<main class="view" data-view="engagement" hidden>
+  <section class="kpis" id="ekpis" aria-label="Engagement summary"></section>
+  <div class="split">
+    <div class="listcol">
+      <div class="phead"><h2>pages</h2>
+        <div class="r"><div class="legend"><span><i style="background:var(--cool)"></i>reached 25 / 50 / 75 / 90 %</span></div><span id="ecount"></span></div></div>
+      <div class="tablewrap">
+        <table class="tight"><thead><tr id="ethead"></tr></thead><tbody id="etbody"></tbody></table>
+      </div>
+    </div>
+    <aside class="detail" aria-label="Clicks by element">
+      <div class="phead"><h2 id="eclickh">clicks by element</h2><div class="r"><span id="eclickn"></span></div></div>
+      <div class="dbody" id="eclicks"></div>
+    </aside>
+  </div>
+</main>
+
+<!-- =================================================================== -->
+<!-- heatmaps: click and mouse heat over the live page. Points were saved  -->
+<!-- relative to an element's box, so they are placed by finding that     -->
+<!-- element again in the iframe — not by replaying pixel coordinates.    -->
+<main class="view" data-view="heatmaps" hidden>
+  <div class="hbar">
+    <span class="lbl">page</span>
+    <select class="sel" id="hpage" aria-label="Page"></select>
+    <div class="seg" id="hkind" role="group" aria-label="Kind"></div>
+    <div class="seg" id="hdev" role="group" aria-label="Device"></div>
+    <div class="seg" id="hrad" role="group" aria-label="Radius"></div>
+    <span class="spacer"></span>
+    <span class="hscale lbl">cold <i></i> hot</span>
+    <span class="lbl" id="hinfo"></span>
+  </div>
+  <div class="hnote" id="hnote"></div>
+  <div class="hstage" id="hstage">
+    <div class="hbox" id="hbox" style="position:relative;overflow:hidden;margin:0 auto">
+      <div class="hframe" id="hframe">
+        <iframe id="hiframe" title="live page preview" loading="eager" referrerpolicy="no-referrer"></iframe>
+        <canvas id="hcanvas"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="hcards" id="hcards" hidden></div>
+</main>
+
+<!-- =================================================================== -->
+<!-- replays: rrweb sessions from R2, played with the vendored player.     -->
+<main class="view" data-view="replays" hidden>
+  <div class="split">
+    <div class="listcol">
+      <div class="phead"><h2>sessions</h2>
+        <div class="r">
+          <label class="chk"><input type="checkbox" id="ronly" checked> with replay only</label>
+          <span id="rcount"></span>
+        </div></div>
+      <div class="tablewrap">
+        <table class="tight"><thead><tr id="rthead"></tr></thead><tbody id="rtbody"></tbody></table>
+      </div>
+    </div>
+    <aside class="detail" aria-label="Replay player">
+      <div class="phead"><h2 id="rtitle">player</h2><div class="r"><span id="rinfo"></span></div></div>
+      <div class="rplayer" id="rplayer"><div class="empty"><b>pick a session</b>inputs were masked when recorded</div></div>
+      <div class="phead"><h2>what happened</h2><div class="r"><span id="rtn"></span></div></div>
+      <ol class="rtimeline" id="rtimeline"></ol>
+    </aside>
+  </div>
+</main>
+
+
+<footer class="foot">
+  <span id="foot"></span>
+  <span>only the /24 is stored, never the full address</span>
+  <button class="link" id="notrack" type="button" aria-pressed="false"
+          title="Sets an aeden_notrack cookie on this browser so your own visits are neither logged nor recorded">exclude this browser</button>
+  <span class="spacer"></span>
+  <span id="stamp"></span>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerco" hidden>
+  <div class="dh">
+    <div>
+      <div class="co" id="drawerco"></div>
+      <div class="where" id="drawerwhere"></div>
+    </div>
+    <button class="x" type="button" id="drawerx" aria-label="Close">&times;</button>
+  </div>
+  <div class="db" id="drawerbody"></div>
+</aside>
+
+
+<div class="lock" id="lock" hidden>
+  <form id="lockform">
+    <div class="lbl">locked</div>
+    <p>This dashboard has a token set. Paste it once and it is kept as a cookie on this browser.</p>
+    <input id="locktoken" type="password" autocomplete="off" placeholder="DASHBOARD_TOKEN" aria-label="Dashboard token">
+    <button type="submit">unlock</button>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+/* ============================================================================
+   Land geometry: a 1.6-degree boolean grid of Natural Earth 110m land, packed
+   one bit per cell and base64'd. 3KB gets a recognisable world map with no
+   network request and no SVG path to parse.
+   ========================================================================== */
+const DOT_BITS="AAAAAPhB7OQAwP//DwAAAAAAGAD4//9HAAIAAAAAAAB4vzj8B4D//wcAAAAAABxg7P///wP+AAAAwD8AAOCH8/8A/v8HAAAAPAAA4P7//////38A8A8AAAAQ/2kO/g8A+P//fwD432MEAAAAAAAAAAB/AAAAAAAA3OAHAP///z8AgAYABAAAAAAAAAAAGAAAAAAAAP6QH8B/4P8fMHAAAAAAAAAAAAAAAAD8/////38ePoA/AB4A4O///////////////z8A/v////8/gCAAHgAAAPDn/////////////79/APz7////PwA/ADAAAADwz/////////////+DDwDgA/j//38AfgIAAAAA4B7+//////////9PxgAAAAuA////AfgPAAAAgAIe/P//////////A+ABAAABAP7//x/wPwAAAAADGv7//////////wPgAQAAAAD4////+f8BAAAAGYz///////////8HwAEAAAAA6P///+f/BwAAAHv+////////////vwABAAAAAID//////w8AAADw/v///////////38BAAAAAAAA/v///z8RAAAAAP//////////////AgAAAAAAAPj////f8AAAAMD//////////////wAAAAAAAADw/////wcAAAAA/v/f/Pn///////8IAAAAAAAAwP////8NAAAAAPz3H/34////////AAAAAAAAAMD/////AAAAAMA/mB/g8////////3AAAAAAAACA/////wEAAACAf2R+jof//////z8QAAAAAAAAAP////8AAAAAAD8IjP+f//////89YAAAAAAAAAD8////AAAAAAB+ADD/P/7/////YUAAAAAAAAAA8P///wEAAAAAcHwA/v/+/////4/hAAAAAAAAAMD///8BAAAAAGD/AIH///////8P8wEAAAAAAAAA////AQAAAADg/wEA////////HygAAAAAAAAAAPz//wAAAAAA4P+fA/7//////38QAAAAAAAAAADo//8BAAAAAMD/////////////AAAAAAAAAAAAoP8BBgAAAADA/////ef//////wEAAAAAAAAAAMD+AQwAAAAAwP////ef//////8BAAAAAAAAAAAA+gMQAAAAAMD////fP/D/////AwAAAAAAAAAAAOAHgAAAAADA////P/8P/P///wsAAAAAAAAAAACAD9AAAAAAgP/////+P/D///8QAAAAAAAAAAAAAB8MBgAAAID/////+X/A//AfAAAAAAAAAAAAAAB8DMAAAAAA/v///+N/AP7AnwAAAAAAAAAAAAAA4B8AAAAAAPz////PfwD8gH+AAAAAAAAAAAAAAAAdAAAAAAD4////Pz8A+AD9AQEAAAAAAAAAAAAA8AMAAAAA+P////8eAOAA+AMAAAAAAAAAAAAAAAAHAAAAAOD/////BwDAAeAHFAAAAAAAAAAAAAAADBQAAADA/////8cAgAMAD1AAAAAAAAAAAAAAABDsBwAAAP//////AQACAAiAAAAAAAAAAAAAAACA/h8AAAD8/////wEAEAABwAEAAAAAAAAAAAAAAPh/AAAA8P////8DACAABBAAAAAAAAAAAAAAAADw/wcAAMCA////AwAAABkwAAAAAAAAAAAAAAAA4P8fAAAAAPj//wMAAAA0MAAAAAAAAAAAAAAAAOD/fwAAAADw//8DAAAAcPwAAAAAAAAAAAAAAADg/38AAAAA4P//AwAAAOD4AAAAAAAAAAAAAAAA4P//DwAAAMD//wMAAACA4QkMAAAAAAAAAAAAAID///8AAACA//8DAAAAAIYr1gMAAAAAAAAAAACA////BwAAAP7/AwAAAAAIAIAfAAAAAAAAAAAAAP7//x8AAAD4/wcAAAAAYAAAfAAAAAAAAAAAAAD8//8/AAAA8P8fAAAAAAAOALyBAAAAAAAAAAAA8P//fwAAAOD/PwAAAAAAgAQABgAAAAAAAAAAAOD//38AAACA/38AAAAAAAAAAAAAAAAAAAAAAACA//9/AAAAgP//AAAAAAAAAA4BAAAAAAAAAAAAAP///wAAAAD//0EAAAAAAIAeAgAAAAAAAAAAAAD4//8BAAAA///jAAAAAACAfw4AAAAAAAAAAAAA4P//AQAAAP7/4QEAAAAAwP8dAAACAAAAAAAAAID//wMAAAD4/4EDAAAAAID/fwAAAAAAAAAAAAAA//8HAAAA8P+DAwAAAADg//8BAAAAAAAAAAAAAP7/BwAAAMD/BwcAAAAA8P//BwAAAAAAAAAAAAD8/wEAAACA/w8OAAAAAOD//x8AAAAAAAAAAAAA+P8BAAAAAP8HAAAAAADA//9/AAAAAAAAAAAAAPD/AwAAAAD8DwAAAAAAgP///wAAAAAAAAAAAADw/wMAAAAA+B8AAAAAAAD+//8BAAAAAAAAAAAA4P8HAAAAAOAfAAAAAAAA/P//AwAAAAAAAAAAAMD/BwAAAADAHwAAAAAAAPjH/wMAAAAAAAAAAACA/wcAAAAAgB8AAAAAAADwAf8HAAAAAAAAAAAAAP8BAAAAAAAAAAAAAAAAAAD4BwACAAAAAAAAAAD/BwAAAAAAAAAAAAAAAAAA4A8AAAAAAAAAAAAA/gcAAAAAAAAAAAAAAAAAAAAFADAAAAAAAAAAAPwBAAAAAAAAAAAAAAAAAAAAAABgAAAAAAAAAAD4AAAAAAAAAAAAAAAAAAAAADAAcAAAAAAAAAAA8AMAAAAAAAAAAAAAAAAAAAAgADAAAAAAAAAAAPADAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAAADgAwAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAwA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAPAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAADwQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+const DOT_GRID={step:1.6,lat0:73.6,ncol:225,nrow:82};
+
+/* ---------------------------------------------------------- projection ---
+   Web Mercator, clamped at 78 degrees. The dot grid only covers 73.6N..-56S,
+   so the canvas is cropped to that band rather than wasting a third of the
+   height on empty ocean. */
+const D2R = Math.PI / 180;
+const MLAT = 78, YMAX = Math.log(Math.tan(Math.PI / 4 + MLAT * D2R / 2));
+function mercator(lon, lat) {
+  const la = Math.max(-MLAT, Math.min(MLAT, lat));
+  const y = -Math.log(Math.tan(Math.PI / 4 + la * D2R / 2)) / YMAX;
+  return [(lon / 180 + 1) / 2 * 1000, (y + 1) / 2 * 500];
+}
+const VIEW = { x0: 0, x1: 1000, y0: 26, y1: 392 };
+function fit(w, h) {
+  const vw = VIEW.x1 - VIEW.x0, vh = VIEW.y1 - VIEW.y0;
+  const s = Math.min(w / vw, h / vh);
+  return { s, ox: (w - vw * s) / 2, oy: (h - vh * s) / 2 };
+}
+function toPx(lon, lat, f) {
+  const p = mercator(lon, lat);
+  return [f.ox + (p[0] - VIEW.x0) * f.s, f.oy + (p[1] - VIEW.y0) * f.s];
+}
+
+/* ------------------------------------------------------- geo fallbacks ---
+   Rows written before the lat/lon columns existed have only country + city,
+   so they resolve through these tables. Anything with real coordinates from
+   Cloudflare skips both. */
+function unpack(s) {
+  const out = {};
+  for (const e of s.split("|")) {
+    const i = e.indexOf(":"), c = e.slice(i + 1).split(",");
+    out[e.slice(0, i)] = [+c[0], +c[1]];
+  }
+  return out;
+}
+const CITY = unpack(
+  "London:51.507,-0.128|Gravesend:51.442,0.370|Harrow:51.580,-0.342|Belfast:54.597,-5.930|" +
+  "Manchester:53.481,-2.242|Birmingham:52.487,-1.890|Edinburgh:55.953,-3.188|Bristol:51.455,-2.597|" +
+  "Leeds:53.801,-1.549|Glasgow:55.864,-4.252|Reading:51.454,-0.978|Cambridge:52.205,0.119|" +
+  "Bengaluru:12.972,77.594|Hyderabad:17.385,78.487|Guntur:16.306,80.437|Tiruvallur:13.144,79.908|" +
+  "Mumbai:19.076,72.878|Delhi:28.614,77.209|Chennai:13.083,80.270|Pune:18.520,73.857|" +
+  "Kolkata:22.573,88.364|Ahmedabad:23.023,72.571|Kochi:9.932,76.267|Noida:28.535,77.391|" +
+  "Gurugram:28.460,77.027|Thiruvananthapuram:8.524,76.937|Coimbatore:11.017,76.956|" +
+  "Ashburn:39.044,-77.487|New York:40.713,-74.006|San Francisco:37.775,-122.419|" +
+  "Seattle:47.606,-122.332|Austin:30.267,-97.743|Chicago:41.878,-87.630|Boston:42.360,-71.058|" +
+  "Los Angeles:34.052,-118.244|Atlanta:33.749,-84.388|Denver:39.739,-104.990|Dallas:32.777,-96.797|" +
+  "San Jose:37.339,-121.895|Mountain View:37.386,-122.084|Redmond:47.674,-122.122|" +
+  "Charlotte:35.227,-80.843|Portland:45.515,-122.678|Miami:25.762,-80.192|" +
+  "Toronto:43.653,-79.383|Vancouver:49.283,-123.121|Montreal:45.502,-73.567|" +
+  "Nagoya:35.181,136.907|Tokyo:35.690,139.692|Osaka:34.694,135.502|Singapore:1.352,103.820|" +
+  "Sydney:-33.868,151.209|Melbourne:-37.814,144.963|Auckland:-36.849,174.763|" +
+  "Falkenstein:50.478,12.371|Frankfurt:50.110,8.682|Berlin:52.520,13.405|Munich:48.135,11.582|" +
+  "Amsterdam:52.370,4.895|Paris:48.857,2.352|Dublin:53.350,-6.260|Madrid:40.417,-3.704|" +
+  "Barcelona:41.385,2.173|Milan:45.464,9.190|Rome:41.903,12.496|Zurich:47.377,8.542|" +
+  "Stockholm:59.329,18.069|Oslo:59.914,10.752|Copenhagen:55.677,12.569|Helsinki:60.170,24.938|" +
+  "Warsaw:52.230,21.011|Prague:50.076,14.438|Vienna:48.208,16.373|Brussels:50.851,4.352|" +
+  "Lisbon:38.722,-9.139|Bucharest:44.427,26.103|Kyiv:50.450,30.524|Istanbul:41.008,28.978|" +
+  "Dubai:25.205,55.271|Tel Aviv:32.085,34.782|Riyadh:24.713,46.675|Doha:25.286,51.535|" +
+  "Nairobi:-1.292,36.822|Lagos:6.525,3.379|Cairo:30.044,31.236|Johannesburg:-26.205,28.048|" +
+  "Cape Town:-33.925,18.424|Sao Paulo:-23.551,-46.633|Rio de Janeiro:-22.906,-43.173|" +
+  "Buenos Aires:-34.604,-58.382|Santiago:-33.449,-70.669|Bogota:4.711,-74.072|" +
+  "Mexico City:19.433,-99.133|Lima:-12.046,-77.043|Seoul:37.567,126.978|Taipei:25.033,121.565|" +
+  "Hong Kong:22.320,114.170|Shanghai:31.230,121.474|Beijing:39.904,116.407|" +
+  "Bangkok:13.756,100.502|Jakarta:-6.208,106.846|Kuala Lumpur:3.139,101.687|" +
+  "Manila:14.600,120.984|Ho Chi Minh City:10.823,106.630|Hanoi:21.028,105.804|" +
+  "Karachi:24.861,67.010|Lahore:31.550,74.344|Dhaka:23.811,90.413|Colombo:6.927,79.861|" +
+  "Kathmandu:27.717,85.324|Moscow:55.756,37.617|Reykjavik:64.147,-21.940"
+);
+const CC = unpack(
+  "GB:54.0,-2.4|IE:53.2,-8.0|IN:21.0,78.0|US:39.5,-98.0|CA:56.1,-106.3|JP:36.2,138.3|" +
+  "DE:51.2,10.4|FR:46.6,2.4|NL:52.1,5.3|BE:50.5,4.5|LU:49.8,6.1|ES:40.0,-3.7|PT:39.4,-8.2|" +
+  "IT:42.8,12.6|CH:46.8,8.2|AT:47.6,14.1|PL:52.0,19.1|CZ:49.8,15.5|SK:48.7,19.7|HU:47.2,19.5|" +
+  "RO:45.9,25.0|BG:42.7,25.5|GR:39.1,21.8|HR:45.1,15.2|SI:46.2,14.8|RS:44.0,21.0|" +
+  "SE:60.1,18.6|NO:60.5,8.5|DK:56.3,9.5|FI:64.9,26.0|EE:58.6,25.0|LV:56.9,24.6|LT:55.2,23.9|" +
+  "IS:64.9,-19.0|UA:48.4,31.2|RU:61.5,105.3|BY:53.7,27.9|TR:39.0,35.2|IL:31.0,34.9|" +
+  "AE:23.4,53.8|SA:23.9,45.1|QA:25.4,51.2|KW:29.3,47.5|BH:26.0,50.6|OM:21.5,55.9|" +
+  "EG:26.8,30.8|MA:31.8,-7.1|TN:33.9,9.6|DZ:28.0,1.7|NG:9.1,8.7|GH:7.9,-1.0|KE:0.0,37.9|" +
+  "ZA:-30.6,22.9|ET:9.1,40.5|TZ:-6.4,34.9|UG:1.4,32.3|ZW:-19.0,29.2|" +
+  "CN:35.9,104.2|HK:22.3,114.2|TW:23.7,121.0|KR:35.9,127.8|SG:1.35,103.8|MY:4.2,101.98|" +
+  "TH:15.9,100.99|VN:14.1,108.3|PH:12.9,121.8|ID:-0.8,113.9|BD:23.7,90.4|PK:30.4,69.3|" +
+  "LK:7.9,80.8|NP:28.4,84.1|KZ:48.0,66.9|UZ:41.4,64.6|AZ:40.1,47.6|GE:42.3,43.4|" +
+  "AU:-25.3,133.8|NZ:-40.9,174.9|BR:-14.2,-51.9|AR:-38.4,-63.6|CL:-35.7,-71.5|" +
+  "CO:4.6,-74.3|PE:-9.2,-75.0|VE:6.4,-66.6|EC:-1.8,-78.2|UY:-32.5,-55.8|PY:-23.4,-58.4|" +
+  "BO:-16.3,-63.6|MX:23.6,-102.6|GT:15.8,-90.2|CR:9.7,-83.8|PA:8.5,-80.8|DO:18.7,-70.2|" +
+  "PR:18.2,-66.6|JM:18.1,-77.3|CU:21.5,-77.8|CY:35.1,33.4|MT:35.9,14.4|MD:47.4,28.4|" +
+  "MM:21.9,95.96|KH:12.6,105.0|LA:19.9,102.5|MN:46.9,103.8|IQ:33.2,43.7|IR:32.4,53.7|" +
+  "JO:30.6,36.2|LB:33.9,35.9|AM:40.1,45.0|AF:33.9,67.7|MU:-20.3,57.6|SN:14.5,-14.5|" +
+  "CI:7.5,-5.5|CM:7.4,12.4|AO:-11.2,17.9|MZ:-18.7,35.5|ZM:-13.1,27.8|BW:-22.3,24.7"
+);
+const COUNTRY = {
+  GB: "United Kingdom", IE: "Ireland", IN: "India", US: "United States", CA: "Canada",
+  JP: "Japan", DE: "Germany", FR: "France", NL: "Netherlands", BE: "Belgium", ES: "Spain",
+  PT: "Portugal", IT: "Italy", CH: "Switzerland", AT: "Austria", PL: "Poland", CZ: "Czechia",
+  SE: "Sweden", NO: "Norway", DK: "Denmark", FI: "Finland", IS: "Iceland", UA: "Ukraine",
+  RU: "Russia", TR: "Turkey", IL: "Israel", AE: "UAE", SA: "Saudi Arabia", QA: "Qatar",
+  EG: "Egypt", NG: "Nigeria", KE: "Kenya", ZA: "South Africa", CN: "China", HK: "Hong Kong",
+  TW: "Taiwan", KR: "South Korea", SG: "Singapore", MY: "Malaysia", TH: "Thailand",
+  VN: "Vietnam", PH: "Philippines", ID: "Indonesia", BD: "Bangladesh", PK: "Pakistan",
+  LK: "Sri Lanka", NP: "Nepal", AU: "Australia", NZ: "New Zealand", BR: "Brazil",
+  AR: "Argentina", CL: "Chile", CO: "Colombia", PE: "Peru", MX: "Mexico", RO: "Romania",
+  GR: "Greece", HU: "Hungary", BG: "Bulgaria", LU: "Luxembourg", MT: "Malta", CY: "Cyprus"
+};
+const cname = c => COUNTRY[c] || c || "unknown";
+
+/* Human labels for decide()'s suppression reasons. */
+const REASON = {
+  "type:isp": "home broadband", "type:hosting": "hosting", "type:unknown": "unknown network",
+  "datacenter-or-vpn": "datacentre or VPN", "no-data": "unrecognised", relay: "private relay",
+  unnamed: "unnamed org", unnameable: "no clean name", "no-ip": "no address",
+  unclassified: "not classified"
+};
+const reasonLabel = r => REASON[r] || r || "not classified";
+
+/* ------------------------------------------------------------- formatting */
+const pad = n => String(n).padStart(2, "0");
+const MON = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"];
+const DOW = ["sun","mon","tue","wed","thu","fri","sat"];
+const hhmm = d => pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes());
+const dmon = d => d.getUTCDate() + " " + MON[d.getUTCMonth()];
+const dstamp = d => d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1) + "-" + pad(d.getUTCDate());
+function ago(d, now) {
+  const m = (now - d) / 6e4;
+  if (m < 1) return "now";
+  if (m < 60) return Math.round(m) + "m";
+  if (m < 1440) return Math.round(m / 60) + "h";
+  if (m < 43200) return Math.round(m / 1440) + "d";
+  return Math.round(m / 43200) + "mo";
+}
+const trim = (s, n) => (String(s).length > n ? String(s).slice(0, n - 1) + "…" : String(s));
+const plural = (n, w) => n + " " + w + (n === 1 ? "" : "s");
+const esc = s => String(s == null ? "" : s)
+  .replace(/[&<>"]/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
+
+/* ============================================================ state ===== */
+const RANGES = [["24h", 24], ["3d", 72], ["7d", 168], ["30d", 720], ["90d", 2160], ["all", null]];
+const KINDS = [["all", "all"], ["employer", "employers"], ["suppressed", "suppressed"]];
+const TABS = [
+  ["feed", "feed"], ["companies", "companies"], ["places", "places"],
+  ["reasons", "why"], ["networks", "nets"]
+];
+const PAGE = 25;
+
+const S = {
+  range: "7d", kind: "all", test: false, q: "",
+  company: null, place: null, reason: null, country: null, type: null, net: null,
+  sort: "seen_at", dir: -1, tab: "feed", live: true, rows: PAGE, sel: null,
+  // analytics views
+  view: "overview", vid: null, sid: null, epath: null,
+  hpage: null, hkind: "c", hdev: "all", hrad: "m", ronly: true
+};
+
+/* State lives in the URL fragment so a filtered view is a link you can keep. */
+const HASHKEYS = ["range","kind","test","q","company","place","reason","country","type","net","sort","dir","tab",
+                  "view","vid","sid","epath","hpage","hkind","hdev"];
+function writeHash() {
+  const p = new URLSearchParams();
+  for (const k of HASHKEYS) {
+    const v = S[k];
+    if (v == null || v === "" || v === false) continue;
+    if (k === "range" && v === "7d") continue;
+    if (k === "kind" && v === "all") continue;
+    if (k === "sort" && v === "seen_at") continue;
+    if (k === "dir" && v === -1) continue;
+    if (k === "tab" && v === "feed") continue;
+    if (k === "view" && v === "overview") continue;
+    if (k === "hkind" && v === "c") continue;
+    if (k === "hdev" && v === "all") continue;
+    p.set(k, v === true ? "1" : String(v));
+  }
+  const s = p.toString();
+  // Throws in a sandboxed or cross-origin frame; a shareable URL is a nicety,
+  // not a reason to take the page down.
+  try {
+    history.replaceState(null, "", s ? "#" + s : location.pathname + location.search);
+  } catch (_) {}
+}
+function readHash() {
+  const p = new URLSearchParams(location.hash.replace(/^#/, ""));
+  for (const k of HASHKEYS) {
+    if (!p.has(k)) continue;
+    const v = p.get(k);
+    if (k === "test") S.test = v === "1";
+    else if (k === "dir") S.dir = v === "1" ? 1 : -1;
+    else S[k] = v;
+  }
+  if (!RANGES.some(r => r[0] === S.range)) S.range = "7d";
+  if (!TABS.some(t => t[0] === S.tab)) S.tab = "feed";
+  if (!VIEWS.some(v => v[0] === S.view)) S.view = "overview";
+  if (S.vid && !/^[a-f0-9]{32}$/.test(S.vid)) S.vid = null;
+  if (S.sid && !/^[a-f0-9]{32}$/.test(S.sid)) S.sid = null;
+  if (!/^[cm]$/.test(S.hkind)) S.hkind = "c";
+  if (!/^(all|desktop|tablet|mobile)$/.test(S.hdev)) S.hdev = "all";
+}
+
+/* ============================================================== data ==== */
+const CACHE = new Map();          // range key -> { rows, at }
+const FRESH_MS = 45e3;
+let RAW = [];                     // hydrated rows for the current range
+let NOW = new Date();
+let LOADED = null;                // when the current RAW arrived
+let inflight = null;
+
+const rangeHours = () => (RANGES.find(r => r[0] === S.range) || [])[1];
+
+/* Rows are pulled for twice the visible window so every KPI can quote a
+   like-for-like change against the period immediately before it. */
+function fetchWindow() {
+  const h = rangeHours();
+  return h == null ? null : h * 2;
+}
+
+function hydrate(r) {
+  const t = new Date(r.seen_at);
+  /* NOT r.shown. Rows written before that column existed carry a company with
+     shown = 0, and counting on `shown` would hide a third of the sightings.
+     The company name is the signal. */
+  const sight = !!r.company;
+  const city = r.city || null;
+  const ll = (r.lat != null && r.lon != null) ? [r.lat, r.lon]
+    : (city && CITY[city]) || CC[r.country] || null;
+  return Object.assign({}, r, {
+    t, sight, city,
+    place: city || cname(r.country),
+    ll,
+    exact: r.lat != null && r.lon != null,
+    hay: [r.company, r.domain, r.net, city, r.country, cname(r.country), r.type,
+          r.reason, r.asn ? "as" + r.asn : "", r.path, r.device, r.visitor_id, r.session_id,
+          r.replay_chunks ? "replay" : ""].join(" ").toLowerCase()
+  });
+}
+
+async function load(force) {
+  const win = fetchWindow(), key = String(win);
+  const hit = CACHE.get(key);
+  if (!force && hit && Date.now() - hit.at < FRESH_MS) {
+    RAW = hit.rows; LOADED = new Date(hit.at); NOW = new Date();
+    return;
+  }
+  if (inflight) return inflight;
+  const u = new URL("/api/visitor/log", location.origin);
+  u.searchParams.set("limit", "5000");
+  if (win != null) u.searchParams.set("since", win + "h");
+  inflight = (async () => {
+    const res = await fetch(u, { headers: { accept: "application/json" } });
+    if (!res.ok) throw new Error("log responded " + res.status);
+    const d = await res.json();
+    if (!d || !Array.isArray(d.visits)) throw new Error(d && d.error ? d.error : "unexpected payload");
+    const rows = d.visits.map(hydrate).sort((a, b) => b.t - a.t);
+    CACHE.set(key, { rows, at: Date.now() });
+    RAW = rows; LOADED = new Date(); NOW = new Date();
+  })();
+  try { await inflight; } finally { inflight = null; }
+}
+
+/* ============================================================== view ==== */
+const activeFilters = () =>
+  [["company", S.company], ["place", S.place], ["reason", S.reason],
+   ["country", S.country], ["type", S.type], ["net", S.net]].filter(f => f[1]);
+
+function passes(r) {
+  if (!S.test && r.test) return false;
+  if (S.kind === "employer" && !r.sight) return false;
+  if (S.kind === "suppressed" && r.sight) return false;
+  if (S.company && r.company !== S.company) return false;
+  if (S.place && r.place !== S.place) return false;
+  if (S.reason && (r.reason || "unclassified") !== S.reason) return false;
+  if (S.country && r.country !== S.country) return false;
+  if (S.type && (r.type || "") !== S.type) return false;
+  if (S.net && r.net !== S.net) return false;
+  if (S.q && !r.hay.includes(S.q.toLowerCase())) return false;
+  return true;
+}
+
+function tally(arr, f) {
+  const m = new Map();
+  for (const x of arr) {
+    const k = f(x);
+    if (k == null || k === "") continue;
+    m.set(k, (m.get(k) || 0) + 1);
+  }
+  return [...m].map(e => ({ k: e[0], n: e[1] })).sort((a, b) => b.n - a.n || String(a.k).localeCompare(b.k));
+}
+
+function summarise(rows) {
+  const sight = rows.filter(r => r.sight);
+  return {
+    lookups: rows.length,
+    sightings: sight.length,
+    companies: new Set(sight.map(r => r.company)).size,
+    nets: new Set(rows.map(r => r.net)).size,
+    countries: new Set(rows.map(r => r.country).filter(Boolean)).size,
+    cities: new Set(rows.map(r => r.place)).size,
+    supp: rows.length - sight.length,
+    rate: rows.length ? Math.round((rows.length - sight.length) / rows.length * 100) : 0
+  };
+}
+
+function view() {
+  const h = rangeHours();
+  const from = h == null ? new Date(0) : new Date(NOW - h * 36e5);
+  const prevFrom = h == null ? null : new Date(NOW - h * 2 * 36e5);
+
+  /* Everything except the range is a *filter*: the range decides which rows
+     exist at all, so the range-only set is what the unfiltered totals and the
+     sidebar counts are measured against. */
+  const inRange = RAW.filter(r => r.t >= from);
+  const rows = inRange.filter(passes);
+  const prev = prevFrom
+    ? RAW.filter(r => r.t >= prevFrom && r.t < from && passes(r))
+    : null;
+
+  /* geography, clustered later at pixel scale */
+  const byPlace = new Map();
+  for (const r of rows) {
+    const k = r.place + "|" + (r.country || "");
+    let p = byPlace.get(k);
+    if (!p) {
+      p = { key: k, place: r.place, country: r.country, ll: r.ll, exact: r.exact,
+            n: 0, sight: 0, nets: new Set(), cos: new Set(), last: r.t, rows: [] };
+      byPlace.set(k, p);
+    }
+    p.n++; p.rows.push(r); p.nets.add(r.net);
+    if (r.sight) { p.sight++; p.cos.add(r.company); }
+    if (r.t > p.last) p.last = r.t;
+    if (!p.ll && r.ll) { p.ll = r.ll; p.exact = r.exact; }
+  }
+  /* least important first, so busy and resolved markers paint on top */
+  const places = [...byPlace.values()].filter(p => p.ll)
+    .sort((a, b) => (a.sight - b.sight) || (a.n - b.n));
+
+  /* time bins — hourly for windows of three days or less, daily beyond */
+  const hourly = h != null && h <= 72;
+  const step = hourly ? 36e5 : 864e5;
+  const floorTo = t => hourly
+    ? Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate(), t.getUTCHours())
+    : Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate());
+  const anchor = h == null ? (inRange.length ? inRange[inRange.length - 1].t : NOW) : from;
+  const start = floorTo(anchor), end = floorTo(NOW);
+  const bins = [];
+  for (let t = start; t <= end && bins.length < 400; t += step) bins.push({ t, s: 0, n: 0 });
+  for (const r of rows) {
+    const b = bins[Math.round((floorTo(r.t) - start) / step)];
+    if (b) r.sight ? b.s++ : b.n++;
+  }
+
+  /* day-of-week x hour-of-day, UTC */
+  const heat = Array.from({ length: 7 }, () => new Array(24).fill(0));
+  const heatS = Array.from({ length: 7 }, () => new Array(24).fill(0));
+  for (const r of rows) {
+    heat[r.t.getUTCDay()][r.t.getUTCHours()]++;
+    if (r.sight) heatS[r.t.getUTCDay()][r.t.getUTCHours()]++;
+  }
+
+  /* sorted table rows */
+  const dir = S.dir;
+  const keyOf = {
+    seen_at: r => +r.t, company: r => (r.company || "￿").toLowerCase(),
+    type: r => (r.type || "￿"), asn: r => r.asn || 0, net: r => r.net || "",
+    city: r => r.place.toLowerCase(), country: r => cname(r.country).toLowerCase(),
+    status: r => (r.sight ? "0" : "1" + (r.reason || ""))
+  }[S.sort] || (r => +r.t);
+  const sorted = rows.slice().sort((a, b) => {
+    const x = keyOf(a), y = keyOf(b);
+    return (x < y ? -1 : x > y ? 1 : 0) * dir || b.t - a.t;
+  });
+
+  return {
+    from, rows, sorted, inRange, places, bins, hourly, heat, heatS,
+    first: inRange.length ? inRange[inRange.length - 1].t : NOW,
+    lastEver: RAW.length ? RAW[0].t : null,
+    kpi: summarise(rows),
+    prev: prev ? summarise(prev) : null,
+    cos: tally(rows.filter(r => r.sight), r => r.company),
+    geo: tally(rows, r => r.place),
+    why: tally(rows.filter(r => !r.sight), r => r.reason || "unclassified"),
+    nets: tally(rows, r => r.net)
+  };
+}
+
+/* ============================================================ dom ====== */
+const q1 = s => document.querySelector(s);
+const set = (sel, html) => { const n = q1(sel); if (n) n.innerHTML = html; return n; };
+const CSSV = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ------------------------------------------------------------ land dots */
+const BITS = atob(DOT_BITS);
+const onLand = k => (BITS.charCodeAt(k >> 3) >> (k & 7)) & 1;
+function drawDots(cv) {
+  const w = cv.clientWidth, h = cv.clientHeight;
+  if (!w || !h) return null;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const c = cv.getContext("2d");
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, w, h);
+  const f = fit(w, h), g = DOT_GRID;
+
+  c.strokeStyle = CSSV("--grat") || "rgba(120,150,175,.07)";
+  c.lineWidth = 0.6;
+  for (let lat = 60; lat >= -30; lat -= 30) {
+    const a = toPx(-180, lat, f), b = toPx(180, lat, f);
+    c.beginPath(); c.moveTo(Math.max(0, a[0]), a[1]); c.lineTo(Math.min(w, b[0]), b[1]); c.stroke();
+  }
+  for (let lon = -150; lon <= 150; lon += 30) {
+    const a = toPx(lon, 73, f), b = toPx(lon, -56, f);
+    c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke();
+  }
+
+  c.fillStyle = CSSV("--land") || "#1e2731";
+  for (let r = 0; r < g.nrow; r++) {
+    const lat = g.lat0 - r * g.step;
+    for (let col = 0; col < g.ncol; col++) {
+      if (!onLand(r * g.ncol + col)) continue;
+      const p = toPx(-180 + col * g.step, lat, f);
+      c.fillRect(p[0] - 0.9, p[1] - 0.9, 1.8, 1.8);
+    }
+  }
+  return f;
+}
+
+/* Cities within a few pixels of each other at world scale (London, Harrow and
+   Gravesend, say) collapse into one marker so the map stays readable. */
+function cluster(places, proj, minPx) {
+  const out = [];
+  for (const p of places.slice().sort((a, b) => (b.sight - a.sight) || (b.n - a.n))) {
+    const xy = proj(p);
+    let hit = null;
+    for (const c of out) {
+      if ((c.x - xy[0]) ** 2 + (c.y - xy[1]) ** 2 <= minPx * minPx) { hit = c; break; }
+    }
+    if (hit) {
+      hit.n += p.n; hit.sight += p.sight; hit.places.push(p);
+      p.cos.forEach(v => hit.cos.add(v));
+      p.nets.forEach(v => hit.nets.add(v));
+      if (p.last > hit.last) hit.last = p.last;
+      hit.rows = hit.rows.concat(p.rows);
+    } else {
+      out.push({ x: xy[0], y: xy[1], n: p.n, sight: p.sight, places: [p],
+                 cos: new Set(p.cos), nets: new Set(p.nets), last: p.last,
+                 rows: p.rows.slice(), place: p.place, country: p.country });
+    }
+  }
+  return out;
+}
+function coNames(s, max) {
+  const a = [...s];
+  if (!a.length) return "";
+  const head = a.slice(0, max).map(x => trim(x, 22)).join(", ");
+  return a.length > max ? head + " +" + (a.length - max) : head;
+}
+
+/* =========================================================== renderers = */
+function delta(now, was, invert, unit) {
+  if (was == null) return "";
+  const d = now - was;
+  if (!d) return '<span class="delta f">±0</span>';
+  const good = invert ? d < 0 : d > 0;
+  return '<span class="delta ' + (good ? "u" : "d") + '" title="' +
+    was + (unit || "") + " in the period before this one\">" +
+    (d > 0 ? "▲" : "▼") + Math.abs(d) + (unit || "") + "</span>";
+}
+
+function renderKpis(v) {
+  const k = v.kpi, p = v.prev;
+  const sp = v.bins.slice(-28);
+  const mx = Math.max(1, ...sp.map(b => b.s + b.n));
+  const spark = '<div class="spark" aria-hidden="true">' + sp.map(b =>
+    '<i class="' + (b.s ? "s" : "") + '" style="height:' +
+    Math.max(b.s + b.n ? 8 : 2, (b.s + b.n) / mx * 100) + '%"></i>').join("") + "</div>";
+
+  const tiles = [
+    { l: "lookups", val: k.lookups, d: p && delta(k.lookups, p.lookups),
+      sub: dmon(v.first) + " → " + dmon(NOW), extra: spark },
+    { l: "employers", val: k.sightings, hot: true, d: p && delta(k.sightings, p.sightings),
+      sub: plural(k.companies, "company").replace("companys", "companies") },
+    { l: "companies", val: k.companies, d: p && delta(k.companies, p.companies),
+      sub: v.cos.length ? "top: " + trim(v.cos[0].k, 18) : "none resolved" },
+    { l: "networks", val: k.nets, d: p && delta(k.nets, p.nets), sub: "distinct /24 blocks" },
+    { l: "countries", val: k.countries, d: p && delta(k.countries, p.countries),
+      sub: plural(k.cities, "city").replace("citys", "cities") },
+    { l: "suppressed", val: k.rate + "%", d: p && delta(k.rate, p.rate, true, "pp"),
+      sub: k.supp + " of " + k.lookups + " went nowhere",
+      extra: '<div class="meter"><i style="width:' + k.rate + '%"></i></div>' }
+  ];
+  set("#kpis", tiles.map(t =>
+    '<div class="kpi' + (t.hot ? " hot" : "") + '">' +
+      '<div class="lbl">' + t.l + '</div>' +
+      '<div class="val">' + t.val + (t.d || "") + '</div>' +
+      '<div class="sub">' + esc(t.sub) + '</div>' +
+      (t.extra || "") +
+    "</div>").join(""));
+}
+
+let mapTip = null;
+function renderMap(v) {
+  const host = q1("#map"), cv = host.querySelector("canvas");
+  const f = drawDots(cv);
+  host.querySelectorAll(".mk,.tip").forEach(n => n.remove());
+  if (!f) return;
+  mapTip = document.createElement("div");
+  mapTip.className = "tip";
+  host.appendChild(mapTip);
+
+  const cs = cluster(v.places, p => toPx(p.ll[1], p.ll[0], f), 7)
+    .sort((a, b) => (a.sight - b.sight) || (a.n - b.n));
+  for (const c of cs) {
+    const sz = Math.min(14, 5 + Math.log2(c.n) * 2.6);
+    const m = document.createElement("button");
+    m.type = "button";
+    m.className = "mk " + (c.sight ? "s" : "n") + (S.place && c.places.some(p => p.place === S.place) ? " sel" : "");
+    m.style.cssText = "left:" + c.x + "px;top:" + c.y + "px;width:" + sz + "px;height:" + sz + "px";
+    const where = c.places.map(p => p.place).slice(0, 3).join(" / ");
+    m.setAttribute("aria-label", "Filter to " + where + ", " + plural(c.n, "lookup"));
+    const html = (c.sight ? "<b>" + esc(coNames(c.cos, 2)) + "</b>" : "<b>no employer</b>") +
+      "<s>" + esc(where) + ", " + esc(c.country || "??") + " · " + plural(c.n, "lookup") +
+      " · " + plural(c.nets.size, "net") + (c.places[0].exact ? "" : " · approx") + "</s>";
+    const show = () => {
+      mapTip.innerHTML = html;
+      mapTip.style.left = c.x + "px"; mapTip.style.top = c.y + "px";
+      mapTip.classList.add("on");
+    };
+    const hide = () => mapTip.classList.remove("on");
+    m.addEventListener("mouseenter", show);
+    m.addEventListener("focus", show);
+    m.addEventListener("mouseleave", hide);
+    m.addEventListener("blur", hide);
+    m.addEventListener("click", () => toggle("place", c.places[0].place));
+    host.appendChild(m);
+  }
+}
+
+function renderTabs(v) {
+  const counts = { feed: v.rows.length, companies: v.cos.length, places: v.geo.length,
+                   reasons: v.why.length, networks: v.nets.length };
+  set("#tabs", TABS.map(t =>
+    '<button type="button" role="tab" id="t-' + t[0] + '" data-tab="' + t[0] +
+    '" aria-selected="' + (S.tab === t[0]) + '" aria-controls="tab-' + t[0] + '">' +
+    t[1] + '<span class="n">' + counts[t[0]] + "</span></button>").join(""));
+  for (const t of TABS) q1("#tab-" + t[0]).hidden = S.tab !== t[0];
+
+  set("#tab-feed", v.rows.length ? v.rows.slice(0, 60).map((r, i) =>
+    '<button class="fr' + (r.sight ? " s" : "") + '" type="button" data-row="' + i + '">' +
+      '<span class="stripe"></span><span>' +
+      '<span class="t1"><span class="who">' +
+        (r.sight ? esc(trim(r.company, 24)) : "no employer") +
+      '</span><span class="ago">' + ago(r.t, NOW) + '</span></span>' +
+      '<span class="t2"><span>' + esc(r.place) + ", " + esc(r.country || "??") + "</span>" +
+      "<em>" + esc(r.net) + "</em>" +
+      (r.sight ? "" : "<em>" + esc(reasonLabel(r.reason)) + "</em>") +
+      (r.replay_chunks ? '<em class="rep">▶ replay</em>' : "") +
+      (r.test ? '<em>test</em>' : "") +
+      "</span></span></button>").join("")
+    : emptyHtml(v));
+
+  const rank = (items, kind, hot, label) => items.length
+    ? '<ol class="rank' + (hot ? " hot" : "") + '">' + items.slice(0, 40).map(it => {
+        const mx = Math.max(1, items[0].n);
+        return '<li><button type="button" data-filter="' + kind + '" data-value="' + esc(it.k) +
+          '" aria-pressed="' + (S[kind] === it.k) + '">' +
+          '<span class="nm">' + esc(label ? label(it.k) : trim(it.k, 26)) + "</span>" +
+          '<span class="n">' + it.n + "</span>" +
+          '<span class="bar"><i style="width:' + (it.n / mx * 100) + '%"></i></span>' +
+          "</button></li>";
+      }).join("") + "</ol>"
+    : '<div class="empty">nothing to rank in this window</div>';
+
+  set("#tab-companies", rank(v.cos, "company", true));
+  set("#tab-places", rank(v.geo, "place", false));
+  set("#tab-reasons", rank(v.why, "reason", false, reasonLabel));
+  set("#tab-networks", rank(v.nets, "net", false));
+}
+
+function emptyHtml(v) {
+  const last = v.lastEver;
+  return '<div class="empty"><b>nothing in this window</b>' +
+    (activeFilters().length || S.q
+      ? "the filters are narrower than the data"
+      : last ? "last visit was " + ago(last, NOW) + " ago, on " + dmon(last) +
+        ' — <button type="button" data-widen="1" style="background:none;border:0;color:var(--hot);' +
+        'text-decoration:underline;font:inherit;padding:0">widen to all time</button>'
+      : "the log is empty") + "</div>";
+}
+
+function renderBars(v) {
+  set("#barh2", "lookups per " + (v.hourly ? "hour" : "day"));
+  const mx = Math.max(1, ...v.bins.map(b => b.s + b.n));
+  set("#barn", "peak " + mx + (v.hourly ? "/hour" : "/day"));
+  set("#bars", v.bins.map(b => {
+    const d = new Date(b.t);
+    return '<button class="b" type="button" title="' +
+      esc((v.hourly ? dmon(d) + " " + hhmm(d) : dmon(d)) + " · " + plural(b.s + b.n, "lookup") +
+        (b.s ? " · " + plural(b.s, "employer") : "")) + '">' +
+      (b.s ? '<i class="s" style="height:' + (b.s / mx * 100) + '%"></i>' : "") +
+      (b.n ? '<i style="height:' + (b.n / mx * 100) + '%"></i>' : "") + "</button>";
+  }).join(""));
+  const a = new Date(v.bins[0].t), b = new Date(v.bins[v.bins.length - 1].t);
+  set("#axis", "<span>" + (v.hourly ? dmon(a) + " " + hhmm(a) : dmon(a)) +
+    "</span><span>" + (v.hourly ? dmon(b) + " " + hhmm(b) : dmon(b)) + "</span>");
+}
+
+function renderHeat(v) {
+  let mx = 0, busiest = null;
+  for (let d = 0; d < 7; d++) for (let h = 0; h < 24; h++) {
+    if (v.heat[d][h] > mx) { mx = v.heat[d][h]; busiest = [d, h]; }
+  }
+  set("#heatn", busiest ? "busiest " + DOW[busiest[0]] + " " + pad(busiest[1]) + ":00" : "");
+  let html = "";
+  for (let d = 0; d < 7; d++) {
+    html += '<span class="hl">' + DOW[d] + "</span>";
+    for (let h = 0; h < 24; h++) {
+      const n = v.heat[d][h];
+      const style = n
+        ? "background:var(--" + (v.heatS[d][h] ? "hot" : "cool") + ");opacity:" +
+          (0.22 + 0.78 * (n / (mx || 1))).toFixed(2)
+        : "";
+      html += '<span class="c" style="' + style + '" title="' +
+        DOW[d] + " " + pad(h) + ":00 utc · " + plural(n, "lookup") + '"></span>';
+    }
+  }
+  set("#heatgrid", html);
+  let ax = "<span></span>";
+  for (let h = 0; h < 24; h++) ax += "<span>" + (h % 6 === 0 ? h : "") + "</span>";
+  set("#heatax", ax);
+}
+
+const COLS = [
+  ["seen_at", "time (utc)"], ["company", "company"], ["type", "type"], ["asn", "asn"],
+  ["net", "network"], ["city", "city"], ["country", "country"], [null, "path"],
+  ["device", "device"], ["status", "status"], [null, "src"]
+];
+function renderTable(v) {
+  set("#thead", COLS.map(c => {
+    if (!c[0]) return "<th><span style=\"padding:9px 12px;display:block\">" + c[1] + "</span></th>";
+    const on = S.sort === c[0];
+    return "<th" + (on ? ' aria-sort="' + (S.dir === 1 ? "ascending" : "descending") + '"' : "") +
+      '><button type="button" data-sort="' + c[0] + '">' + c[1] +
+      "<u>" + (on ? (S.dir === 1 ? "▲" : "▼") : "") + "</u></button></th>";
+  }).join(""));
+
+  const shown = v.sorted.slice(0, S.rows);
+  set("#tbody", shown.length ? shown.map((r, i) =>
+    '<tr class="' + (r.sight ? "s" : "") + (S.sel === r.id ? " sel" : "") +
+      '" data-srow="' + i + '" tabindex="0">' +
+    '<td class="first">' + dmon(r.t) + " " + hhmm(r.t) + "</td>" +
+    '<td class="co">' + (r.sight
+      ? esc(trim(r.company, 26)) + (r.domain ? ' <span class="dom">' + esc(r.domain) + "</span>" : "")
+      : "—") + "</td>" +
+    "<td>" + esc(r.type || "—") + "</td>" +
+    "<td>" + (r.asn ? "AS" + r.asn : "—") + "</td>" +
+    "<td>" + esc(r.net) + "</td>" +
+    "<td>" + esc(r.place) + "</td>" +
+    "<td>" + esc(r.country || "??") + "</td>" +
+    "<td>" + esc(trim(r.path || "/", 18)) + "</td>" +
+    "<td>" + esc(r.device || "—") + "</td>" +
+    "<td>" + (r.sight ? '<span class="tag ok">greeted</span>'
+      : '<span class="tag" title="' + esc(r.reason || "unclassified") + '">' +
+        esc(reasonLabel(r.reason)) + "</span>") +
+      (r.replay_chunks ? ' <span class="tag ok" title="' + plural(r.replay_chunks, "chunk") + ' in R2">▶ replay</span>' : "") + "</td>" +
+    "<td>" + (r.test ? '<span class="tag">test</span>' : "live") + "</td></tr>").join("")
+    : '<tr><td colspan="11">' + emptyHtml(v) + "</td></tr>");
+
+  const more = q1("#more");
+  more.hidden = v.sorted.length <= S.rows;
+  more.textContent = "show " + Math.min(PAGE * 4, v.sorted.length - S.rows) +
+    " more · " + (v.sorted.length - S.rows) + " hidden";
+  set("#tablen", v.sorted.length
+    ? "showing " + shown.length + " of " + plural(v.sorted.length, "row")
+    : "no rows");
+}
+
+function renderChips(v) {
+  const fs = activeFilters();
+  const bits = fs.map(f =>
+    '<span class="chip"><em>' + f[0] + "</em>" +
+    esc(trim(f[0] === "reason" ? reasonLabel(f[1]) : f[1], 26)) +
+    '<button type="button" data-unset="' + f[0] + '" aria-label="Remove filter">×</button></span>');
+  if (S.q) bits.unshift('<span class="chip"><em>search</em>' + esc(trim(S.q, 22)) +
+    '<button type="button" data-unset="q" aria-label="Clear search">×</button></span>');
+  if (S.kind !== "all") bits.unshift('<span class="chip"><em>kind</em>' + esc(S.kind) +
+    '<button type="button" data-unset="kind" aria-label="Clear">×</button></span>');
+  q1("#chips").hidden = !bits.length;
+  set("#chiplist", bits.join(" "));
+}
+
+function renderFoot(v) {
+  set("#foot", v.inRange.length
+    ? plural(v.inRange.length, "row") + " in range · " + v.rows.length + " after filters · " +
+      "window " + (rangeHours() == null ? dmon(v.first) + " (all)" : dmon(v.from)) +
+      " → " + dmon(NOW)
+    : "no rows in range");
+  set("#stamp", (LOADED ? "loaded " + hhmm(LOADED) + " utc" : "") +
+    (S.live ? " · refreshing every 60s" : ""));
+}
+
+/* =========================================================== drawer ==== */
+function openDrawer(r, v) {
+  S.sel = r.id;
+  const dr = q1("#drawer");
+  dr.hidden = false;
+  requestAnimationFrame(() => { dr.classList.add("on"); q1("#scrim").classList.add("on"); });
+
+  set("#drawerco", r.sight ? esc(r.company) : "No employer resolved");
+  q1("#drawerco").className = "co" + (r.sight ? "" : " none");
+  set("#drawerwhere", esc(r.place) + ", " + esc(cname(r.country)) +
+    (r.exact ? "" : " · approximate"));
+
+  /* other rows sharing this network or company, so a single sighting has the
+     context of how often that office turns up */
+  const kin = v.inRange.filter(x => x !== r &&
+    (r.sight ? x.company === r.company : x.net === r.net)).slice(0, 8);
+
+  const row = (k, val) => val ? "<dt>" + k + "</dt><dd>" + val + "</dd>" : "";
+  set("#drawerbody",
+    "<dl>" +
+      row("seen", dmon(r.t) + " " + hhmm(r.t) + " utc <span style='color:var(--dimmer)'>(" +
+        ago(r.t, NOW) + " ago)</span>") +
+      row("domain", r.domain ? '<a href="https://' + esc(r.domain) + '" target="_blank" rel="noreferrer noopener">' +
+        esc(r.domain) + "</a>" : "") +
+      row("org type", esc(r.type || "—")) +
+      row("asn", r.asn ? "AS" + r.asn : "") +
+      row("network", esc(r.net)) +
+      row("coordinates", r.ll ? r.ll[0].toFixed(3) + ", " + r.ll[1].toFixed(3) +
+        (r.exact ? "" : " <span style='color:var(--dimmer)'>(city)</span>") : "") +
+      row("landed on", esc(r.path || "/")) +
+      row("referrer", r.referrer ? esc(trim(r.referrer, 44)) : "<span style='color:var(--dimmer)'>direct</span>") +
+      row("device", esc(r.device || "—")) +
+      row("visitor", r.visitor_id ? '<span class="mono">' + shortId(r.visitor_id) + "</span>" : "") +
+      row("session", r.session_id ? '<span class="mono">' + shortId(r.session_id) + "</span>" +
+        (r.session_pages != null ? " · " + plural(r.session_pages, "page") : "") +
+        (r.session_started && r.session_last ? " · " + fmtDur(new Date(r.session_last) - new Date(r.session_started)) : "") +
+        (r.replay_chunks ? ' · <span class="tag ok">▶ ' + plural(r.replay_chunks, "chunk") + "</span>"
+          : ' · <span style="color:var(--dimmer)">no replay</span>') : "") +
+      row("outcome", r.sight ? '<span class="tag ok">greeted</span>'
+        : '<span class="tag">' + esc(reasonLabel(r.reason)) + "</span>") +
+      row("source", r.test ? "pinned test request" : "live visit") +
+    "</dl>" +
+    '<div class="note">' + (r.sight
+      ? "The peek bubble asked this visitor whether they work at " +
+        esc(trim(r.company, 30)) + "."
+      : "Logged but never greeted — " + esc(reasonLabel(r.reason)) +
+        ", so the honest answer was that we do not know where they work.") + "</div>" +
+    (kin.length
+      ? "<h3>" + (r.sight ? "other visits from this company" : "other visits from this /24") +
+        "</h3><ul class='hist'>" + kin.map(x =>
+          "<li>" + dmon(x.t) + " " + hhmm(x.t) + " <span style='color:var(--dimmer)'>" +
+          esc(x.place) + "</span><b>" + (x.sight ? "greeted" : esc(reasonLabel(x.reason))) +
+          "</b></li>").join("") + "</ul>"
+      : "") +
+    '<div class="acts">' +
+      (r.replay_chunks ? '<button type="button" data-replay="' + r.session_id + '">watch replay</button>' : "") +
+      (r.session_id ? '<button type="button" data-session="' + r.session_id + '">session details</button>' : "") +
+      (r.visitor_id ? '<button type="button" data-vid="' + r.visitor_id + '">visitor timeline</button>' : "") +
+      (r.sight ? '<button type="button" data-filter="company" data-value="' + esc(r.company) +
+        '">filter to this company</button>' : "") +
+      '<button type="button" data-filter="net" data-value="' + esc(r.net) + '">filter to this /24</button>' +
+      '<button type="button" data-filter="place" data-value="' + esc(r.place) + '">filter to ' +
+        esc(trim(r.place, 18)) + "</button>" +
+      '<button type="button" data-copyrow="' + r.id + '">copy json</button>' +
+    "</div>");
+}
+function closeDrawer() {
+  S.sel = null;
+  q1("#drawer").classList.remove("on");
+  q1("#scrim").classList.remove("on");
+  setTimeout(() => { if (!S.sel) q1("#drawer").hidden = true; }, 200);
+  render();
+}
+
+/* =========================================================== export === */
+const CSVCOLS = ["seen_at","company","domain","type","asn","net","country","city",
+                 "path","referrer","device","shown","reason","test","lat","lon"];
+function csvCell(x) {
+  if (x == null) return "";
+  const s = String(x);
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function download(v) {
+  const lines = [CSVCOLS.join(",")];
+  for (const r of v.sorted) lines.push(CSVCOLS.map(c => csvCell(r[c])).join(","));
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "aeden-visitors-" + dstamp(NOW) + "-" + S.range + ".csv";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast(plural(v.sorted.length, "row") + " exported");
+}
+let toastTimer = 0;
+function toast(msg) {
+  const t = q1("#toast");
+  t.textContent = msg;
+  t.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("on"), 2200);
+}
+
+/* ========================================================== controls == */
+function toggle(kind, value) {
+  S[kind] = S[kind] === value ? null : value;
+  S.rows = PAGE;
+  render();
+}
+function clearAll() {
+  S.company = S.place = S.reason = S.country = S.type = S.net = null;
+  S.q = ""; S.kind = "all"; S.rows = PAGE;
+  q1("#q").value = "";
+  render();
+}
+
+function renderControls(v) {
+  set("#ranges", RANGES.map(r => {
+    const h = r[1];
+    const from = h == null ? new Date(0) : new Date(NOW - h * 36e5);
+    const n = RAW.filter(x => x.t >= from && (S.test || !x.test)).length;
+    return '<button type="button" data-range="' + r[0] + '" aria-pressed="' + (S.range === r[0]) +
+      '" title="' + plural(n, "lookup") + '">' + r[0] + "</button>";
+  }).join(""));
+  set("#kinds", KINDS.map(k =>
+    '<button type="button" data-kind="' + k[0] + '" aria-pressed="' + (S.kind === k[0]) + '">' +
+    k[1] + "</button>").join(""));
+  q1("#testtog").setAttribute("aria-pressed", String(S.test));
+  q1("#livetog").setAttribute("aria-pressed", String(S.live));
+  q1("#livedot").className = "live" + (S.live ? "" : " off");
+}
+
+let V = null;
+function render() {
+  V = view();
+  renderControls(V);
+  renderChips(V);
+  renderKpis(V);
+  renderMap(V);
+  renderTabs(V);
+  renderBars(V);
+  renderHeat(V);
+  renderTable(V);
+  renderFoot(V);
+  renderViewsSeg();
+  rerenderView();
+  writeHash();
+}
+
+/* One delegated listener rather than rebinding on every render. */
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-range],[data-kind],[data-tab],[data-sort],[data-filter]," +
+    "[data-unset],[data-row],[data-srow],[data-widen],[data-copyrow]");
+  if (!t) return;
+  const d = t.dataset;
+
+  if (d.range)  { S.range = d.range; S.rows = PAGE; boot(false); return; }
+  if (d.kind)   { S.kind = d.kind; S.rows = PAGE; return render(); }
+  if (d.tab)    { S.tab = d.tab; return render(); }
+  if (d.widen)  { S.range = "all"; return boot(false); }
+  if (d.sort)   {
+    if (S.sort === d.sort) S.dir = -S.dir; else { S.sort = d.sort; S.dir = -1; }
+    return render();
+  }
+  if (d.filter) { return toggle(d.filter, d.value); }
+  if (d.unset)  {
+    if (d.unset === "q") { S.q = ""; q1("#q").value = ""; }
+    else if (d.unset === "kind") S.kind = "all";
+    else S[d.unset] = null;
+    S.rows = PAGE;
+    return render();
+  }
+  if (d.copyrow) {
+    const r = V.rows.find(x => String(x.id) === d.copyrow);
+    if (r) navigator.clipboard.writeText(JSON.stringify(
+      Object.fromEntries(CSVCOLS.concat("id").map(c => [c, r[c]])), null, 2))
+      .then(() => toast("row copied")).catch(() => toast("clipboard blocked"));
+    return;
+  }
+  if (d.row)  { const r = V.rows[+d.row];  if (r) openDrawer(r, V); return; }
+  if (d.srow) { const r = V.sorted[+d.srow]; if (r) openDrawer(r, V); return; }
+});
+document.addEventListener("keydown", e => {
+  const tr = e.target.closest("tr[data-srow]");
+  if (tr && (e.key === "Enter" || e.key === " ")) {
+    e.preventDefault();
+    const r = V.sorted[+tr.dataset.srow];
+    if (r) openDrawer(r, V);
+  }
+});
+
+q1("#clearall").addEventListener("click", clearAll);
+q1("#drawerx").addEventListener("click", closeDrawer);
+q1("#scrim").addEventListener("click", closeDrawer);
+q1("#more").addEventListener("click", () => { S.rows += PAGE * 4; render(); });
+q1("#testtog").addEventListener("click", () => { S.test = !S.test; S.rows = PAGE; render(); refreshView(false); });
+q1("#livetog").addEventListener("click", () => { S.live = !S.live; schedule(); render(); });
+q1("#refresh").addEventListener("click", () => boot(true));
+q1("#export").addEventListener("click", () => V && download(V));
+
+let qTimer = 0;
+q1("#q").addEventListener("input", e => {
+  clearTimeout(qTimer);
+  qTimer = setTimeout(() => { S.q = e.target.value.trim(); S.rows = PAGE; render(); }, 160);
+});
+
+document.addEventListener("keydown", e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+  if (e.key === "Escape") {
+    if (!q1("#lock").hidden) { q1("#lock").hidden = true; return; }
+    if (!q1("#drawer").hidden && q1("#drawer").classList.contains("on")) return closeDrawer();
+    if (typing) { document.activeElement.blur(); return; }
+    return clearAll();
+  }
+  if (typing) return;
+  if (e.key === "/") { e.preventDefault(); return q1("#q").focus(); }
+  const n = "123456".indexOf(e.key);
+  if (n >= 0 && RANGES[n]) { S.range = RANGES[n][0]; S.rows = PAGE; return boot(false); }
+  if (e.key === "t") { S.test = !S.test; render(); return refreshView(false); }
+  if (e.key === "r") return boot(true);
+  if (e.key === "l") { S.live = !S.live; schedule(); return render(); }
+  if (e.key === "d") return flipTheme();
+  if (e.key === "e") return V && download(V);
+});
+
+/* ============================================================ theme === */
+function applyTheme(t) {
+  const sys = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  document.documentElement.dataset.theme = t === "auto" ? sys : t;
+}
+function flipTheme() {
+  const cur = document.documentElement.dataset.theme;
+  const next = cur === "light" ? "dark" : "light";
+  try { localStorage.setItem("vc-theme", next); } catch (_) {}
+  applyTheme(next);
+  if (V) renderMap(V);
+}
+q1("#theme").addEventListener("click", flipTheme);
+(function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem("vc-theme"); } catch (_) {}
+  applyTheme(saved || "auto");
+  matchMedia("(prefers-color-scheme: light)").addEventListener("change", () => {
+    let s = null;
+    try { s = localStorage.getItem("vc-theme"); } catch (_) {}
+    if (!s) { applyTheme("auto"); if (V) renderMap(V); }
+  });
+})();
+
+/* ============================================================= boot === */
+let timer = 0;
+function schedule() {
+  clearTimeout(timer);
+  if (S.live) timer = setTimeout(() => boot(true), 60e3);
+}
+async function boot(force) {
+  const btn = q1("#refresh");
+  btn.classList.add("spin"); btn.disabled = true;
+  document.body.classList.add("loading");
+  try {
+    await load(force);
+    q1("#err").hidden = true;
+  } catch (err) {
+    set("#errmsg", "could not read the log — " + esc(err.message || err));
+    q1("#err").hidden = false;
+  } finally {
+    btn.classList.remove("spin"); btn.disabled = false;
+    document.body.classList.remove("loading");
+  }
+  render();
+  schedule();
+  if (S.view !== "overview") refreshView(force);
+}
+q1("#errretry").addEventListener("click", () => boot(true));
+
+/* Markers are absolutely positioned in pixels, so they have to be laid out
+   again whenever the map box changes size. */
+let raf = 0;
+new ResizeObserver(() => {
+  cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(() => { if (V) renderMap(V); });
+}).observe(q1("#map"));
+
+
+/* ======================================================== analytics views ==
+   visitors · engagement · heatmaps · replays. Each view fetches its own data
+   from the Worker for the current range and caches it for FRESH_MS, the way
+   the overview does with /log. They share the range, the search box and the
+   test-rows toggle with the overview and nothing else.
+   ========================================================================== */
+const VIEWS = [["overview", "overview"], ["visitors", "visitors"], ["engagement", "engagement"],
+               ["heatmaps", "heatmaps"], ["replays", "replays"]];
+/* The rrweb player is served by the site, first-party, from public/vendor.
+   Off aeden.me (wrangler dev) it is fetched from the live site instead. */
+const VENDOR = (() => {
+  const local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  // wrangler dev: #vendor=http://127.0.0.1:8081/vendor serves public/ from a
+  // local static server. Honoured on loopback only — a shareable link must
+  // never be able to point the dashboard at someone else's script.
+  const o = local ? new URLSearchParams(location.hash.slice(1)).get("vendor") : null;
+  return o || (location.hostname === "aeden.me" ? "/vendor" : "https://aeden.me/vendor");
+})();
+const SITE = "https://aeden.me";
+const API_CACHE = new Map();      // url -> { at, data | promise }
+
+const viewSince = () => { const h = rangeHours(); return h == null ? null : h + "h"; };
+const viewFrom = () => { const h = rangeHours(); return h == null ? new Date(0) : new Date(NOW - h * 36e5); };
+function fmtDur(ms) {
+  if (ms == null || !(ms >= 0)) return "—";
+  const s = Math.round(ms / 1000);
+  if (s < 60) return s + "s";
+  if (s < 3600) return Math.floor(s / 60) + "m " + pad(s % 60) + "s";
+  return Math.floor(s / 3600) + "h " + pad(Math.floor(s % 3600 / 60)) + "m";
+}
+const shortId = id => id ? String(id).slice(0, 8) : "—";
+const devLine = r => [r.device, r.browser, r.os].filter(Boolean).join(" · ") || "—";
+const placeOf = r => (r.city || cname(r.country)) + (r.country && r.city ? ", " + r.country : "");
+const sessDur = s => Math.max(0, new Date(s.last_seen_at) - new Date(s.started_at));
+const sum = (arr, f) => arr.reduce((a, x) => a + (Number(f ? f(x) : x) || 0), 0);
+const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
+
+function tiles(sel, list) {
+  set(sel, list.map(t =>
+    '<div class="kpi' + (t.hot ? " hot" : "") + '"><div class="lbl">' + t.l + '</div>' +
+    '<div class="val">' + t.val + (t.small ? '<small>' + esc(t.small) + '</small>' : "") + '</div>' +
+    '<div class="sub">' + esc(t.sub || "") + '</div>' + (t.extra || "") + '</div>').join(""));
+}
+
+/* One fetch per URL per FRESH_MS; concurrent callers share the promise. */
+function api(path, params, force) {
+  const u = new URL("/api/visitor/" + path, location.origin);
+  const since = viewSince();
+  if (since) u.searchParams.set("since", since);
+  if (!S.test) u.searchParams.set("test", "0");
+  for (const k in params || {}) if (params[k] != null && params[k] !== "") u.searchParams.set(k, params[k]);
+  const key = u.toString();
+  const hit = API_CACHE.get(key);
+  if (!force && hit && Date.now() - hit.at < FRESH_MS) return hit.promise;
+  const promise = fetch(u, { headers: { accept: "application/json" }, credentials: "same-origin" }).then(res => {
+    if (res.status === 401) { lock(); throw new Error("locked"); }
+    if (!res.ok) throw new Error(path + " responded " + res.status);
+    return res.json();
+  }).catch(err => { API_CACHE.delete(key); throw err; });
+  API_CACHE.set(key, { at: Date.now(), promise });
+  return promise;
+}
+function showErr(err) {
+  if (err && err.message === "locked") return;
+  set("#errmsg", "could not load — " + esc((err && err.message) || err));
+  q1("#err").hidden = false;
+}
+
+/* ---------------------------------------------------------------- lock -- */
+function lock() { q1("#lock").hidden = false; q1("#locktoken").focus(); }
+q1("#lockform").addEventListener("submit", e => {
+  e.preventDefault();
+  const t = q1("#locktoken").value.trim();
+  if (t) location.href = location.pathname + "?token=" + encodeURIComponent(t) + location.hash;
+});
+
+/* ------------------------------------------------------------ switching -- */
+function applyView(v) {
+  if (!VIEWS.some(x => x[0] === v)) v = "overview";
+  S.view = v;
+  document.body.dataset.view = v;
+  document.querySelectorAll(".view").forEach(el => { el.hidden = el.dataset.view !== v; });
+  renderViewsSeg();
+}
+function renderViewsSeg() {
+  set("#views", VIEWS.map(x =>
+    '<button type="button" data-go="' + x[0] + '" aria-pressed="' + (S.view === x[0]) + '">' + x[1] + "</button>").join(""));
+}
+function setView(v) {
+  applyView(v);
+  writeHash();
+  if (S.view === "overview") { if (V) renderMap(V); return; }
+  refreshView(false);
+}
+
+let viewBusy = 0;
+async function refreshView(force) {
+  const v = S.view;
+  if (v === "overview") return;
+  const token = ++viewBusy;
+  document.body.classList.add("loading");
+  try {
+    if (v === "visitors") {
+      const [a, b] = await Promise.all([api("visitors", { limit: 2000 }, force), api("sessions", { limit: 2000 }, force)]);
+      if (token !== viewBusy) return;
+      VIS.raw = a.visitors; VIS.sessions = b.sessions;
+      renderVisitors();
+    } else if (v === "engagement") {
+      const d = await api("engagement", {}, force);
+      if (token !== viewBusy) return;
+      ENG = d; renderEngagement();
+    } else if (v === "heatmaps") {
+      const d = await api("heat", {}, force);
+      if (token !== viewBusy) return;
+      HEAT.pages = d.pages; renderHeatControls();
+      await loadHeat(force);
+    } else if (v === "replays") {
+      const d = await api("sessions", { limit: 1000, replay: S.ronly ? 1 : null }, force);
+      if (token !== viewBusy) return;
+      REP.raw = d.sessions; renderReplays();
+      if (S.sid && S.sid !== REP.open) openReplay(S.sid).catch(showErr);
+    }
+    q1("#err").hidden = true;
+  } catch (err) {
+    showErr(err);
+  } finally {
+    document.body.classList.remove("loading");
+  }
+}
+/* Re-render from cached data — for the search box and the test toggle. */
+function rerenderView() {
+  if (S.view === "visitors" && VIS.raw) renderVisitors();
+  else if (S.view === "engagement" && ENG) renderEngagement();
+  else if (S.view === "replays" && REP.raw) renderReplays();
+}
+
+/* ============================================================= visitors == */
+const VIS = { raw: null, sessions: [], rows: [], groups: [], grpOf: new Map() };
+
+/**
+ * "Likely the same person": sessions from different cookies that share a
+ * company and a /24 and start within an hour of each other. Someone opening
+ * the site in a second browser, an incognito window, or on their phone over
+ * the office wifi. Where no employer resolved, the city has to match too, so
+ * a busy residential /24 does not merge strangers.
+ */
+function samePerson(sessions) {
+  const byKey = new Map();
+  for (const s of sessions) {
+    if (!s.net || !s.visitor_id) continue;
+    const k = (s.company || "") + "|" + s.net + (s.company ? "" : "|" + (s.city || ""));
+    if (!byKey.has(k)) byKey.set(k, []);
+    byKey.get(k).push(s);
+  }
+  const groups = [];
+  for (const [k, arr] of byKey) {
+    arr.sort((a, b) => new Date(a.started_at) - new Date(b.started_at));
+    let cur = null;
+    for (const s of arr) {
+      const t0 = +new Date(s.started_at), t1 = +new Date(s.last_seen_at || s.started_at);
+      if (cur && t0 - cur.end <= 36e5) {
+        cur.sessions.push(s); cur.end = Math.max(cur.end, t1); cur.vids.add(s.visitor_id);
+      } else {
+        cur = { key: k, company: s.company, net: s.net, city: s.city, country: s.country,
+                sessions: [s], end: t1, vids: new Set([s.visitor_id]) };
+        groups.push(cur);
+      }
+    }
+  }
+  const out = groups.filter(g => g.vids.size > 1)
+    .sort((a, b) => (b.company ? 1 : 0) - (a.company ? 1 : 0) || b.sessions.length - a.sessions.length);
+  out.forEach((g, i) => { g.id = "P" + (i + 1); });
+  return out;
+}
+
+function renderVisitors() {
+  const from = viewFrom();
+  const q = S.q.toLowerCase();
+  VIS.groups = samePerson(VIS.sessions);
+  VIS.grpOf = new Map();
+  VIS.groups.forEach(g => g.vids.forEach(v => VIS.grpOf.set(v, g.id)));
+
+  const rows = VIS.raw.map(v => Object.assign({}, v, {
+    isNew: new Date(v.first_seen_at) >= from,
+    grp: VIS.grpOf.get(v.visitor_id) || null,
+    hay: [v.visitor_id, v.company, v.domain, v.city, cname(v.country), v.country, v.device, v.browser, v.os,
+          v.net, VIS.grpOf.get(v.visitor_id)].join(" ").toLowerCase()
+  })).filter(v => !q || v.hay.includes(q));
+  VIS.rows = rows;
+
+  const vids = new Set(rows.map(v => v.visitor_id));
+  const sess = VIS.sessions.filter(s => vids.has(s.visitor_id));
+  const newN = rows.filter(v => v.isNew).length;
+  const withReplay = rows.filter(v => v.replay_chunks > 0).length;
+  const cos = new Set(rows.filter(v => v.company).map(v => v.company));
+  tiles("#vkpis", [
+    { l: "visitors", val: rows.length, sub: "distinct cookies seen in range" },
+    { l: "new", val: newN, sub: "first seen inside this window",
+      extra: '<div class="meter"><i style="width:' + pct(newN, rows.length) + '%"></i></div>' },
+    { l: "returning", val: rows.length - newN, sub: "were here before the window opened" },
+    { l: "sessions", val: sess.length, sub: sess.length ? (sum(sess, s => s.page_views) / sess.length).toFixed(1) + " pages per session" : "" },
+    { l: "employers", val: cos.size, hot: true, sub: cos.size ? "top: " + trim([...cos][0], 18) : "none resolved" },
+    { l: "with replay", val: withReplay, sub: plural(sum(sess, s => s.replay_chunks), "chunk") + " in R2" }
+  ]);
+
+  set("#vthead", ["last seen", "visitor", "company", "place", "device", "sessions", "pages", "lookups", "first seen"]
+    .map(h => '<th><span style="padding:8px 10px;display:block">' + h + "</span></th>").join(""));
+  set("#vtbody", rows.length ? rows.slice(0, 400).map(v => {
+    const t = new Date(v.last_seen_at), f = new Date(v.first_seen_at);
+    return '<tr data-vid="' + v.visitor_id + '" class="' + (v.company ? "s" : "") + (S.vid === v.visitor_id ? " on" : "") + '" tabindex="0">' +
+      '<td class="first">' + dmon(t) + " " + hhmm(t) + ' <span class="mono">' + ago(t, NOW) + "</span></td>" +
+      '<td><span class="mono">' + shortId(v.visitor_id) + "</span> " +
+        (v.isNew ? '<span class="pill new">new</span>' : '<span class="pill">returning</span>') +
+        (v.grp ? ' <span class="pill grp">' + v.grp + "</span>" : "") +
+        (v.test ? ' <span class="pill">test</span>' : "") + "</td>" +
+      '<td class="co">' + (v.company ? esc(trim(v.company, 24)) : "—") + "</td>" +
+      "<td>" + esc(placeOf(v)) + "</td>" +
+      "<td>" + esc(devLine(v)) + "</td>" +
+      "<td>" + (v.sessions_n || 0) + (v.replay_chunks ? ' <span class="tag ok" title="' + plural(v.replay_chunks, "chunk") + ' in R2">▶</span>' : "") + "</td>" +
+      "<td>" + (v.pages_n || 0) + "</td>" +
+      "<td>" + (v.visits_n || 0) + "</td>" +
+      "<td>" + dmon(f) + "</td></tr>";
+  }).join("") : '<tr><td colspan="9"><div class="empty"><b>no visitors in this window</b>' +
+      (q ? "the search is narrower than the data" : "the tracker writes a visitor on the first batch it receives") + "</div></td></tr>");
+  set("#vcount", rows.length ? "showing " + Math.min(400, rows.length) + " of " + plural(rows.length, "visitor") : "");
+
+  set("#vgroups", VIS.groups.length ? VIS.groups.slice(0, 30).map(g =>
+    '<div class="g"><b>' + g.id + "</b> · " +
+      (g.company ? '<span class="k">' + esc(trim(g.company, 24)) + "</span>" : "no employer") +
+      ' · <span class="mono">' + esc(g.net) + "</span>" +
+      (g.city ? " · " + esc(g.city) : "") +
+      "<div>" + plural(g.vids.size, "browser") + " · " + plural(g.sessions.length, "session") +
+      " · " + fmtDur(sum(g.sessions, sessDur)) + " together</div>" +
+      '<div class="chips2">' + [...g.vids].map(vid =>
+        '<button type="button" data-vid="' + vid + '">' + shortId(vid) + "</button>").join("") + "</div></div>").join("")
+    : '<div class="empty">no two cookies shared a company and /24 within an hour of each other</div>');
+
+  if (S.vid) openVisitor(S.vid).catch(showErr);
+}
+
+async function openVisitor(vid) {
+  S.vid = vid;
+  writeHash();
+  document.querySelectorAll("#vtbody tr").forEach(tr => tr.classList.toggle("on", tr.dataset.vid === vid));
+  const d = await api("visitors/" + vid, {}, false);
+  const v = d.visitor;
+  const counts = new Map();
+  for (const c of d.event_counts) {
+    if (!counts.has(c.session_id)) counts.set(c.session_id, {});
+    counts.get(c.session_id)[c.type] = c.n;
+  }
+  const pvBySid = new Map();
+  for (const p of d.page_views.slice().reverse()) {
+    if (!pvBySid.has(p.session_id)) pvBySid.set(p.session_id, []);
+    pvBySid.get(p.session_id).push(p);
+  }
+  const grp = VIS.grpOf.get(vid);
+  const first = new Date(v.first_seen_at), last = new Date(v.last_seen_at);
+  const summary = o => {
+    const bits = [];
+    if (o.click) bits.push(plural(o.click, "click"));
+    if (o.rage_click) bits.push('<span class="pill bad">' + o.rage_click + " rage</span>");
+    if (o.dead_click) bits.push('<span class="pill bad">' + o.dead_click + " dead</span>");
+    if (o.copy) bits.push(plural(o.copy, "copy").replace("copys", "copies"));
+    if (o.download) bits.push('<span class="pill hot">' + plural(o.download, "download") + "</span>");
+    if (o.outbound) bits.push(plural(o.outbound, "outbound link"));
+    return bits.join(" · ");
+  };
+  set("#vdetailn", plural(d.sessions.length, "session") + " · " + plural(d.page_views.length, "page view"));
+  set("#vtimeline",
+    '<div class="vhead">' +
+      '<div class="co' + (v.company ? "" : " none") + '">' + (v.company ? esc(v.company) : "No employer resolved") + "</div>" +
+      '<div class="sub"><span class="mono">' + esc(vid) + "</span>" +
+        (grp ? '<span class="pill grp">' + grp + "</span>" : "") + (v.test ? '<span class="pill">test</span>' : "") + "</div>" +
+      '<div class="sub"><span>' + esc(placeOf(v)) + "</span><span>" + esc(devLine(v)) + "</span>" +
+        (v.net ? '<span class="mono">' + esc(v.net) + "</span>" : "") + "</div>" +
+      '<div class="sub"><span>first ' + dmon(first) + " " + hhmm(first) + "</span><span>last " + dmon(last) + " " + hhmm(last) +
+        " (" + ago(last, NOW) + " ago)</span></div>" +
+      '<div class="acts">' +
+        (v.company ? '<button type="button" data-ov-filter="company" data-value="' + esc(v.company) + '">overview: this company</button>' : "") +
+        (v.net ? '<button type="button" data-ov-filter="net" data-value="' + esc(v.net) + '">overview: this /24</button>' : "") +
+        '<button type="button" data-copytext="' + esc(vid) + '">copy id</button>' +
+      "</div></div>" +
+    (d.sessions.length ? '<ol class="tl">' + d.sessions.map(s => {
+      const t = new Date(s.started_at);
+      const pages = pvBySid.get(s.session_id) || [];
+      const o = counts.get(s.session_id) || {};
+      return "<li>" +
+        '<div class="h"><span>' + dmon(t) + " " + hhmm(t) + "</span><span>" + fmtDur(sessDur(s)) + "</span>" +
+          (s.company ? "<b>" + esc(trim(s.company, 22)) + "</b>" : "") +
+          '<span class="ago">' + ago(t, NOW) + "</span></div>" +
+        '<div class="m"><span>' + esc(placeOf(s)) + "</span><span>" + esc(devLine(s)) + "</span>" +
+          (s.ref_host ? "<span>from " + esc(s.ref_host) + "</span>" : "<span>direct</span>") +
+          (s.vw ? "<span>" + s.vw + "×" + s.vh + "</span>" : "") + "</div>" +
+        (pages.length ? '<ol class="pages">' + pages.map(p =>
+          '<li><b><button type="button" class="lnk" data-heat="' + esc(p.path) + '" title="heatmap for ' + esc(p.path) + '">' + esc(trim(p.path, 30)) + "</button></b>" +
+          (p.title ? '<span class="mono">' + esc(trim(p.title, 22)) + "</span>" : "") +
+          "<span>" + (p.scroll_max != null ? p.scroll_max + "% · " : "") + (p.active_ms != null ? fmtDur(p.active_ms) + " active" : "open") + "</span></li>").join("") + "</ol>"
+          : '<div class="m">' + (s.page_views ? plural(s.page_views, "page view") : "no page views recorded") + "</div>") +
+        (summary(o) ? '<div class="m">' + summary(o) + "</div>" : "") +
+        '<div class="acts">' + (s.replay_chunks ? '<button type="button" data-replay="' + s.session_id + '">watch replay</button>' : "") +
+          '<button type="button" data-session="' + s.session_id + '">session details</button></div>' +
+      "</li>";
+    }).join("") + "</ol>" : '<div class="empty">no sessions recorded — this cookie only ever hit the employer lookup</div>') +
+    (d.visits.length ? '<div class="phead"><h2>lookups</h2><div class="r"><span>' + plural(d.visits.length, "hit") + "</span></div></div>" +
+      '<ul class="hist" style="padding:6px 14px;list-style:none;margin:0;font-size:11px">' + d.visits.slice(0, 40).map(x => {
+        const t = new Date(x.seen_at);
+        return '<li style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid var(--rule);color:var(--dim)">' +
+          "<span>" + dmon(t) + " " + hhmm(t) + "</span><span>" + esc(trim(x.path || "/", 18)) + "</span>" +
+          '<b style="margin-left:auto;font-weight:400;color:var(--ink)">' +
+          (x.company ? esc(trim(x.company, 20)) : esc(reasonLabel(x.reason))) + "</b></li>";
+      }).join("") + "</ul>" : ""));
+}
+
+/* =========================================================== engagement == */
+let ENG = null;
+function renderEngagement() {
+  const d = ENG;
+  const t = Object.fromEntries(d.types.map(x => [x.type, x.n]));
+  const views = sum(d.pages, p => p.views);
+  const ended = sum(d.pages, p => p.ended);
+  const wAvg = f => ended ? Math.round(sum(d.pages, p => (f(p) || 0) * p.ended) / ended) : 0;
+  const rage = t.rage_click || 0, dead = t.dead_click || 0, clicks = t.click || 0;
+  tiles("#ekpis", [
+    { l: "page views", val: views, sub: plural(d.pages.length, "distinct page") },
+    { l: "avg active", val: fmtDur(wAvg(p => p.active_avg)), sub: "interacting · " + fmtDur(wAvg(p => p.dur_avg)) + " on page" },
+    { l: "avg scroll", val: wAvg(p => p.scroll_avg) + "%", sub: pct(sum(d.pages, p => p.s90), ended) + "% reached the end",
+      extra: '<div class="meter"><i style="width:' + wAvg(p => p.scroll_avg) + '%"></i></div>' },
+    { l: "clicks", val: clicks, sub: [t.outbound ? plural(t.outbound, "outbound") : "", t.download ? plural(t.download, "download") : "",
+        t.copy ? plural(t.copy, "copy").replace("copys", "copies") : ""].filter(Boolean).join(" · ") || "no outbound, downloads or copies" },
+    { l: "rage clicks", val: rage, sub: clicks ? pct(rage, clicks) + "% of clicks" : "" },
+    { l: "dead clicks", val: dead, sub: clicks ? pct(dead, clicks) + "% of clicks" : "" }
+  ]);
+
+  const byPath = new Map();
+  for (const c of d.clicks) {
+    const o = byPath.get(c.path) || { click: 0, rage_click: 0, dead_click: 0 };
+    o[c.type] = (o[c.type] || 0) + c.n;
+    byPath.set(c.path, o);
+  }
+  const funnel = p => {
+    const n = p.ended || 1;
+    return '<span class="funnel" title="' + [p.s25, p.s50, p.s75, p.s90].map((x, i) => [25, 50, 75, 90][i] + "%: " + pct(x, n) + "% of views").join(" · ") + '">' +
+      [p.s25, p.s50, p.s75, p.s90].map(x => '<i class="s" style="height:' + Math.max(1, pct(x, n) * 0.14) + 'px"></i>').join("") + "</span>";
+  };
+  set("#ethead", ["page", "views", "sessions", "avg active", "avg on page", "scroll depth", "clicks", "rage", "dead"]
+    .map(h => '<th><span style="padding:8px 10px;display:block">' + h + "</span></th>").join(""));
+  set("#etbody", d.pages.length ? d.pages.map(p => {
+    const o = byPath.get(p.path) || {};
+    return '<tr data-epath="' + esc(p.path) + '" class="' + (S.epath === p.path ? "on" : "") + '" tabindex="0">' +
+      '<td class="first co">' + esc(trim(p.path, 34)) +
+        ' <button type="button" class="lnk" data-heat="' + esc(p.path) + '" title="heatmap for ' + esc(p.path) + '">heatmap</button></td>' +
+      "<td>" + p.views + "</td><td>" + p.sessions + "</td>" +
+      "<td>" + fmtDur(p.active_avg) + "</td><td>" + fmtDur(p.dur_avg) + "</td>" +
+      "<td>" + funnel(p) + Math.round(p.scroll_avg || 0) + "%</td>" +
+      "<td>" + (o.click || 0) + "</td>" +
+      "<td>" + (o.rage_click ? '<span class="pill bad">' + o.rage_click + "</span>" : "—") + "</td>" +
+      "<td>" + (o.dead_click ? '<span class="pill bad">' + o.dead_click + "</span>" : "—") + "</td></tr>";
+  }).join("") : '<tr><td colspan="9"><div class="empty"><b>no page views in this window</b>the tracker has not reported yet</div></td></tr>');
+  set("#ecount", plural(d.pages.length, "page"));
+  renderClicks();
+}
+function renderClicks() {
+  const list = ENG.clicks.filter(c => !S.epath || c.path === S.epath);
+  const bySel = new Map();
+  for (const c of list) {
+    const k = c.path + "|" + (c.selector || "");
+    const o = bySel.get(k) || { path: c.path, sel: c.selector || "", text: c.text, click: 0, rage_click: 0, dead_click: 0, sessions: 0 };
+    o[c.type] += c.n; o.sessions = Math.max(o.sessions, c.sessions || 0);
+    if (!o.text && c.text) o.text = c.text;
+    bySel.set(k, o);
+  }
+  const items = [...bySel.values()].map(o => Object.assign(o, { n: o.click + o.rage_click + o.dead_click }))
+    .sort((a, b) => b.n - a.n).slice(0, 80);
+  set("#eclickh", "clicks by element" + (S.epath ? " · " + esc(trim(S.epath, 22)) : ""));
+  set("#eclickn", items.length ? plural(items.length, "element") + (S.epath ? ' · <button type="button" data-epath="' + esc(S.epath) + '" class="clear" style="background:none;border:0;color:var(--dim);text-decoration:underline;font:inherit;padding:0">all pages</button>' : "") : "");
+  const mx = Math.max(1, ...items.map(i => i.n));
+  set("#eclicks", items.length ? '<ol class="rank">' + items.map(o => {
+    const shortSel = o.sel.split(">").slice(-2).join(">") || "page";
+    return '<li><button type="button" data-copytext="' + esc(o.sel) + '" title="' + esc(o.sel) + '">' +
+      '<span class="nm">' + esc(trim(o.text || shortSel, 30)) + "<em>" + esc(trim(o.text ? shortSel : o.path, 26)) + "</em></span>" +
+      '<span class="n">' + o.n +
+        (o.rage_click ? ' <span class="pill bad">' + o.rage_click + " rage</span>" : "") +
+        (o.dead_click ? ' <span class="pill bad">' + o.dead_click + " dead</span>" : "") + "</span>" +
+      '<span class="bar"><i style="width:' + (o.n / mx * 100) + '%"></i></span></button></li>';
+  }).join("") + "</ol>" : '<div class="empty">no clicks recorded' + (S.epath ? " on this page" : "") + "</div>");
+}
+
+/* ============================================================= heatmaps == */
+const HEAT = { pages: [], cells: [], frameKey: null, ready: false, doc: null };
+const FRAME_W = { all: 1280, desktop: 1280, tablet: 820, mobile: 390 };
+const RADIUS = { s: 14, m: 24, l: 40 };
+
+function renderHeatControls() {
+  const names = [];
+  for (const p of HEAT.pages) if (!names.includes(p.page)) names.push(p.page);
+  if (!S.hpage || !names.includes(S.hpage)) S.hpage = names[0] || null;
+  const total = pg => sum(HEAT.pages.filter(p => p.page === pg), p => p.n);
+  set("#hpage", names.length ? names.map(n =>
+    '<option value="' + esc(n) + '"' + (n === S.hpage ? " selected" : "") + ">" + esc(trim(n, 40)) + " · " + total(n) + "</option>").join("")
+    : "<option>no heat data yet</option>");
+  const kindN = k => sum(HEAT.pages.filter(p => p.page === S.hpage && p.kind === k), p => p.n);
+  set("#hkind", [["c", "clicks"], ["m", "mouse"]].map(k =>
+    '<button type="button" data-hkind="' + k[0] + '" aria-pressed="' + (S.hkind === k[0]) + '">' + k[1] + " · " + kindN(k[0]) + "</button>").join(""));
+  const devN = dv => sum(HEAT.pages.filter(p => p.page === S.hpage && p.kind === S.hkind && (dv === "all" || p.device === dv)), p => p.n);
+  set("#hdev", ["all", "desktop", "tablet", "mobile"].map(dv =>
+    '<button type="button" data-hdev="' + dv + '" aria-pressed="' + (S.hdev === dv) + '">' + dv + " · " + devN(dv) + "</button>").join(""));
+  set("#hrad", [["s", "fine"], ["m", "medium"], ["l", "broad"]].map(r =>
+    '<button type="button" data-hrad="' + r[0] + '" aria-pressed="' + (S.hrad === r[0]) + '">' + r[1] + "</button>").join(""));
+}
+
+async function loadHeat(force) {
+  if (!S.hpage) { set("#hinfo", "nothing recorded in this range"); set("#hnote", ""); return; }
+  const d = await api("heat", { page: S.hpage, kind: S.hkind, device: S.hdev === "all" ? null : S.hdev }, force);
+  HEAT.cells = d.cells;
+  set("#hinfo", plural(sum(d.cells, c => c.n), S.hkind === "c" ? "click" : "sample") + " · " + plural(d.cells.length, "cell"));
+  mountFrame();
+}
+
+/* The live page in an iframe, sized to its full document so nothing is
+   below the fold, then scaled to fit the stage. Same-origin on aeden.me, so
+   the elements the heat was recorded against can be found again. */
+function mountFrame() {
+  const key = S.hpage + "|" + S.hdev;
+  const wrap = q1("#hframe"), ifr = q1("#hiframe");
+  const w = FRAME_W[S.hdev] || 1280;
+  if (HEAT.frameKey !== key) {
+    HEAT.frameKey = key; HEAT.ready = false; HEAT.doc = null;
+    wrap.style.width = w + "px"; wrap.style.height = "900px";
+    q1("#hcanvas").getContext("2d").clearRect(0, 0, 4000, 20000);
+    set("#hnote", "loading " + esc(SITE + (S.hpage === "/" ? "/" : "/#" + S.hpage)) + " …");
+    ifr.onload = () => settleFrame(0);
+    ifr.src = SITE + (S.hpage === "/" ? "/" : "/#" + S.hpage);
+    fitFrame();
+    return;
+  }
+  if (HEAT.ready) paintHeat();
+}
+function settleFrame(i) {
+  const wrap = q1("#hframe"), ifr = q1("#hiframe");
+  let doc = null;
+  try { doc = ifr.contentDocument; if (doc && !doc.body) doc = null; } catch (_) { doc = null; }
+  if (!doc) {
+    HEAT.ready = true; HEAT.doc = null;
+    paintCards("The preview is cross-origin from " + location.host + ", so the live page cannot be measured here. " +
+      "On aeden.me/dashboard the heat is drawn over the real page; below it is drawn per element instead.");
+    return;
+  }
+  const h = Math.min(20000, Math.max(doc.documentElement.scrollHeight, doc.body.scrollHeight, 600));
+  wrap.style.height = h + "px";
+  fitFrame();
+  // The site animates sections in as they scroll into view; give it a moment.
+  if (i < 6) { setTimeout(() => settleFrame(i + 1), 350); return; }
+  HEAT.ready = true; HEAT.doc = doc;
+  paintHeat();
+}
+let lastStageW = 0;
+function fitFrame(fromObserver) {
+  const wrap = q1("#hframe"), box = q1("#hbox"), stage = q1("#hstage");
+  // The observer watches the stage, and fitting resizes the box inside it;
+  // only a real width change is worth another pass or the two feed each other.
+  if (fromObserver && stage.clientWidth === lastStageW) return;
+  lastStageW = stage.clientWidth;
+  const w = parseFloat(wrap.style.width) || 1280, h = parseFloat(wrap.style.height) || 900;
+  const s = Math.min(1, Math.max(0.2, (stage.clientWidth - 34) / w));
+  wrap.style.transform = "scale(" + s + ")";
+  box.style.width = Math.round(w * s) + "px";
+  box.style.height = Math.round(h * s) + "px";
+}
+function paintHeat() {
+  const wrap = q1("#hframe"), cv = q1("#hcanvas"), doc = HEAT.doc;
+  q1("#hcards").hidden = true; q1("#hstage").hidden = false;
+  if (!doc) return paintCards("");
+  const w = parseFloat(wrap.style.width), h = parseFloat(wrap.style.height);
+  const pts = [], found = new Map();
+  let miss = 0, missCells = 0;
+  for (const c of HEAT.cells) {
+    let el = found.get(c.sel);
+    if (el === undefined) {
+      try { el = doc.querySelector(c.sel) || null; } catch (_) { el = null; }
+      found.set(c.sel, el);
+    }
+    if (!el) { miss += c.n; missCells++; continue; }
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) { miss += c.n; missCells++; continue; }
+    pts.push({ x: r.left + c.cx * r.width, y: r.top + c.cy * r.height, n: c.n });
+  }
+  drawHeat(cv, pts, w, h, RADIUS[S.hrad] || 24);
+  set("#hnote", (pts.length ? plural(pts.length, "cell") + " placed on the live page" : "nothing to place") +
+    (miss ? " · " + plural(miss, "hit") + " in " + plural(missCells, "cell") + " belong to elements no longer on the page" : "") +
+    " · " + (FRAME_W[S.hdev] || 1280) + "px wide" + (S.hdev === "all" ? " (all devices on a desktop layout)" : ""));
+}
+/* Fallback when the iframe cannot be read: one small canvas per element. */
+function paintCards(msg) {
+  q1("#hstage").hidden = true;
+  const cards = q1("#hcards");
+  cards.hidden = false;
+  set("#hnote", msg);
+  const bySel = new Map();
+  for (const c of HEAT.cells) {
+    const o = bySel.get(c.sel) || { sel: c.sel, w: c.w || 400, h: c.h || 200, n: 0, cells: [] };
+    o.n += c.n; o.cells.push(c); o.w = Math.max(o.w, c.w || 0); o.h = Math.max(o.h, c.h || 0);
+    bySel.set(c.sel, o);
+  }
+  const items = [...bySel.values()].sort((a, b) => b.n - a.n).slice(0, 40);
+  cards.innerHTML = items.length ? items.map((o, i) =>
+    '<div class="hcard"><div class="lbl" title="' + esc(o.sel) + '">' + esc(o.sel.split(">").slice(-3).join(">")) +
+    " · " + plural(o.n, "hit") + '</div><canvas data-card="' + i + '"></canvas></div>').join("")
+    : '<div class="empty">nothing recorded for this page and device in the window</div>';
+  cards.querySelectorAll("canvas").forEach(cv => {
+    const o = items[+cv.dataset.card];
+    const W = 300, H = Math.max(40, Math.min(600, Math.round(W * o.h / Math.max(1, o.w))));
+    drawHeat(cv, o.cells.map(c => ({ x: c.cx * W, y: c.cy * H, n: c.n })), W, H, Math.max(6, RADIUS[S.hrad] * W / Math.max(300, o.w)));
+  });
+}
+
+let PAL = null;
+function palette() {
+  if (PAL) return PAL;
+  const c = document.createElement("canvas").getContext("2d");
+  c.canvas.width = 256; c.canvas.height = 1;
+  const g = c.createLinearGradient(0, 0, 256, 0);
+  g.addColorStop(0, "rgb(91,116,136)");
+  g.addColorStop(0.45, "rgb(240,169,60)");
+  g.addColorStop(0.8, "rgb(255,193,101)");
+  g.addColorStop(1, "rgb(255,245,230)");
+  c.fillStyle = g; c.fillRect(0, 0, 256, 1);
+  PAL = c.getImageData(0, 0, 256, 1).data;
+  return PAL;
+}
+/* Classic two-pass heat: accumulate alpha with radial gradients, then map
+   alpha through the palette. Weight is log-scaled so one hot spot does not
+   wash out everything else. */
+function drawHeat(cv, pts, w, h, radius) {
+  const W = Math.max(1, Math.round(w)), H = Math.max(1, Math.min(20000, Math.round(h)));
+  cv.width = W; cv.height = H;
+  cv.style.width = W + "px"; cv.style.height = H + "px";
+  const c = cv.getContext("2d");
+  c.clearRect(0, 0, W, H);
+  if (!pts.length) return;
+  const max = Math.max(...pts.map(p => p.n));
+  const lg = Math.log1p(max) || 1;
+  for (const p of pts) {
+    const a = 0.12 + 0.68 * Math.log1p(p.n) / lg;
+    const g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
+    g.addColorStop(0, "rgba(0,0,0," + a.toFixed(3) + ")");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    c.fillStyle = g;
+    c.fillRect(p.x - radius, p.y - radius, radius * 2, radius * 2);
+  }
+  const img = c.getImageData(0, 0, W, H), d = img.data, pal = palette();
+  for (let i = 0; i < d.length; i += 4) {
+    const a = d[i + 3];
+    if (!a) continue;
+    const k = Math.min(255, a) * 4;
+    d[i] = pal[k]; d[i + 1] = pal[k + 1]; d[i + 2] = pal[k + 2];
+    d[i + 3] = Math.min(235, 60 + a);
+  }
+  c.putImageData(img, 0, 0);
+}
+
+/* ============================================================== replays == */
+const REP = { raw: null, rows: [], open: null };
+let PLAYER = null;
+let vendorP = null;
+function ensureVendor() {
+  if (window.rrwebPlayer) return Promise.resolve();
+  if (vendorP) return vendorP;
+  vendorP = new Promise((res, rej) => {
+    const l = document.createElement("link");
+    l.rel = "stylesheet"; l.href = VENDOR + "/scene-player.css";
+    document.head.appendChild(l);
+    const s = document.createElement("script");
+    s.src = VENDOR + "/scene-player.min.js";
+    s.onload = res;
+    s.onerror = () => { vendorP = null; rej(new Error("could not load the replay player from " + VENDOR + " — is the site deployed with public/vendor?")); };
+    document.head.appendChild(s);
+  });
+  return vendorP;
+}
+
+function renderReplays() {
+  const q = S.q.toLowerCase();
+  const rows = REP.raw.filter(s => !q || [s.session_id, s.company, s.city, cname(s.country), s.device, s.browser, s.os, s.paths, s.net]
+    .join(" ").toLowerCase().includes(q));
+  REP.rows = rows;
+  set("#rthead", ["started", "duration", "pages", "company", "place", "device", "activity", "replay"]
+    .map(h => '<th><span style="padding:8px 10px;display:block">' + h + "</span></th>").join(""));
+  set("#rtbody", rows.length ? rows.slice(0, 300).map(s => {
+    const t = new Date(s.started_at);
+    return '<tr data-sid="' + s.session_id + '" class="' + (s.company ? "s" : "") + (S.sid === s.session_id ? " on" : "") + '" tabindex="0">' +
+      '<td class="first">' + dmon(t) + " " + hhmm(t) + ' <span class="mono">' + ago(t, NOW) + "</span></td>" +
+      "<td>" + fmtDur(sessDur(s)) + "</td>" +
+      "<td>" + s.page_views + (s.paths ? ' <span class="mono">' + esc(trim(s.paths, 34)) + "</span>" : "") + "</td>" +
+      '<td class="co">' + (s.company ? esc(trim(s.company, 22)) : "—") + "</td>" +
+      "<td>" + esc(placeOf(s)) + "</td>" +
+      "<td>" + esc(devLine(s)) + "</td>" +
+      "<td>" + plural(s.clicks, "click") +
+        (s.rage_clicks ? ' <span class="pill bad">' + s.rage_clicks + " rage</span>" : "") +
+        (s.dead_clicks ? ' <span class="pill bad">' + s.dead_clicks + " dead</span>" : "") +
+        (s.max_scroll ? ' <span class="mono">' + s.max_scroll + "%</span>" : "") + "</td>" +
+      "<td>" + (s.replay_chunks ? '<span class="tag ok">' + plural(s.replay_chunks, "chunk") + " · " + (s.replay_bytes / 1024).toFixed(0) + " KB</span>"
+        : '<span class="tag">none</span>') + (s.test ? ' <span class="pill">test</span>' : "") + "</td></tr>";
+  }).join("") : '<tr><td colspan="8"><div class="empty"><b>no sessions in this window</b>' +
+    (S.ronly ? "untick “with replay only” to see sessions the recorder did not reach" : "the tracker has not reported yet") + "</div></td></tr>");
+  set("#rcount", rows.length ? "showing " + Math.min(300, rows.length) + " of " + plural(rows.length, "session") : "");
+}
+
+async function fetchChunk(sid, seq) {
+  const r = await fetch("/api/visitor/replay/" + sid + "/" + seq, { credentials: "same-origin" });
+  if (r.status === 401) { lock(); throw new Error("locked"); }
+  if (!r.ok) return null;
+  const buf = await r.arrayBuffer();
+  const u8 = new Uint8Array(buf);
+  let text;
+  // Normally the Worker labels the body gzip and the browser has already
+  // inflated it. If the bytes still carry the gzip magic, inflate here.
+  if (u8[0] === 0x1f && u8[1] === 0x8b && window.DecompressionStream) {
+    text = await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+  } else text = new TextDecoder().decode(buf);
+  try { return JSON.parse(text); } catch (_) { return null; }
+}
+
+function destroyPlayer() {
+  if (!PLAYER) return;
+  try { PLAYER.pause(); } catch (_) {}
+  try { const rp = PLAYER.getReplayer(); if (rp && rp.destroy) rp.destroy(); } catch (_) {}
+  PLAYER = null;
+}
+
+async function openReplay(sid) {
+  S.sid = sid; REP.open = sid;
+  writeHash();
+  document.querySelectorAll("#rtbody tr").forEach(tr => tr.classList.toggle("on", tr.dataset.sid === sid));
+  const host = q1("#rplayer");
+  destroyPlayer();
+  host.innerHTML = '<div class="empty">loading replay…</div>';
+  set("#rtimeline", ""); set("#rtn", "");
+  const vendorReady = ensureVendor();
+  vendorReady.catch(() => {});
+  const d = await api("sessions/" + sid, {}, false);
+  if (REP.open !== sid) return;
+  const s = d.session;
+  set("#rtitle", (s.company ? esc(trim(s.company, 20)) + " · " : "") + esc(placeOf(s)));
+  set("#rinfo", fmtDur(sessDur(s)) + " · " + plural(d.page_views.length, "page") + " · " + esc(devLine(s)) +
+    (s.visitor_id ? ' · <button type="button" class="lnk" data-vid="' + s.visitor_id + '">visitor timeline</button>' : "") +
+    (s.net ? ' · <button type="button" class="lnk" data-ov-filter="net" data-value="' + esc(s.net) + '">overview</button>' : ""));
+
+  const events = [];
+  for (const ch of d.replay) {
+    const arr = await fetchChunk(sid, ch.seq).catch(() => null);
+    if (Array.isArray(arr)) for (const ev of arr) events.push(ev);
+  }
+  if (REP.open !== sid) return;
+  events.sort((a, b) => a.timestamp - b.timestamp);
+  const t0 = events.length ? events[0].timestamp : null;
+  renderTimeline(d, t0);
+  if (events.length < 2 || !events.some(e => e.type === 2)) {
+    host.innerHTML = '<div class="empty"><b>no replay for this session</b>' +
+      (d.replay.length ? "the chunks in R2 could not be read" :
+        "the recorder had not loaded before the visitor left, or their browser blocked it") + "</div>";
+    return;
+  }
+  try { await vendorReady; } catch (err) {
+    host.innerHTML = '<div class="empty"><b>replay player unavailable</b>' + esc(err.message) + "</div>";
+    return;
+  }
+  if (REP.open !== sid) return;
+  host.innerHTML = "";
+  const W = Math.max(320, Math.min(host.clientWidth - 20, 1100));
+  const H = Math.max(220, Math.min(Math.round(W * ((s.vh || 720) / (s.vw || 1280))), 640));
+  PLAYER = new rrwebPlayer.Player({
+    target: host,
+    props: {
+      events, width: W, height: H, autoPlay: false, showController: true,
+      speedOption: [1, 2, 4, 8], skipInactive: true,
+      mouseTail: { strokeStyle: "#f0a93c", lineWidth: 2, duration: 600 },
+      tags: { page_view: "#5b7488", rage_click: "#c9724f", dead_click: "#9a4a12",
+              outbound: "#6fb98a", download: "#f0a93c", copy: "#79828f" }
+    }
+  });
+}
+function renderTimeline(d, t0) {
+  const items = [];
+  for (const p of d.page_views) items.push({ at: new Date(p.at), k: "page", d: p.path + (p.title ? " · " + p.title : ""), cls: "" });
+  for (const e of d.events) {
+    if (e.type === "page_end") continue;
+    let meta = null;
+    try { meta = e.meta ? JSON.parse(e.meta) : null; } catch (_) {}
+    const desc = e.type === "visibility" ? "tab " + (meta && meta.state) :
+      e.type === "copy" ? (meta && meta.text ? "“" + meta.text + "”" : plural((meta && meta.len) || 0, "char")) :
+      (e.type === "outbound" || e.type === "download") ? (meta && meta.href) || "" :
+      (e.text || e.selector || "");
+    items.push({ at: new Date(e.at), k: e.type.replace("_click", "").replace("custom:", ""), d: desc,
+                 cls: /rage|dead/.test(e.type) ? "bad" : /download|outbound|copy/.test(e.type) ? "hot" : "" });
+  }
+  items.sort((a, b) => a.at - b.at);
+  set("#rtn", plural(items.length, "event"));
+  set("#rtimeline", items.length ? items.map(it => {
+    const off = t0 != null ? it.at - t0 : null;
+    return '<li class="' + it.cls + '"' + (off != null && off >= 0 ? ' data-goto="' + off + '"' : "") + ' title="' + esc(it.d) + '">' +
+      '<span class="t">' + (off != null ? fmtDur(Math.max(0, off)) : hhmm(it.at)) + "</span>" +
+      '<span class="k">' + esc(it.k) + '</span><span class="d">' + esc(it.d) + "</span></li>";
+  }).join("") : '<li class="empty">nothing recorded</li>');
+}
+
+/* ---------------------------------------------------------- notrack ---- */
+const NT = /(?:^|;\s*)aeden_notrack=1/;
+function renderNotrack() {
+  const on = NT.test(document.cookie);
+  const b = q1("#notrack");
+  b.setAttribute("aria-pressed", String(on));
+  b.textContent = on ? "this browser is excluded" : "exclude this browser";
+}
+q1("#notrack").addEventListener("click", () => {
+  const secure = location.protocol === "https:" ? "; Secure" : "";
+  if (NT.test(document.cookie)) {
+    document.cookie = "aeden_notrack=; Path=/; Max-Age=0; SameSite=Lax" + secure;
+    try { localStorage.removeItem("aeden:notrack"); } catch (_) {}
+    toast("this browser will be tracked again");
+  } else {
+    document.cookie = "aeden_notrack=1; Path=/; Max-Age=31536000; SameSite=Lax" + secure;
+    try { localStorage.setItem("aeden:notrack", "1"); } catch (_) {}
+    toast("this browser is now excluded from the log");
+  }
+  renderNotrack();
+});
+renderNotrack();
+
+/* ------------------------------------------------------------ controls -- */
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-go],[data-vid],[data-sid],[data-epath],[data-hkind],[data-hdev],[data-hrad]," +
+    "[data-replay],[data-session],[data-goto],[data-copytext],[data-ov-filter],[data-heat]");
+  if (!t) return;
+  const d = t.dataset;
+  if (d.go) return setView(d.go);
+  if (S.sel && (d.vid || d.replay || d.session || d.heat !== undefined)) closeDrawer();
+  if (d.vid) { if (S.view !== "visitors") applyView("visitors"); openVisitor(d.vid).catch(showErr); return; }
+  if (d.heat !== undefined) { S.hpage = d.heat; setView("heatmaps"); return; }
+  if (d.replay) { S.sid = d.replay; setView("replays"); return; }
+  if (d.session) { S.sid = d.session; S.ronly = false; q1("#ronly").checked = false; setView("replays"); return; }
+  if (d.sid) { openReplay(d.sid).catch(showErr); return; }
+  if (d.epath !== undefined) { S.epath = S.epath === d.epath ? null : d.epath; writeHash(); renderEngagement(); return; }
+  if (d.hkind) { S.hkind = d.hkind; renderHeatControls(); writeHash(); loadHeat(false).catch(showErr); return; }
+  if (d.hdev) { S.hdev = d.hdev; renderHeatControls(); writeHash(); loadHeat(false).catch(showErr); return; }
+  if (d.hrad) { S.hrad = d.hrad; renderHeatControls(); if (HEAT.ready) paintHeat(); return; }
+  if (d.goto !== undefined) { if (PLAYER) { try { PLAYER.goto(+d.goto, true); } catch (_) {} } return; }
+  if (d.copytext) {
+    navigator.clipboard.writeText(d.copytext).then(() => toast("copied")).catch(() => toast("clipboard blocked"));
+    return;
+  }
+  if (d.ovFilter) { S[d.ovFilter] = d.value; S.rows = PAGE; setView("overview"); render(); }
+});
+document.addEventListener("keydown", e => {
+  const tr = e.target.closest("tr[data-vid],tr[data-sid],tr[data-epath]");
+  if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); tr.click(); }
+});
+q1("#hpage").addEventListener("change", e => {
+  S.hpage = e.target.value; renderHeatControls(); writeHash(); loadHeat(false).catch(showErr);
+});
+q1("#ronly").addEventListener("change", e => { S.ronly = e.target.checked; refreshView(false); });
+new ResizeObserver(() => { if (S.view === "heatmaps") fitFrame(true); }).observe(q1("#hstage"));
+
+readHash();
+applyView(S.view);
+q1("#q").value = S.q || "";
+boot(false);
+</script>
+</body>
+</html>

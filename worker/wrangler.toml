@@ -2,26 +2,57 @@ name = "aeden-visitor"
 main = "src/index.js"
 compatibility_date = "2025-09-01"
 
+# src/dashboard.html is imported as a string, not code. Wrangler's default
+# module rules already treat *.html as Text, so no [[rules]] block is needed —
+# adding one here would *replace* that default and silence .txt and .sql too.
+
 # Serves at https://aeden.me/api/visitor. Requires the aeden.me DNS record to be
 # proxied (orange cloud) — Workers do not run on DNS-only records.
 # Trailing * matters: Cloudflare matches route patterns against the full URL
 # including the query string, so a bare /api/visitor would miss ?debug=1.
+#
+# Everything the analytics tracker talks to lives under this one prefix too:
+# /api/visitor/journal (event batches), /api/visitor/frames (rrweb chunks),
+# and the read endpoints the dashboard uses (sessions, visitors, engagement,
+# heat, replay). One route covers all of it.
 [[routes]]
 pattern = "aeden.me/api/visitor*"
 zone_name = "aeden.me"
 
+# The short URL for the dashboard. Without its own route /dashboard falls
+# through to GitHub Pages, which has no such path and answers with 404.html —
+# an SPA shim that redirects to the home page.
+[[routes]]
+pattern = "aeden.me/dashboard*"
+zone_name = "aeden.me"
+
 # Answers cache per /24 — 24h for a hit, 6h for a miss. Also holds the
-# once-per-company-per-day alert dedupe keys.
+# once-per-subject-per-day alert dedupe keys (seen:<company>:<day> for the
+# employer alerts, ret:<visitor>:<day> for the returning-visitor alerts).
 [[kv_namespaces]]
 binding = "VISITOR_CACHE"
 id = "6c3ee61f096a44e5b63296ef011ecb69"
 
-# Log of company visits, readable at /api/visitor/log?debug=<DEBUG_TOKEN>
+# Every visit, session, page view, event and heat cell, plus the index of
+# replay chunks. Raw JSON at /api/visitor/log, dashboard at /dashboard.
+# Public unless DASHBOARD_TOKEN is set — see README.
 [[d1_databases]]
 binding = "DB"
 database_name = "aeden-visitors"
 database_id = "5ff8d775-73e5-41c3-b8f6-f3b24b119ac4"
 
-# Optional fallback provider. Set with:
-#   npx wrangler secret put IPREGISTRY_KEY
-# Skipped entirely when unset.
+# Session replay blobs: one object per chunk at replays/<session>/<seq>.json
+# (gzip when the browser could compress). D1 only holds the index. Create the
+# bucket once before the first deploy:
+#   npx wrangler r2 bucket create aeden-replays
+[[r2_buckets]]
+binding = "REPLAYS"
+bucket_name = "aeden-replays"
+
+# Secrets (npx wrangler secret put <NAME>):
+#   IPAPI_KEY        ipapi.is — without it the payload has no company.type
+#   IPREGISTRY_KEY   optional fallback provider, skipped entirely when unset
+#   DEBUG_TOKEN      enables ?debug= and ?ip= spoofing
+#   ALERT_WEBHOOK    Discord / Slack / Telegram / ntfy URL for the alerts
+#   DASHBOARD_TOKEN  optional; when set, the dashboard and every read
+#                    endpoint need ?token= once (stored as a cookie after)
