@@ -349,11 +349,12 @@ async function store(env, body, vid, c) {
       const cx = Number(h.x), cy = Number(h.y), n = int(h.n, 1, 100000);
       if (!kind || !sel || !(cx >= 0 && cx <= 1) || !(cy >= 0 && cy <= 1) || !n) continue;
       stmts.push(db.prepare(
-        `INSERT INTO heat_points (day, page, device, kind, sel, cx, cy, n, w, h) VALUES (?,?,?,?,?,?,?,?,?,?)
-         ON CONFLICT(day, page, device, kind, sel, cx, cy) DO UPDATE SET
+        `INSERT INTO heat_points (day, page, device, kind, sel, cx, cy, net, n, w, h) VALUES (?,?,?,?,?,?,?,?,?,?,?)
+         ON CONFLICT(day, page, device, kind, sel, cx, cy, net) DO UPDATE SET
            n = heat_points.n + excluded.n, w = excluded.w, h = excluded.h`
       ).bind(day, str(h.p, 300) || "/", c.device || "desktop", kind, sel,
-             Math.round(cx * 100) / 100, Math.round(cy * 100) / 100, n, int(h.w, 0, 100000), int(h.h, 0, 100000)));
+             Math.round(cx * 100) / 100, Math.round(cy * 100) / 100, c.net || "",
+             n, int(h.w, 0, 100000), int(h.h, 0, 100000)));
     }
   }
 
@@ -439,7 +440,19 @@ function readParams(url, sinceISO, defLimit = 200, maxLimit = 2000) {
   const test = url.searchParams.get("test");
   const testWhere = test === "0" ? "test = 0" : test === "1" ? "test = 1" : null;
   const limit = Math.min(Math.max(Number(url.searchParams.get("limit") || defLimit) || defLimit, 1), maxLimit);
-  return { since, testWhere, limit };
+  return { since, testWhere, limit, xnet: xnetOf(url) };
+}
+
+/**
+ * `?xnet=<net>` hides one network's own rows from a read without deleting
+ * anything — the dashboard's "exclude my IP" toggle. Only ever a /24 (or /48),
+ * the same shape netOf() writes, so it cannot be used to probe a single
+ * address. Rows with no net recorded are never hidden: they predate the
+ * column and cannot be attributed either way.
+ */
+function xnetOf(url) {
+  const v = url.searchParams.get("xnet");
+  return v && /^[0-9a-f.:]{3,45}\/(24|48)$/i.test(v) ? v : null;
 }
 
 function where(parts) {
@@ -450,7 +463,7 @@ function where(parts) {
 export async function handleRead(kind, rest, url, env, sinceISO) {
   if (!env.DB) return respond({ error: "no database bound" }, 503);
   const db = env.DB;
-  const { since, testWhere, limit } = readParams(url, sinceISO);
+  const { since, testWhere, limit, xnet } = readParams(url, sinceISO);
 
   /* ---- sessions ------------------------------------------------------- */
   if (kind === "sessions") {
@@ -476,6 +489,7 @@ export async function handleRead(kind, rest, url, env, sinceISO) {
     if (vid && VID_RE.test(vid)) { w.push("s.visitor_id = ?"); binds.push(vid); }
     if (url.searchParams.get("replay") === "1") w.push("s.replay_chunks > 0");
     if (testWhere) w.push("s." + testWhere);
+    if (xnet) { w.push("(s.net IS NULL OR s.net != ?)"); binds.push(xnet); }
     const { results } = await db.prepare(
       `SELECT s.*,
          (SELECT GROUP_CONCAT(path, ' › ') FROM (SELECT path FROM page_views p WHERE p.session_id = s.session_id ORDER BY at)) AS paths
@@ -508,6 +522,7 @@ export async function handleRead(kind, rest, url, env, sinceISO) {
     const w = [];
     if (since) { w.push("v.last_seen_at >= ?"); binds.push(since); }
     if (testWhere) w.push("v." + testWhere);
+    if (xnet) { w.push("(v.net IS NULL OR v.net != ?)"); binds.push(xnet); }
     const { results } = await db.prepare(
       `SELECT v.*,
          (SELECT COUNT(*) FROM sessions s WHERE s.visitor_id = v.visitor_id) AS sessions_n,
@@ -521,10 +536,14 @@ export async function handleRead(kind, rest, url, env, sinceISO) {
 
   /* ---- engagement ----------------------------------------------------- */
   if (kind === "engagement") {
-    const pvW = where([since && "at >= ?", testWhere]);
-    const evW = where([since && "at >= ?", testWhere, "type IN ('click','rage_click','dead_click')"]);
-    const tyW = where([since && "at >= ?", testWhere]);
+    // page_views and events have no net of their own, so the exclusion reaches
+    // through session_id to the session that recorded them.
+    const notMine = xnet ? "session_id NOT IN (SELECT session_id FROM sessions WHERE net = ?)" : null;
+    const pvW = where([since && "at >= ?", testWhere, notMine]);
+    const evW = where([since && "at >= ?", testWhere, "type IN ('click','rage_click','dead_click')", notMine]);
+    const tyW = where([since && "at >= ?", testWhere, notMine]);
     const b = since ? [since] : [];
+    if (xnet) b.push(xnet);
     const [pages, clicks, types, hourly] = await db.batch([
       db.prepare(
         `SELECT path, COUNT(*) AS views,
@@ -556,10 +575,12 @@ export async function handleRead(kind, rest, url, env, sinceISO) {
     const page = url.searchParams.get("page");
     const device = url.searchParams.get("device");
     const hk = url.searchParams.get("kind") === "m" ? "m" : "c";
-    const pw = where([day && "day >= ?"]);
+    const pw = where([day && "day >= ?", xnet && "(net IS NULL OR net = '' OR net != ?)"]);
+    const pb = day ? [day] : [];
+    if (xnet) pb.push(xnet);
     const pagesQ = db.prepare(
       `SELECT page, device, kind, SUM(n) AS n FROM heat_points ${pw} GROUP BY page, device, kind ORDER BY n DESC`
-    ).bind(...(day ? [day] : []));
+    ).bind(...pb);
     if (!page) {
       const { results } = await pagesQ.all();
       return respond({ since, pages: results, cells: [] });
@@ -567,6 +588,7 @@ export async function handleRead(kind, rest, url, env, sinceISO) {
     const binds = [];
     const w = [];
     if (day) { w.push("day >= ?"); binds.push(day); }
+    if (xnet) { w.push("(net IS NULL OR net = '' OR net != ?)"); binds.push(xnet); }
     w.push("page = ?"); binds.push(page.slice(0, 300));
     w.push("kind = ?"); binds.push(hk);
     if (device && /^(mobile|tablet|desktop)$/.test(device)) { w.push("device = ?"); binds.push(device); }

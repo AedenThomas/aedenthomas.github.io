@@ -700,9 +700,17 @@ export default {
     //   /engagement                   per-page scroll/time/click aggregates
     //   /heat?page=&device=&kind=     heat cells for one page
     //   /replay/<sid>[/<seq>]         chunk index, or one chunk from R2
-    const read = /\/api\/visitor\/(log|sessions|visitors|engagement|heat|replay)(?:\/([^/]+))?(?:\/([^/]+))?$/.exec(path);
+    const read = /\/api\/visitor\/(log|sessions|visitors|engagement|heat|replay|me)(?:\/([^/]+))?(?:\/([^/]+))?$/.exec(path);
     if (read) {
       if (!authorized(request, env, url)) return respond({ error: "unauthorized" }, 401);
+
+      // Who is asking, as far as the log is concerned. The dashboard uses this
+      // for its "exclude my IP" toggle: it never sees the address, only the
+      // /24 the rows were written with.
+      if (read[1] === "me") {
+        return json({ net: netOf(request.headers.get("CF-Connecting-IP") || ""),
+                      country: (request.cf || {}).country || null });
+      }
 
       // Read the log: /api/visitor/log?since=7d&limit=500&test=0
       //
@@ -715,14 +723,22 @@ export default {
         const since = sinceISO(url.searchParams.get("since"));
         const test = url.searchParams.get("test");
 
+        // Clauses are written against the `visits v` alias directly.
         const where = [];
         const binds = [];
         if (since) {
-          where.push("seen_at >= ?");
+          where.push("v.seen_at >= ?");
           binds.push(since);
         }
-        if (test === "0") where.push("test = 0");
-        else if (test === "1") where.push("test = 1");
+        if (test === "0") where.push("v.test = 0");
+        else if (test === "1") where.push("v.test = 1");
+        // ?xnet=<net> hides the caller's own network from the log without
+        // touching the rows — see xnetOf() in analytics.js.
+        const xnet = url.searchParams.get("xnet");
+        if (xnet && /^[0-9a-f.:]{3,45}\/(24|48)$/i.test(xnet)) {
+          where.push("(v.net IS NULL OR v.net != ?)");
+          binds.push(xnet);
+        }
 
         const { results } = await env.DB.prepare(
           `SELECT v.id, v.seen_at, v.company, v.domain, v.type, v.asn, v.net, v.country, v.city, v.lat, v.lon,
@@ -732,7 +748,7 @@ export default {
                   s.replay_chunks AS replay_chunks, s.page_views AS session_pages,
                   s.started_at AS session_started, s.last_seen_at AS session_last
            FROM visits v LEFT JOIN sessions s ON s.session_id = v.session_id
-           ${where.length ? "WHERE " + where.map(w => "v." + w).join(" AND ") : ""}
+           ${where.length ? "WHERE " + where.join(" AND ") : ""}
            ORDER BY v.seen_at DESC LIMIT ?`
         )
           .bind(...binds, limit)

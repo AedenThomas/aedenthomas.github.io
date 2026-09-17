@@ -694,6 +694,8 @@ tr.on td{background:var(--hot-wash)}
   <span>only the /24 is stored, never the full address</span>
   <button class="link" id="notrack" type="button" aria-pressed="false"
           title="Sets an aeden_notrack cookie on this browser so your own visits are neither logged nor recorded">exclude this browser</button>
+  <button class="link" id="xnet" type="button" aria-pressed="false" hidden
+          title="Hides rows recorded from this network across every view. Nothing is deleted — untick to see them again.">hide my IP</button>
   <span class="spacer"></span>
   <span id="stamp"></span>
 </footer>
@@ -962,7 +964,7 @@ function hydrate(r) {
 }
 
 async function load(force) {
-  const win = fetchWindow(), key = String(win);
+  const win = fetchWindow(), key = String(win) + "|" + (MYNET.on && MYNET.net ? MYNET.net : "");
   const hit = CACHE.get(key);
   if (!force && hit && Date.now() - hit.at < FRESH_MS) {
     RAW = hit.rows; LOADED = new Date(hit.at); NOW = new Date();
@@ -972,6 +974,7 @@ async function load(force) {
   const u = new URL("/api/visitor/log", location.origin);
   u.searchParams.set("limit", "5000");
   if (win != null) u.searchParams.set("since", win + "h");
+  if (MYNET.on && MYNET.net) u.searchParams.set("xnet", MYNET.net);
   inflight = (async () => {
     const res = await fetch(u, { headers: { accept: "application/json" } });
     if (!res.ok) throw new Error("log responded " + res.status);
@@ -1758,6 +1761,9 @@ function api(path, params, force) {
   const since = viewSince();
   if (since) u.searchParams.set("since", since);
   if (!S.test) u.searchParams.set("test", "0");
+  // The "hide my IP" toggle is a read filter, not a delete: every view asks
+  // the Worker to leave this /24 out, and untoggling brings the rows back.
+  if (MYNET.on && MYNET.net && path !== "me") u.searchParams.set("xnet", MYNET.net);
   for (const k in params || {}) if (params[k] != null && params[k] !== "") u.searchParams.set(k, params[k]);
   const key = u.toString();
   const hit = API_CACHE.get(key);
@@ -2486,6 +2492,43 @@ function renderTimeline(d, t0) {
       '<span class="k">' + esc(it.k) + '</span><span class="d">' + esc(it.d) + "</span></li>";
   }).join("") : '<li class="empty">nothing recorded</li>');
 }
+
+/* ------------------------------------------------------------ my net ---- */
+/* The dashboard never learns the full address — /api/visitor/me hands back the
+   same /24 the rows were written with, and that is what gets filtered out. */
+const MYNET = { net: null, on: false };
+try { MYNET.on = localStorage.getItem("aeden:xnet") === "1"; } catch (_) {}
+
+function renderXnet() {
+  const b = q1("#xnet");
+  b.hidden = !MYNET.net;
+  b.setAttribute("aria-pressed", String(MYNET.on));
+  b.textContent = MYNET.on ? "showing everything except " + MYNET.net : "hide my IP (" + MYNET.net + ")";
+}
+q1("#xnet").addEventListener("click", () => {
+  MYNET.on = !MYNET.on;
+  try { localStorage.setItem("aeden:xnet", MYNET.on ? "1" : "0"); } catch (_) {}
+  renderXnet();
+  reloadForNet();
+  toast(MYNET.on ? "rows from " + MYNET.net + " are hidden everywhere" : "rows from " + MYNET.net + " are back");
+});
+
+/* The overview reads the log through its own cache; every other view goes
+   through api(). Both have to drop what they were holding. */
+function reloadForNet() {
+  API_CACHE.clear();
+  CACHE.clear();
+  HEAT.cells = [];
+  load(true).then(render).catch(showErr);
+  if (S.view !== "overview") refreshView(true);
+}
+api("me", {}, false).then(d => {
+  MYNET.net = d && d.net;
+  if (!MYNET.net) { MYNET.on = false; return; }
+  renderXnet();
+  // The first load already went out unfiltered; redo it if the toggle is on.
+  if (MYNET.on) reloadForNet();
+}).catch(() => {});
 
 /* ---------------------------------------------------------- notrack ---- */
 const NT = /(?:^|;\s*)aeden_notrack=1/;

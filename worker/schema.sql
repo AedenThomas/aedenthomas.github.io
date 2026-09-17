@@ -207,12 +207,16 @@ CREATE TABLE IF NOT EXISTS heat_points (
   sel    TEXT NOT NULL,        -- structural selector of the anchor element
   cx     REAL NOT NULL,        -- 0..1 across the anchor's box, 2 dp
   cy     REAL NOT NULL,
+  -- /24 (or /48) of the client, so the dashboard can leave the owner's own
+  -- passes out of the map. '' on rows written before migration 0003.
+  net    TEXT NOT NULL DEFAULT '',
   n      INTEGER NOT NULL DEFAULT 0,
   w      INTEGER,              -- anchor box size when last seen, for fallback rendering
   h      INTEGER,
-  PRIMARY KEY (day, page, device, kind, sel, cx, cy)
+  PRIMARY KEY (day, page, device, kind, sel, cx, cy, net)
 );
 CREATE INDEX IF NOT EXISTS idx_heat_page ON heat_points (page, day);
+CREATE INDEX IF NOT EXISTS idx_heat_net  ON heat_points (net);
 
 -- --------------------------------------------------------- replay_chunks ---
 -- Index only. The rrweb events themselves live in R2 at `key`, one object per
