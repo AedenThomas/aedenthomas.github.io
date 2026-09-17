@@ -25,6 +25,12 @@ const CLAUDE_DIR = path.join(os.homedir(), '.claude');
 const PROJECTS_DIR = path.join(CLAUDE_DIR, 'projects');
 const STATS_CACHE = path.join(CLAUDE_DIR, 'stats-cache.json');
 
+// A frozen snapshot of the AWS Bedrock work, captured once by
+// scripts/fetch-bedrock-stats.js. That traffic is finished, so it is history
+// rather than something to re-collect daily, and committing it keeps the site
+// off both AWS credentials and CloudWatch's 15-month retention window.
+const BEDROCK_SNAPSHOT = path.join(__dirname, 'bedrock-snapshot.json');
+
 // Deliberately outside ~/.claude (Claude Code prunes in there) and outside the
 // repo (survives a fresh clone). This file is the source of truth for history.
 const STATE_DIR = path.join(os.homedir(), '.claude-portfolio-stats');
@@ -98,12 +104,16 @@ function mergeDay(into, from) {
 }
 
 // "claude-opus-4-8" -> "Opus 4.8", "claude-sonnet-4-5-20250929" -> "Sonnet 4.5"
+//
+// The family is the first non-numeric part rather than simply the first one:
+// the older ids put the version in front ("claude-3-sonnet", "claude-3-5-haiku"),
+// which otherwise labels as "3". Those only turn up via the Bedrock snapshot.
 function modelLabel(id) {
     const parts = id
         .replace(/^claude-/, '')
         .replace(/-\d{8}$/, '') // trailing release date
         .split('-');
-    const family = parts.shift();
+    const family = parts.find((p) => !/^\d+$/.test(p)) || parts[0];
     const name = family.charAt(0).toUpperCase() + family.slice(1);
     const version = parts.filter((p) => /^\d+$/.test(p)).join('.');
     return version ? `${name} ${version}` : name;
@@ -407,13 +417,86 @@ function computeWindow(combined, legacy, today, from) {
     };
 }
 
+// Fold the Bedrock snapshot into the day map and the legacy model split.
+//
+// Tokens merge; sessions, messages, streaks and peak hour do not. Bedrock has no
+// notion of a session or a user message — only invocations — so those stay
+// transcript-only, and a Bedrock-only day is not an "active day" (computeWindow
+// keys that off messages). It contributes tokens to the totals and nothing else.
+//
+// The modelIo split has to respect the same boundary computeWindow uses: it
+// takes per-model in/out from legacy.modelUsage for dates through
+// legacy.through, and from each day's own modelIo after that. Bedrock spans
+// both sides, so each date is routed to whichever side owns it. Without this,
+// everything before the baseline date would count toward the token totals but
+// vanish from the model legend.
+function mergeBedrock(combined, legacy) {
+    if (!fs.existsSync(BEDROCK_SNAPSHOT)) return null;
+
+    let snapshot;
+    try {
+        snapshot = JSON.parse(fs.readFileSync(BEDROCK_SNAPSHOT, 'utf8'));
+    } catch (e) {
+        console.warn(`Ignoring unreadable Bedrock snapshot: ${e.message}`);
+        return null;
+    }
+
+    let tokens = 0;
+    let dayCount = 0;
+
+    for (const [date, models] of Object.entries(snapshot.days || {})) {
+        const day = combined[date] || emptyDay();
+        combined[date] = day;
+        dayCount++;
+
+        const beforeBaseline = legacy.through && date <= legacy.through;
+
+        for (const [model, io] of Object.entries(models)) {
+            const input = io.input || 0;
+            const output = io.output || 0;
+            const total = input + output;
+            if (!total) continue;
+
+            tokens += total;
+            day.tokens = (day.tokens || 0) + total;
+            day.modelTokens[model] = (day.modelTokens[model] || 0) + total;
+
+            if (beforeBaseline) {
+                const prev = legacy.modelUsage[model] || { input: 0, output: 0 };
+                legacy.modelUsage[model] = {
+                    input: (prev.input || 0) + input,
+                    output: (prev.output || 0) + output
+                };
+            } else {
+                const prev = day.modelIo[model] || { input: 0, output: 0 };
+                day.modelIo[model] = { input: prev.input + input, output: prev.output + output };
+            }
+        }
+    }
+
+    return { tokens, days: dayCount, range: [snapshot.firstDate, snapshot.lastDate] };
+}
+
 function buildOutput(state) {
-    const legacy = state.legacy || { through: null, hourCounts: {}, days: {} };
+    // Deep copy: mergeBedrock writes into legacy.modelUsage and into individual
+    // days, and state is persisted straight after this runs. Mutating the live
+    // objects would bake the snapshot into the saved history and re-add it on
+    // every subsequent run.
+    const source = JSON.parse(JSON.stringify(state.legacy || { through: null, hourCounts: {}, days: {} }));
+    const legacy = Object.assign({ through: null, hourCounts: {}, days: {}, modelUsage: {} }, source);
 
     // Disjoint by construction: legacy owns <= through, our scan owns everything after.
     const combined = {};
     for (const [date, day] of Object.entries(legacy.days || {})) combined[date] = day;
-    for (const [date, day] of Object.entries(state.days || {})) combined[date] = day;
+    for (const [date, day] of Object.entries(JSON.parse(JSON.stringify(state.days || {})))) combined[date] = day;
+
+    const bedrock = mergeBedrock(combined, legacy);
+    if (bedrock) {
+        console.log(
+            `Bedrock: +${(bedrock.tokens / 1e6).toFixed(1)}M tokens over ${bedrock.days} days ` +
+            `(${bedrock.range[0]} -> ${bedrock.range[1]})`
+        );
+    }
 
     const dates = Object.keys(combined).sort();
     const today = localDateKey(new Date());

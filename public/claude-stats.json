@@ -1,14 +1,14 @@
 {
-  "updatedAt": "2026-09-17T21:50:28.642Z",
+  "updatedAt": "2026-09-17T22:10:41.041Z",
   "firstSessionDate": "2026-02-05",
   "windows": {
     "all": {
       "from": null,
       "totals": {
-        "sessions": 837,
-        "messages": 200518,
-        "toolCalls": 79413,
-        "tokens": 279297488,
+        "sessions": 838,
+        "messages": 200650,
+        "toolCalls": 79451,
+        "tokens": 325851606,
         "activeDays": 105,
         "currentStreak": 17,
         "longestStreak": 27,
@@ -16,7 +16,7 @@
         "peakHourLabel": "11 AM",
         "favoriteModel": "Opus 4.8"
       },
-      "mobyDickMultiple": 1042,
+      "mobyDickMultiple": 1215,
       "models": [
         {
           "id": "claude-opus-4-8",
@@ -24,15 +24,15 @@
           "tokens": 161047516,
           "inputTokens": 39927359,
           "outputTokens": 121120157,
-          "share": 0.5766164141082429
+          "share": 0.49423575957455923
         },
         {
           "id": "claude-opus-5",
           "label": "Opus 5",
-          "tokens": 64003067,
-          "inputTokens": 800753,
-          "outputTokens": 63202314,
-          "share": 0.22915733133983646
+          "tokens": 64065977,
+          "inputTokens": 800915,
+          "outputTokens": 63265062,
+          "share": 0.19661089839772034
         },
         {
           "id": "claude-sonnet-5",
@@ -40,7 +40,15 @@
           "tokens": 30221459,
           "inputTokens": 2622153,
           "outputTokens": 27599306,
-          "share": 0.10820526606383227
+          "share": 0.09274607963724445
+        },
+        {
+          "id": "claude-haiku-4-5-20251001",
+          "label": "Haiku 4.5",
+          "tokens": 27313022,
+          "inputTokens": 18897650,
+          "outputTokens": 8415372,
+          "share": 0.08382043082518979
         },
         {
           "id": "claude-fable-5",
@@ -48,7 +56,15 @@
           "tokens": 10796216,
           "inputTokens": 3255830,
           "outputTokens": 7540386,
-          "share": 0.038654898321176454
+          "share": 0.033132308698825316
+        },
+        {
+          "id": "claude-sonnet-4-5-20250929",
+          "label": "Sonnet 4.5",
+          "tokens": 9259106,
+          "inputTokens": 6649157,
+          "outputTokens": 2609949,
+          "share": 0.028415100093138714
         },
         {
           "id": "claude-fable-5-1",
@@ -56,47 +72,55 @@
           "tokens": 6550389,
           "inputTokens": 75099,
           "outputTokens": 6475290,
-          "share": 0.023453089560189672
-        },
-        {
-          "id": "claude-haiku-4-5-20251001",
-          "label": "Haiku 4.5",
-          "tokens": 2324338,
-          "inputTokens": 301191,
-          "outputTokens": 2023147,
-          "share": 0.00832208702141997
-        },
-        {
-          "id": "claude-opus-4-7",
-          "label": "Opus 4.7",
-          "tokens": 2302896,
-          "inputTokens": 3787,
-          "outputTokens": 2299109,
-          "share": 0.008245315833273804
-        },
-        {
-          "id": "claude-opus-4-6",
-          "label": "Opus 4.6",
-          "tokens": 1286897,
-          "inputTokens": 1184092,
-          "outputTokens": 102805,
-          "share": 0.004607621103989306
+          "share": 0.020102368315471797
         },
         {
           "id": "claude-sonnet-4-6",
           "label": "Sonnet 4.6",
-          "tokens": 752290,
-          "inputTokens": 72449,
-          "outputTokens": 679841,
-          "share": 0.002693507934450166
+          "tokens": 5938384,
+          "inputTokens": 1645181,
+          "outputTokens": 4293203,
+          "share": 0.018224197428077123
         },
         {
-          "id": "claude-sonnet-4-5-20250929",
-          "label": "Sonnet 4.5",
-          "tokens": 12420,
-          "inputTokens": 9718,
-          "outputTokens": 2702,
-          "share": 0.000044468713589002993
+          "id": "claude-opus-4-6",
+          "label": "Opus 4.6",
+          "tokens": 5168678,
+          "inputTokens": 1765005,
+          "outputTokens": 3403673,
+          "share": 0.0158620608425051
+        },
+        {
+          "id": "claude-opus-4-7",
+          "label": "Opus 4.7",
+          "tokens": 2314294,
+          "inputTokens": 3809,
+          "outputTokens": 2310485,
+          "share": 0.007102294287909694
+        },
+        {
+          "id": "claude-sonnet-4-20250514",
+          "label": "Sonnet 4",
+          "tokens": 1773490,
+          "inputTokens": 23979,
+          "outputTokens": 1749511,
+          "share": 0.005442630839757163
+        },
+        {
+          "id": "claude-opus-4-5-20251101",
+          "label": "Opus 4.5",
+          "tokens": 1402979,
+          "inputTokens": 13510,
+          "outputTokens": 1389469,
+          "share": 0.004305576446967089
+        },
+        {
+          "id": "claude-3-sonnet-20240229",
+          "label": "Sonnet 3",
+          "tokens": 96,
+          "inputTokens": 33,
+          "outputTokens": 63,
+          "share": 2.946126341939834e-7
         }
       ],
       "hourCounts": {
@@ -122,17 +146,17 @@
         "19": 53,
         "20": 19,
         "21": 11,
-        "22": 28,
+        "22": 29,
         "23": 37
       }
     },
     "d30": {
       "from": "2026-08-19",
       "totals": {
-        "sessions": 175,
-        "messages": 45367,
-        "toolCalls": 13406,
-        "tokens": 56147720,
+        "sessions": 176,
+        "messages": 45499,
+        "toolCalls": 13444,
+        "tokens": 65671423,
         "activeDays": 26,
         "currentStreak": 17,
         "longestStreak": 17,
@@ -140,15 +164,15 @@
         "peakHourLabel": "9 AM",
         "favoriteModel": "Opus 5"
       },
-      "mobyDickMultiple": 209,
+      "mobyDickMultiple": 245,
       "models": [
         {
           "id": "claude-opus-5",
           "label": "Opus 5",
-          "tokens": 34199586,
-          "inputTokens": 84166,
-          "outputTokens": 34115420,
-          "share": 0.609100173613461
+          "tokens": 34262496,
+          "inputTokens": 84328,
+          "outputTokens": 34178168,
+          "share": 0.521726109087053
         },
         {
           "id": "claude-sonnet-5",
@@ -156,7 +180,15 @@
           "tokens": 15368807,
           "inputTokens": 253603,
           "outputTokens": 15115204,
-          "share": 0.2737209453919055
+          "share": 0.2340257953600305
+        },
+        {
+          "id": "claude-haiku-4-5-20251001",
+          "label": "Haiku 4.5",
+          "tokens": 6609241,
+          "inputTokens": 6368488,
+          "outputTokens": 240753,
+          "share": 0.10064105052208173
         },
         {
           "id": "claude-fable-5-1",
@@ -164,23 +196,23 @@
           "tokens": 6550389,
           "inputTokens": 75099,
           "outputTokens": 6475290,
-          "share": 0.11666349052107548
+          "share": 0.09974489208190296
+        },
+        {
+          "id": "claude-sonnet-4-6",
+          "label": "Sonnet 4.6",
+          "tokens": 2847764,
+          "inputTokens": 1332522,
+          "outputTokens": 1515242,
+          "share": 0.043363823561429454
         },
         {
           "id": "claude-opus-4-7",
           "label": "Opus 4.7",
-          "tokens": 21328,
-          "inputTokens": 47,
-          "outputTokens": 21281,
-          "share": 0.00037985513926478223
-        },
-        {
-          "id": "claude-haiku-4-5-20251001",
-          "label": "Haiku 4.5",
-          "tokens": 7610,
-          "inputTokens": 306,
-          "outputTokens": 7304,
-          "share": 0.00013553533429318235
+          "tokens": 32726,
+          "inputTokens": 69,
+          "outputTokens": 32657,
+          "share": 0.0004983293875023844
         }
       ],
       "hourCounts": {
@@ -206,17 +238,17 @@
         "19": 4,
         "20": 8,
         "21": 3,
-        "22": 10,
+        "22": 11,
         "23": 5
       }
     },
     "d7": {
       "from": "2026-09-11",
       "totals": {
-        "sessions": 40,
-        "messages": 11874,
-        "toolCalls": 3478,
-        "tokens": 11979122,
+        "sessions": 41,
+        "messages": 12006,
+        "toolCalls": 3516,
+        "tokens": 17196810,
         "activeDays": 7,
         "currentStreak": 7,
         "longestStreak": 7,
@@ -224,15 +256,23 @@
         "peakHourLabel": "9 AM",
         "favoriteModel": "Opus 5"
       },
-      "mobyDickMultiple": 44,
+      "mobyDickMultiple": 64,
       "models": [
         {
           "id": "claude-opus-5",
           "label": "Opus 5",
-          "tokens": 9201725,
-          "inputTokens": 19716,
-          "outputTokens": 9182009,
-          "share": 0.7681468641858727
+          "tokens": 9264635,
+          "inputTokens": 19878,
+          "outputTokens": 9244757,
+          "share": 0.5387414875200691
+        },
+        {
+          "id": "claude-haiku-4-5-20251001",
+          "label": "Haiku 4.5",
+          "tokens": 4462696,
+          "inputTokens": 4407168,
+          "outputTokens": 55528,
+          "share": 0.25950719930033533
         },
         {
           "id": "claude-fable-5-1",
@@ -240,7 +280,7 @@
           "tokens": 1664819,
           "inputTokens": 20980,
           "outputTokens": 1643839,
-          "share": 0.13897671298447414
+          "share": 0.09680975715844974
         },
         {
           "id": "claude-sonnet-5",
@@ -248,15 +288,23 @@
           "tokens": 1102043,
           "inputTokens": 1660,
           "outputTokens": 1100383,
-          "share": 0.09199697607220296
+          "share": 0.06408415281671426
+        },
+        {
+          "id": "claude-sonnet-4-6",
+          "label": "Sonnet 4.6",
+          "tokens": 680684,
+          "inputTokens": 299479,
+          "outputTokens": 381205,
+          "share": 0.03958199224158434
         },
         {
           "id": "claude-opus-4-7",
           "label": "Opus 4.7",
-          "tokens": 10535,
-          "inputTokens": 22,
-          "outputTokens": 10513,
-          "share": 0.0008794467574501704
+          "tokens": 21933,
+          "inputTokens": 44,
+          "outputTokens": 21889,
+          "share": 0.0012754109628471792
         }
       ],
       "hourCounts": {
@@ -282,488 +330,2131 @@
         "19": 0,
         "20": 2,
         "21": 2,
-        "22": 4,
+        "22": 5,
         "23": 0
       }
     }
   },
   "days": [
     {
+      "date": "2025-08-13",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 52159,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 52159
+      }
+    },
+    {
+      "date": "2025-08-14",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 2877,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 2877
+      }
+    },
+    {
+      "date": "2025-08-15",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 114022,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 114022
+      }
+    },
+    {
+      "date": "2025-08-16",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 312473,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 312473
+      }
+    },
+    {
+      "date": "2025-08-17",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 68894,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 68894
+      }
+    },
+    {
+      "date": "2025-08-18",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 20234,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 20234
+      }
+    },
+    {
+      "date": "2025-08-19",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 10073,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 10073
+      }
+    },
+    {
+      "date": "2025-08-20",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 11218,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 11218
+      }
+    },
+    {
+      "date": "2025-08-21",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 608001,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 608001
+      }
+    },
+    {
+      "date": "2025-08-22",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 304629,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 304629
+      }
+    },
+    {
+      "date": "2025-08-23",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 68380,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 68380
+      }
+    },
+    {
+      "date": "2025-08-24",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 7048,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 7048
+      }
+    },
+    {
+      "date": "2025-08-25",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 3967,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 3967
+      }
+    },
+    {
+      "date": "2025-08-26",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-08-27",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-08-28",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-08-29",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 70735,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 70735
+      }
+    },
+    {
+      "date": "2025-08-30",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-08-31",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-01",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-02",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-03",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-04",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 1764,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 1764
+      }
+    },
+    {
+      "date": "2025-09-05",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-06",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-07",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 38514,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 38514
+      }
+    },
+    {
+      "date": "2025-09-08",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 76895,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 76895
+      }
+    },
+    {
+      "date": "2025-09-09",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-10",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-11",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-12",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-13",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-14",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-15",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-16",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-17",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-18",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-19",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 57,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 57
+      }
+    },
+    {
+      "date": "2025-09-20",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-21",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-22",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-23",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-24",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-25",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-26",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-27",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-28",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-29",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-09-30",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-01",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-02",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-03",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-04",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-05",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-06",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 197,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-20250514": 197
+      }
+    },
+    {
+      "date": "2025-10-07",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-08",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-09",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-10",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-11",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-12",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-13",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-14",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-15",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-16",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-17",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-18",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-19",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-20",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-21",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-22",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-23",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-24",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-25",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-26",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-27",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-28",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 8618,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 8618
+      }
+    },
+    {
+      "date": "2025-10-29",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 44176,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 44176
+      }
+    },
+    {
+      "date": "2025-10-30",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-10-31",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-01",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-02",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-03",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-04",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-05",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-06",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-07",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-08",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-09",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-10",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-11",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-12",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-13",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-14",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-15",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-16",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-17",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-18",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-19",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-20",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-21",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-22",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-23",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-24",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-25",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-26",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-27",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-28",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-29",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-11-30",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-01",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-02",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-03",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-04",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-05",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 110278,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 110278
+      }
+    },
+    {
+      "date": "2025-12-06",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 542891,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 542891
+      }
+    },
+    {
+      "date": "2025-12-07",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 596893,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 596893
+      }
+    },
+    {
+      "date": "2025-12-08",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 3018801,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 3018801
+      }
+    },
+    {
+      "date": "2025-12-09",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-10",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 254150,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 254150
+      }
+    },
+    {
+      "date": "2025-12-11",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 100314,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 100314
+      }
+    },
+    {
+      "date": "2025-12-12",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-13",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-14",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 2070500,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 2070500
+      }
+    },
+    {
+      "date": "2025-12-15",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 1444099,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 1444099
+      }
+    },
+    {
+      "date": "2025-12-16",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 189705,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 189705
+      }
+    },
+    {
+      "date": "2025-12-17",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-18",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-19",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-20",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-21",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-22",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-23",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-24",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-25",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-26",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-27",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-28",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-29",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-30",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2025-12-31",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-01",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-02",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-03",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-04",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 658151,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 658151
+      }
+    },
+    {
+      "date": "2026-01-05",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 119572,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 119572
+      }
+    },
+    {
+      "date": "2026-01-06",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-07",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-08",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 254961,
+      "level": 0,
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 254961
+      }
+    },
+    {
+      "date": "2026-01-09",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-10",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-11",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-12",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-13",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-14",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-15",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-16",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 0,
+      "level": 0,
+      "modelTokens": {}
+    },
+    {
+      "date": "2026-01-17",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 711567,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 711567
+      }
+    },
+    {
+      "date": "2026-01-18",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 524151,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 524151
+      }
+    },
+    {
+      "date": "2026-01-19",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 34929,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 34929
+      }
+    },
+    {
+      "date": "2026-01-20",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 50380,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 50380
+      }
+    },
+    {
+      "date": "2026-01-21",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 126012,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 126012
+      }
+    },
+    {
+      "date": "2026-01-22",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 76323,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 76323
+      }
+    },
+    {
+      "date": "2026-01-23",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 90179,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 90179
+      }
+    },
+    {
+      "date": "2026-01-24",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 33079,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 33079
+      }
+    },
+    {
+      "date": "2026-01-25",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 151535,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 151535
+      }
+    },
+    {
+      "date": "2026-01-26",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 74355,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 74355
+      }
+    },
+    {
+      "date": "2026-01-27",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 28825,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 28825
+      }
+    },
+    {
+      "date": "2026-01-28",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 87680,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 87680
+      }
+    },
+    {
+      "date": "2026-01-29",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 229357,
+      "level": 0,
+      "modelTokens": {
+        "claude-3-sonnet-20240229": 96,
+        "claude-opus-4-5-20251101": 204950,
+        "claude-sonnet-4-5-20250929": 5820,
+        "claude-haiku-4-5-20251001": 18491
+      }
+    },
+    {
+      "date": "2026-01-30",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 202477,
+      "level": 0,
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 58926,
+        "claude-opus-4-5-20251101": 143551
+      }
+    },
+    {
+      "date": "2026-01-31",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 127671,
+      "level": 0,
+      "modelTokens": {
+        "claude-opus-4-5-20251101": 89028,
+        "claude-sonnet-4-5-20250929": 10281,
+        "claude-haiku-4-5-20251001": 28362
+      }
+    },
+    {
+      "date": "2026-02-01",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 269102,
+      "level": 0,
+      "modelTokens": {
+        "claude-opus-4-5-20251101": 56930,
+        "claude-haiku-4-5-20251001": 212172
+      }
+    },
+    {
+      "date": "2026-02-02",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 404665,
+      "level": 0,
+      "modelTokens": {
+        "claude-opus-4-5-20251101": 317050,
+        "claude-sonnet-4-5-20250929": 53845,
+        "claude-haiku-4-5-20251001": 33770
+      }
+    },
+    {
+      "date": "2026-02-03",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 404122,
+      "level": 0,
+      "modelTokens": {
+        "claude-opus-4-5-20251101": 337531,
+        "claude-sonnet-4-5-20250929": 26763,
+        "claude-haiku-4-5-20251001": 39828
+      }
+    },
+    {
+      "date": "2026-02-04",
+      "messages": 0,
+      "sessions": 0,
+      "tokens": 364347,
+      "level": 0,
+      "modelTokens": {
+        "claude-opus-4-5-20251101": 195491,
+        "claude-sonnet-4-20250514": 1353,
+        "claude-sonnet-4-5-20250929": 59177,
+        "claude-haiku-4-5-20251001": 108326
+      }
+    },
+    {
       "date": "2026-02-05",
       "messages": 395,
       "sessions": 4,
-      "tokens": 2041,
+      "tokens": 303406,
       "level": 1,
       "modelTokens": {
-        "claude-sonnet-4-5-20250929": 2015,
-        "claude-haiku-4-5-20251001": 26
+        "claude-sonnet-4-5-20250929": 127912,
+        "claude-haiku-4-5-20251001": 117046,
+        "claude-opus-4-5-20251101": 58448
       }
     },
     {
       "date": "2026-02-06",
       "messages": 3031,
       "sessions": 13,
-      "tokens": 170458,
+      "tokens": 740919,
       "level": 4,
       "modelTokens": {
-        "claude-opus-4-6": 170458
+        "claude-opus-4-6": 470057,
+        "claude-haiku-4-5-20251001": 270862
       }
     },
     {
       "date": "2026-02-07",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 64654,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 64654
+      }
     },
     {
       "date": "2026-02-08",
       "messages": 435,
       "sessions": 3,
-      "tokens": 211794,
+      "tokens": 363947,
       "level": 1,
       "modelTokens": {
-        "claude-opus-4-6": 211794
+        "claude-opus-4-6": 290252,
+        "claude-haiku-4-5-20251001": 73695
       }
     },
     {
       "date": "2026-02-09",
       "messages": 7591,
       "sessions": 9,
-      "tokens": 74324,
+      "tokens": 3270072,
       "level": 4,
       "modelTokens": {
-        "claude-opus-4-6": 74264,
-        "claude-haiku-4-5-20251001": 60
+        "claude-opus-4-6": 813885,
+        "claude-haiku-4-5-20251001": 2456187
       }
     },
     {
       "date": "2026-02-10",
       "messages": 3830,
       "sessions": 9,
-      "tokens": 52968,
+      "tokens": 881048,
       "level": 4,
       "modelTokens": {
-        "claude-opus-4-6": 50295,
+        "claude-opus-4-6": 316745,
         "claude-sonnet-4-5-20250929": 34,
-        "claude-haiku-4-5-20251001": 2639
+        "claude-haiku-4-5-20251001": 564269
       }
     },
     {
       "date": "2026-02-11",
       "messages": 2139,
       "sessions": 20,
-      "tokens": 42707,
+      "tokens": 620637,
       "level": 3,
       "modelTokens": {
-        "claude-haiku-4-5-20251001": 2540,
-        "claude-opus-4-6": 38663,
-        "claude-sonnet-4-5-20250929": 1504
+        "claude-haiku-4-5-20251001": 354113,
+        "claude-opus-4-6": 242852,
+        "claude-sonnet-4-5-20250929": 23672
       }
     },
     {
       "date": "2026-02-12",
       "messages": 1991,
       "sessions": 11,
-      "tokens": 24380,
+      "tokens": 475240,
       "level": 3,
       "modelTokens": {
-        "claude-opus-4-6": 24074,
-        "claude-haiku-4-5-20251001": 306
+        "claude-opus-4-6": 234721,
+        "claude-haiku-4-5-20251001": 240519
       }
     },
     {
       "date": "2026-02-13",
       "messages": 2524,
       "sessions": 9,
-      "tokens": 25969,
+      "tokens": 792733,
       "level": 3,
       "modelTokens": {
-        "claude-opus-4-6": 25170,
-        "claude-sonnet-4-5-20250929": 135,
-        "claude-haiku-4-5-20251001": 664
+        "claude-opus-4-6": 350801,
+        "claude-sonnet-4-5-20250929": 31649,
+        "claude-haiku-4-5-20251001": 410283
       }
     },
     {
       "date": "2026-02-14",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 8053,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-sonnet-4-5-20250929": 355,
+        "claude-haiku-4-5-20251001": 7698
+      }
     },
     {
       "date": "2026-02-15",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 24117,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 13541,
+        "claude-opus-4-6": 5230,
+        "claude-sonnet-4-5-20250929": 5346
+      }
     },
     {
       "date": "2026-02-16",
       "messages": 3875,
       "sessions": 20,
-      "tokens": 100449,
+      "tokens": 703159,
       "level": 4,
       "modelTokens": {
-        "claude-opus-4-6": 99035,
-        "claude-sonnet-4-5-20250929": 1414
+        "claude-opus-4-6": 278725,
+        "claude-sonnet-4-5-20250929": 32199,
+        "claude-haiku-4-5-20251001": 392235
       }
     },
     {
       "date": "2026-02-17",
       "messages": 2058,
       "sessions": 15,
-      "tokens": 118528,
+      "tokens": 396562,
       "level": 3,
       "modelTokens": {
-        "claude-sonnet-4-5-20250929": 7024,
-        "claude-opus-4-6": 111468,
-        "claude-haiku-4-5-20251001": 36
+        "claude-sonnet-4-5-20250929": 104664,
+        "claude-opus-4-6": 223012,
+        "claude-haiku-4-5-20251001": 68886
       }
     },
     {
       "date": "2026-02-18",
       "messages": 39,
       "sessions": 2,
-      "tokens": 315,
+      "tokens": 962914,
       "level": 1,
       "modelTokens": {
-        "claude-sonnet-4-5-20250929": 294,
-        "claude-opus-4-6": 17,
-        "claude-sonnet-4-6": 4
+        "claude-sonnet-4-5-20250929": 26293,
+        "claude-opus-4-6": 117646,
+        "claude-sonnet-4-6": 4563,
+        "claude-haiku-4-5-20251001": 814412
       }
     },
     {
       "date": "2026-02-19",
       "messages": 6017,
       "sessions": 22,
-      "tokens": 153670,
+      "tokens": 750652,
       "level": 4,
       "modelTokens": {
-        "claude-sonnet-4-6": 66781,
-        "claude-opus-4-6": 86889
+        "claude-sonnet-4-6": 210199,
+        "claude-opus-4-6": 255588,
+        "claude-haiku-4-5-20251001": 234593,
+        "claude-sonnet-4-5-20250929": 50272
       }
     },
     {
       "date": "2026-02-20",
       "messages": 2177,
       "sessions": 13,
-      "tokens": 296886,
+      "tokens": 942462,
       "level": 3,
       "modelTokens": {
-        "claude-sonnet-4-6": 3932,
-        "claude-opus-4-6": 292954
+        "claude-sonnet-4-6": 115577,
+        "claude-opus-4-6": 362711,
+        "claude-haiku-4-5-20251001": 464174
       }
     },
     {
       "date": "2026-02-21",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 97282,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 91251,
+        "claude-sonnet-4-6": 6031
+      }
     },
     {
       "date": "2026-02-22",
       "messages": 766,
       "sessions": 6,
-      "tokens": 103999,
+      "tokens": 181801,
       "level": 2,
       "modelTokens": {
-        "claude-opus-4-6": 101816,
-        "claude-sonnet-4-6": 2183
+        "claude-opus-4-6": 120147,
+        "claude-sonnet-4-6": 46828,
+        "claude-haiku-4-5-20251001": 14826
       }
     },
     {
       "date": "2026-02-23",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 590062,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 402978,
+        "claude-opus-4-6": 32968,
+        "claude-sonnet-4-6": 154116
+      }
     },
     {
       "date": "2026-02-24",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 685292,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 333821,
+        "claude-opus-4-6": 27315,
+        "claude-sonnet-4-5-20250929": 47749,
+        "claude-sonnet-4-6": 276407
+      }
     },
     {
       "date": "2026-02-25",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 188148,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 119941,
+        "claude-opus-4-6": 12980,
+        "claude-sonnet-4-6": 55227
+      }
     },
     {
       "date": "2026-02-26",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 283194,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 123862,
+        "claude-sonnet-4-6": 159332
+      }
     },
     {
       "date": "2026-02-27",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 369120,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 125516,
+        "claude-opus-4-6": 194558,
+        "claude-sonnet-4-6": 49046
+      }
     },
     {
       "date": "2026-02-28",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 162379,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 88041,
+        "claude-opus-4-6": 58322,
+        "claude-sonnet-4-6": 16016
+      }
     },
     {
       "date": "2026-03-01",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 54526,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 28116,
+        "claude-sonnet-4-6": 26410
+      }
     },
     {
       "date": "2026-03-02",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 284855,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 60007,
+        "claude-sonnet-4-6": 224848
+      }
     },
     {
       "date": "2026-03-03",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 204245,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 79617,
+        "claude-opus-4-6": 11695,
+        "claude-sonnet-4-6": 112933
+      }
     },
     {
       "date": "2026-03-04",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 332310,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 128840,
+        "claude-opus-4-6": 135310,
+        "claude-sonnet-4-6": 68160
+      }
     },
     {
       "date": "2026-03-05",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 242047,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 21780,
+        "claude-opus-4-6": 217607,
+        "claude-sonnet-4-6": 2660
+      }
     },
     {
       "date": "2026-03-06",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 136191,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 61552,
+        "claude-opus-4-6": 61635,
+        "claude-sonnet-4-5-20250929": 303,
+        "claude-sonnet-4-6": 12701
+      }
     },
     {
       "date": "2026-03-07",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 213712,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 213712
+      }
     },
     {
       "date": "2026-03-08",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 28728,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 28728
+      }
     },
     {
       "date": "2026-03-09",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 75931,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 75931
+      }
     },
     {
       "date": "2026-03-10",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 47538,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 43362,
+        "claude-sonnet-4-6": 4176
+      }
     },
     {
       "date": "2026-03-11",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 70358,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 70358
+      }
     },
     {
       "date": "2026-03-12",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 60629,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 60629
+      }
     },
     {
       "date": "2026-03-13",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 17255,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 17255
+      }
     },
     {
       "date": "2026-03-14",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 62123,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 62123
+      }
     },
     {
       "date": "2026-03-15",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 60034,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 60034
+      }
     },
     {
       "date": "2026-03-16",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 9921,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 9921
+      }
     },
     {
       "date": "2026-03-17",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 4451,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 4451
+      }
     },
     {
       "date": "2026-03-18",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 46543,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 46543
+      }
     },
     {
       "date": "2026-03-19",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 28153,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 28153
+      }
     },
     {
       "date": "2026-03-20",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 10776,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 10776
+      }
     },
     {
       "date": "2026-03-21",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 9500,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 9500
+      }
     },
     {
       "date": "2026-03-22",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 22536,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 22536
+      }
     },
     {
       "date": "2026-03-23",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 35025,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 35025
+      }
     },
     {
       "date": "2026-03-24",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 29629,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 29629
+      }
     },
     {
       "date": "2026-03-25",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 16220,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 16220
+      }
     },
     {
       "date": "2026-03-26",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 27968,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 27968
+      }
     },
     {
       "date": "2026-03-27",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 26832,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 26832
+      }
     },
     {
       "date": "2026-03-28",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 14964,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 14964
+      }
     },
     {
       "date": "2026-03-29",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 6240,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 6240
+      }
     },
     {
       "date": "2026-03-30",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 15278,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 15278
+      }
     },
     {
       "date": "2026-03-31",
@@ -777,17 +2468,25 @@
       "date": "2026-04-01",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 440544,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 177569,
+        "claude-opus-4-6": 85661,
+        "claude-sonnet-4-6": 177314
+      }
     },
     {
       "date": "2026-04-02",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 101867,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 55268,
+        "claude-opus-4-6": 38744,
+        "claude-sonnet-4-6": 7855
+      }
     },
     {
       "date": "2026-04-03",
@@ -809,9 +2508,11 @@
       "date": "2026-04-05",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 18384,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 18384
+      }
     },
     {
       "date": "2026-04-06",
@@ -825,33 +2526,49 @@
       "date": "2026-04-07",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 108195,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 43099,
+        "claude-opus-4-6": 25775,
+        "claude-sonnet-4-6": 39321
+      }
     },
     {
       "date": "2026-04-08",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 139857,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 54319,
+        "claude-opus-4-6": 25204,
+        "claude-sonnet-4-6": 60334
+      }
     },
     {
       "date": "2026-04-09",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 121775,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 29897,
+        "claude-opus-4-6": 28706,
+        "claude-sonnet-4-6": 63172
+      }
     },
     {
       "date": "2026-04-10",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 66452,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 42199,
+        "claude-sonnet-4-5-20250929": 17366,
+        "claude-sonnet-4-6": 6887
+      }
     },
     {
       "date": "2026-04-11",
@@ -865,41 +2582,51 @@
       "date": "2026-04-12",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 6615,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 6615
+      }
     },
     {
       "date": "2026-04-13",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 19829,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 19829
+      }
     },
     {
       "date": "2026-04-14",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 16401,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 16401
+      }
     },
     {
       "date": "2026-04-15",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 98680,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 98680
+      }
     },
     {
       "date": "2026-04-16",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 27489,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 27489
+      }
     },
     {
       "date": "2026-04-17",
@@ -913,49 +2640,61 @@
       "date": "2026-04-18",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 25626,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 25626
+      }
     },
     {
       "date": "2026-04-19",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 20170,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 20170
+      }
     },
     {
       "date": "2026-04-20",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 26229,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 26229
+      }
     },
     {
       "date": "2026-04-21",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 25520,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 25520
+      }
     },
     {
       "date": "2026-04-22",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 28526,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 28526
+      }
     },
     {
       "date": "2026-04-23",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 19094,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 19094
+      }
     },
     {
       "date": "2026-04-24",
@@ -969,57 +2708,71 @@
       "date": "2026-04-25",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 3588,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 3588
+      }
     },
     {
       "date": "2026-04-26",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 26797,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 26797
+      }
     },
     {
       "date": "2026-04-27",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 8983,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 8983
+      }
     },
     {
       "date": "2026-04-28",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 40694,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 40694
+      }
     },
     {
       "date": "2026-04-29",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 11783,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 11783
+      }
     },
     {
       "date": "2026-04-30",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 36108,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 36108
+      }
     },
     {
       "date": "2026-05-01",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 43612,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 43612
+      }
     },
     {
       "date": "2026-05-02",
@@ -1041,65 +2794,84 @@
       "date": "2026-05-04",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 129645,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 56280,
+        "claude-opus-4-6": 73365
+      }
     },
     {
       "date": "2026-05-05",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 76513,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 10728,
+        "claude-opus-4-6": 56461,
+        "claude-sonnet-4-6": 9324
+      }
     },
     {
       "date": "2026-05-06",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 19839,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 19839
+      }
     },
     {
       "date": "2026-05-07",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 9514,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 9514
+      }
     },
     {
       "date": "2026-05-08",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 7647,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 7647
+      }
     },
     {
       "date": "2026-05-09",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 5481,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 5481
+      }
     },
     {
       "date": "2026-05-10",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 3656,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 3656
+      }
     },
     {
       "date": "2026-05-11",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 40210,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 40210
+      }
     },
     {
       "date": "2026-05-12",
@@ -1113,225 +2885,260 @@
       "date": "2026-05-13",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 17125,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 17125
+      }
     },
     {
       "date": "2026-05-14",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 3786,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 3786
+      }
     },
     {
       "date": "2026-05-15",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 56326,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 56326
+      }
     },
     {
       "date": "2026-05-16",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 21294,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 21294
+      }
     },
     {
       "date": "2026-05-17",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 9479,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 9479
+      }
     },
     {
       "date": "2026-05-18",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 56190,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 56190
+      }
     },
     {
       "date": "2026-05-19",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 16911,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 16911
+      }
     },
     {
       "date": "2026-05-20",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 59893,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 59893
+      }
     },
     {
       "date": "2026-05-21",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 63625,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 63625
+      }
     },
     {
       "date": "2026-05-22",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 11252,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 11252
+      }
     },
     {
       "date": "2026-05-23",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 22456,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 22456
+      }
     },
     {
       "date": "2026-05-24",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 6778,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 6778
+      }
     },
     {
       "date": "2026-05-25",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 38359,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 38359
+      }
     },
     {
       "date": "2026-05-26",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 12250,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 12250
+      }
     },
     {
       "date": "2026-05-27",
       "messages": 500,
       "sessions": 2,
-      "tokens": 471195,
+      "tokens": 510993,
       "level": 1,
       "modelTokens": {
         "claude-opus-4-7": 450828,
-        "claude-haiku-4-5-20251001": 20367
+        "claude-haiku-4-5-20251001": 60165
       }
     },
     {
       "date": "2026-05-28",
       "messages": 366,
       "sessions": 0,
-      "tokens": 498826,
+      "tokens": 508830,
       "level": 1,
       "modelTokens": {
-        "claude-opus-4-7": 498826
+        "claude-opus-4-7": 498826,
+        "claude-haiku-4-5-20251001": 10004
       }
     },
     {
       "date": "2026-05-29",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 24609,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 24609
+      }
     },
     {
       "date": "2026-05-30",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 17579,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 17579
+      }
     },
     {
       "date": "2026-05-31",
       "messages": 166,
       "sessions": 0,
-      "tokens": 159937,
+      "tokens": 163875,
       "level": 1,
       "modelTokens": {
         "claude-opus-4-7": 46293,
         "claude-opus-4-8": 103404,
-        "claude-haiku-4-5-20251001": 10240
+        "claude-haiku-4-5-20251001": 14178
       }
     },
     {
       "date": "2026-06-01",
       "messages": 556,
       "sessions": 1,
-      "tokens": 506838,
+      "tokens": 526702,
       "level": 1,
       "modelTokens": {
-        "claude-opus-4-8": 506838
+        "claude-opus-4-8": 506838,
+        "claude-haiku-4-5-20251001": 19864
       }
     },
     {
       "date": "2026-06-02",
       "messages": 879,
       "sessions": 4,
-      "tokens": 1704760,
+      "tokens": 1713844,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 1644248,
-        "claude-haiku-4-5-20251001": 60512
+        "claude-haiku-4-5-20251001": 69596
       }
     },
     {
       "date": "2026-06-03",
       "messages": 2787,
       "sessions": 9,
-      "tokens": 4242282,
+      "tokens": 4281655,
       "level": 4,
       "modelTokens": {
         "claude-opus-4-8": 4191368,
-        "claude-haiku-4-5-20251001": 50914
+        "claude-haiku-4-5-20251001": 90287
       }
     },
     {
       "date": "2026-06-04",
       "messages": 1500,
       "sessions": 0,
-      "tokens": 1955849,
+      "tokens": 2057245,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 1938746,
-        "claude-haiku-4-5-20251001": 17103
+        "claude-haiku-4-5-20251001": 118499
       }
     },
     {
       "date": "2026-06-05",
       "messages": 412,
       "sessions": 1,
-      "tokens": 1274129,
+      "tokens": 1289844,
       "level": 1,
       "modelTokens": {
-        "claude-opus-4-8": 1274129
+        "claude-opus-4-8": 1274129,
+        "claude-haiku-4-5-20251001": 15715
       }
     },
     {
       "date": "2026-06-06",
       "messages": 242,
       "sessions": 1,
-      "tokens": 419006,
+      "tokens": 441593,
       "level": 1,
       "modelTokens": {
         "claude-opus-4-8": 413621,
-        "claude-haiku-4-5-20251001": 5385
+        "claude-haiku-4-5-20251001": 27972
       }
     },
     {
@@ -1362,10 +3169,10 @@
       "date": "2026-06-09",
       "messages": 2065,
       "sessions": 11,
-      "tokens": 3323428,
+      "tokens": 3361672,
       "level": 3,
       "modelTokens": {
-        "claude-haiku-4-5-20251001": 131303,
+        "claude-haiku-4-5-20251001": 169547,
         "claude-opus-4-8": 3188426,
         "claude-sonnet-4-6": 2791,
         "claude-opus-4-7": 908
@@ -1375,12 +3182,12 @@
       "date": "2026-06-10",
       "messages": 2822,
       "sessions": 6,
-      "tokens": 5142671,
+      "tokens": 5179905,
       "level": 4,
       "modelTokens": {
         "claude-opus-4-8": 3867882,
         "claude-sonnet-4-6": 51872,
-        "claude-haiku-4-5-20251001": 165237,
+        "claude-haiku-4-5-20251001": 202471,
         "claude-opus-4-7": 13743,
         "claude-fable-5": 1043937
       }
@@ -1389,12 +3196,12 @@
       "date": "2026-06-11",
       "messages": 3023,
       "sessions": 6,
-      "tokens": 4246859,
+      "tokens": 4261714,
       "level": 4,
       "modelTokens": {
         "claude-sonnet-4-6": 81818,
         "claude-opus-4-8": 3128169,
-        "claude-haiku-4-5-20251001": 82575,
+        "claude-haiku-4-5-20251001": 97430,
         "claude-fable-5": 954297
       }
     },
@@ -1415,59 +3222,59 @@
       "date": "2026-06-13",
       "messages": 734,
       "sessions": 5,
-      "tokens": 1274725,
+      "tokens": 1287009,
       "level": 1,
       "modelTokens": {
         "claude-opus-4-8": 1215197,
         "claude-sonnet-4-6": 24283,
-        "claude-haiku-4-5-20251001": 35245
+        "claude-haiku-4-5-20251001": 47529
       }
     },
     {
       "date": "2026-06-14",
       "messages": 1206,
       "sessions": 7,
-      "tokens": 2295411,
+      "tokens": 2348255,
       "level": 2,
       "modelTokens": {
         "claude-sonnet-4-6": 56868,
         "claude-opus-4-8": 2150960,
-        "claude-haiku-4-5-20251001": 87583
+        "claude-haiku-4-5-20251001": 140427
       }
     },
     {
       "date": "2026-06-15",
       "messages": 927,
       "sessions": 8,
-      "tokens": 1484121,
+      "tokens": 1509554,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 1417638,
         "claude-sonnet-4-6": 30825,
-        "claude-haiku-4-5-20251001": 35658
+        "claude-haiku-4-5-20251001": 61091
       }
     },
     {
       "date": "2026-06-16",
       "messages": 1590,
       "sessions": 11,
-      "tokens": 2949280,
+      "tokens": 2999195,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 2786887,
         "claude-sonnet-4-6": 12935,
-        "claude-haiku-4-5-20251001": 149458
+        "claude-haiku-4-5-20251001": 199373
       }
     },
     {
       "date": "2026-06-17",
       "messages": 2152,
       "sessions": 13,
-      "tokens": 6338612,
+      "tokens": 6468827,
       "level": 3,
       "modelTokens": {
         "claude-opus-4-8": 6168090,
-        "claude-haiku-4-5-20251001": 159880,
+        "claude-haiku-4-5-20251001": 290095,
         "claude-opus-4-7": 10642
       }
     },
@@ -1475,52 +3282,55 @@
       "date": "2026-06-18",
       "messages": 1688,
       "sessions": 11,
-      "tokens": 5443177,
+      "tokens": 5523435,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 5218163,
-        "claude-haiku-4-5-20251001": 225014
+        "claude-haiku-4-5-20251001": 305272
       }
     },
     {
       "date": "2026-06-19",
       "messages": 1357,
       "sessions": 5,
-      "tokens": 1943342,
+      "tokens": 1996570,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 1867440,
         "claude-sonnet-4-6": 54597,
-        "claude-haiku-4-5-20251001": 21305
+        "claude-haiku-4-5-20251001": 74533
       }
     },
     {
       "date": "2026-06-20",
       "messages": 3,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 49954,
       "level": 1,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 49954
+      }
     },
     {
       "date": "2026-06-21",
       "messages": 340,
       "sessions": 0,
-      "tokens": 424436,
+      "tokens": 433066,
       "level": 1,
       "modelTokens": {
-        "claude-opus-4-8": 424436
+        "claude-opus-4-8": 424436,
+        "claude-haiku-4-5-20251001": 8630
       }
     },
     {
       "date": "2026-06-22",
       "messages": 1510,
       "sessions": 4,
-      "tokens": 3785276,
+      "tokens": 3883715,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 3652914,
-        "claude-haiku-4-5-20251001": 127208,
+        "claude-haiku-4-5-20251001": 225647,
         "claude-sonnet-4-6": 5154
       }
     },
@@ -1528,47 +3338,47 @@
       "date": "2026-06-23",
       "messages": 1769,
       "sessions": 12,
-      "tokens": 3984697,
+      "tokens": 4024259,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 3901749,
         "claude-sonnet-4-6": 15,
-        "claude-haiku-4-5-20251001": 82933
+        "claude-haiku-4-5-20251001": 122495
       }
     },
     {
       "date": "2026-06-24",
       "messages": 1132,
       "sessions": 6,
-      "tokens": 2131409,
+      "tokens": 2178895,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 2016993,
         "claude-sonnet-4-6": 49558,
-        "claude-haiku-4-5-20251001": 64858
+        "claude-haiku-4-5-20251001": 112344
       }
     },
     {
       "date": "2026-06-25",
       "messages": 1783,
       "sessions": 7,
-      "tokens": 4744398,
+      "tokens": 4806102,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 4650792,
-        "claude-haiku-4-5-20251001": 93606
+        "claude-haiku-4-5-20251001": 155310
       }
     },
     {
       "date": "2026-06-26",
       "messages": 1307,
       "sessions": 7,
-      "tokens": 3180738,
+      "tokens": 3257434,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 3156494,
         "claude-sonnet-4-6": 2453,
-        "claude-haiku-4-5-20251001": 21791
+        "claude-haiku-4-5-20251001": 98487
       }
     },
     {
@@ -1583,21 +3393,22 @@
       "date": "2026-06-28",
       "messages": 66,
       "sessions": 1,
-      "tokens": 317620,
+      "tokens": 355634,
       "level": 1,
       "modelTokens": {
-        "claude-opus-4-8": 317620
+        "claude-opus-4-8": 317620,
+        "claude-haiku-4-5-20251001": 38014
       }
     },
     {
       "date": "2026-06-29",
       "messages": 599,
       "sessions": 3,
-      "tokens": 1014981,
+      "tokens": 1079506,
       "level": 1,
       "modelTokens": {
         "claude-opus-4-8": 771100,
-        "claude-haiku-4-5-20251001": 7612,
+        "claude-haiku-4-5-20251001": 72137,
         "claude-sonnet-4-6": 236269
       }
     },
@@ -1605,11 +3416,11 @@
       "date": "2026-06-30",
       "messages": 5029,
       "sessions": 19,
-      "tokens": 10834910,
+      "tokens": 10892449,
       "level": 4,
       "modelTokens": {
         "claude-opus-4-8": 10668821,
-        "claude-haiku-4-5-20251001": 163733,
+        "claude-haiku-4-5-20251001": 221272,
         "claude-sonnet-4-6": 2356
       }
     },
@@ -1617,10 +3428,10 @@
       "date": "2026-07-01",
       "messages": 4830,
       "sessions": 26,
-      "tokens": 8547303,
+      "tokens": 8604824,
       "level": 4,
       "modelTokens": {
-        "claude-haiku-4-5-20251001": 86342,
+        "claude-haiku-4-5-20251001": 143863,
         "claude-sonnet-5": 2286,
         "claude-opus-4-8": 8458663,
         "claude-sonnet-4-6": 12
@@ -1630,84 +3441,91 @@
       "date": "2026-07-02",
       "messages": 746,
       "sessions": 3,
-      "tokens": 1184079,
+      "tokens": 1226872,
       "level": 1,
       "modelTokens": {
         "claude-opus-4-8": 1154969,
-        "claude-haiku-4-5-20251001": 29110
+        "claude-haiku-4-5-20251001": 71903
       }
     },
     {
       "date": "2026-07-03",
       "messages": 239,
       "sessions": 6,
-      "tokens": 1744370,
+      "tokens": 1764644,
       "level": 1,
       "modelTokens": {
         "claude-fable-5": 1739386,
-        "claude-haiku-4-5-20251001": 4984
+        "claude-haiku-4-5-20251001": 25258
       }
     },
     {
       "date": "2026-07-04",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 48731,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 48731
+      }
     },
     {
       "date": "2026-07-05",
       "messages": 1172,
       "sessions": 2,
-      "tokens": 2251187,
+      "tokens": 2297923,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 1545791,
-        "claude-fable-5": 705396
+        "claude-fable-5": 705396,
+        "claude-haiku-4-5-20251001": 46736
       }
     },
     {
       "date": "2026-07-06",
       "messages": 1986,
       "sessions": 3,
-      "tokens": 2734306,
-      "level": 3,
+      "tokens": 2826587,
+      "level": 2,
       "modelTokens": {
         "claude-fable-5": 1042363,
-        "claude-opus-4-8": 1691943
+        "claude-opus-4-8": 1691943,
+        "claude-haiku-4-5-20251001": 92281
       }
     },
     {
       "date": "2026-07-07",
       "messages": 2169,
       "sessions": 8,
-      "tokens": 6276539,
+      "tokens": 6321745,
       "level": 3,
       "modelTokens": {
         "claude-fable-5": 2146931,
-        "claude-opus-4-8": 4129608
+        "claude-opus-4-8": 4129608,
+        "claude-haiku-4-5-20251001": 45206
       }
     },
     {
       "date": "2026-07-08",
       "messages": 2456,
       "sessions": 11,
-      "tokens": 7792278,
+      "tokens": 7804113,
       "level": 3,
       "modelTokens": {
         "claude-opus-4-8": 4849503,
-        "claude-sonnet-5": 2942775
+        "claude-sonnet-5": 2942775,
+        "claude-haiku-4-5-20251001": 11835
       }
     },
     {
       "date": "2026-07-09",
       "messages": 663,
       "sessions": 1,
-      "tokens": 1320910,
+      "tokens": 1427561,
       "level": 1,
       "modelTokens": {
-        "claude-opus-4-8": 1320910
+        "claude-opus-4-8": 1320910,
+        "claude-haiku-4-5-20251001": 106651
       }
     },
     {
@@ -1724,712 +3542,824 @@
       "date": "2026-07-11",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 41844,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 41844
+      }
     },
     {
       "date": "2026-07-12",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 55155,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 55155
+      }
     },
     {
       "date": "2026-07-13",
       "messages": 2653,
       "sessions": 7,
-      "tokens": 6203314,
+      "tokens": 6238798,
       "level": 3,
       "modelTokens": {
         "claude-opus-4-8": 5456853,
-        "claude-sonnet-5": 746461
+        "claude-sonnet-5": 746461,
+        "claude-haiku-4-5-20251001": 35484
       }
     },
     {
       "date": "2026-07-14",
       "messages": 3114,
       "sessions": 11,
-      "tokens": 9081674,
+      "tokens": 9303967,
       "level": 4,
       "modelTokens": {
         "claude-opus-4-8": 9020028,
-        "claude-sonnet-5": 61646
+        "claude-sonnet-5": 61646,
+        "claude-haiku-4-5-20251001": 222293
       }
     },
     {
       "date": "2026-07-15",
       "messages": 3705,
       "sessions": 19,
-      "tokens": 7447983,
+      "tokens": 7529935,
       "level": 4,
       "modelTokens": {
         "claude-opus-4-8": 6924750,
         "claude-sonnet-5": 170178,
         "claude-opus-4-7": 30825,
         "claude-fable-5": 318508,
-        "claude-haiku-4-5-20251001": 3722
+        "claude-haiku-4-5-20251001": 85674
       }
     },
     {
       "date": "2026-07-16",
       "messages": 2440,
       "sessions": 12,
-      "tokens": 7106095,
+      "tokens": 7123296,
       "level": 3,
       "modelTokens": {
         "claude-sonnet-5": 155588,
         "claude-opus-4-8": 6413667,
-        "claude-fable-5": 536840
+        "claude-fable-5": 536840,
+        "claude-haiku-4-5-20251001": 17201
       }
     },
     {
       "date": "2026-07-17",
       "messages": 3364,
       "sessions": 14,
-      "tokens": 5515280,
+      "tokens": 5571855,
       "level": 4,
       "modelTokens": {
         "claude-opus-4-7": 8520,
         "claude-opus-4-8": 3852627,
         "claude-fable-5": 838610,
-        "claude-sonnet-5": 815523
+        "claude-sonnet-5": 815523,
+        "claude-haiku-4-5-20251001": 56575
       }
     },
     {
       "date": "2026-07-18",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 28700,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 28700
+      }
     },
     {
       "date": "2026-07-19",
       "messages": 216,
       "sessions": 7,
-      "tokens": 235160,
+      "tokens": 254404,
       "level": 1,
       "modelTokens": {
         "claude-sonnet-5": 3795,
         "claude-opus-4-8": 227412,
-        "claude-haiku-4-5-20251001": 3953
+        "claude-haiku-4-5-20251001": 23197
       }
     },
     {
       "date": "2026-07-20",
       "messages": 1991,
       "sessions": 12,
-      "tokens": 4487796,
+      "tokens": 4544511,
       "level": 3,
       "modelTokens": {
         "claude-opus-4-7": 7500,
-        "claude-opus-4-8": 4480296
+        "claude-opus-4-8": 4480296,
+        "claude-haiku-4-5-20251001": 56715
       }
     },
     {
       "date": "2026-07-21",
       "messages": 2898,
       "sessions": 13,
-      "tokens": 5533548,
+      "tokens": 5580456,
       "level": 4,
       "modelTokens": {
         "claude-opus-4-8": 5532520,
-        "claude-sonnet-5": 1028
+        "claude-sonnet-5": 1028,
+        "claude-haiku-4-5-20251001": 46908
       }
     },
     {
       "date": "2026-07-22",
       "messages": 3189,
       "sessions": 25,
-      "tokens": 5398458,
+      "tokens": 5491320,
       "level": 4,
       "modelTokens": {
         "claude-opus-4-8": 5015878,
-        "claude-sonnet-5": 382580
+        "claude-sonnet-5": 382580,
+        "claude-haiku-4-5-20251001": 92862
       }
     },
     {
       "date": "2026-07-23",
       "messages": 790,
       "sessions": 3,
-      "tokens": 697892,
+      "tokens": 812062,
       "level": 2,
       "modelTokens": {
-        "claude-opus-4-8": 697892
+        "claude-opus-4-8": 697892,
+        "claude-haiku-4-5-20251001": 114170
       }
     },
     {
       "date": "2026-07-24",
       "messages": 1908,
       "sessions": 7,
-      "tokens": 3911276,
+      "tokens": 3930095,
       "level": 2,
       "modelTokens": {
         "claude-opus-4-8": 3900422,
-        "claude-sonnet-5": 10854
+        "claude-sonnet-5": 10854,
+        "claude-haiku-4-5-20251001": 18819
       }
     },
     {
       "date": "2026-07-25",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 38775,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 38775
+      }
     },
     {
       "date": "2026-07-26",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 39803,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 39803
+      }
     },
     {
       "date": "2026-07-27",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 146701,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 146701
+      }
     },
     {
       "date": "2026-07-28",
       "messages": 3902,
       "sessions": 13,
-      "tokens": 4293953,
+      "tokens": 4379932,
       "level": 4,
       "modelTokens": {
         "claude-sonnet-5": 83121,
         "claude-opus-5": 3596315,
         "claude-opus-4-8": 592195,
-        "claude-opus-4-7": 22322
+        "claude-opus-4-7": 22322,
+        "claude-haiku-4-5-20251001": 85979
       }
     },
     {
       "date": "2026-07-29",
       "messages": 2773,
       "sessions": 15,
-      "tokens": 3605120,
+      "tokens": 3695186,
       "level": 4,
       "modelTokens": {
         "claude-opus-4-8": 397321,
         "claude-opus-5": 3205290,
-        "claude-sonnet-5": 2509
+        "claude-sonnet-5": 2509,
+        "claude-haiku-4-5-20251001": 90066
       }
     },
     {
       "date": "2026-07-30",
       "messages": 3882,
       "sessions": 13,
-      "tokens": 4667117,
+      "tokens": 4710368,
       "level": 4,
       "modelTokens": {
         "claude-opus-5": 3917710,
-        "claude-sonnet-5": 749407
+        "claude-sonnet-5": 749407,
+        "claude-haiku-4-5-20251001": 43251
       }
     },
     {
       "date": "2026-07-31",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 52734,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 52714,
+        "claude-sonnet-4-5-20250929": 20
+      }
     },
     {
       "date": "2026-08-01",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 4485,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 4485
+      }
     },
     {
       "date": "2026-08-02",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 75380,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 75380
+      }
     },
     {
       "date": "2026-08-03",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 68771,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 68771
+      }
     },
     {
       "date": "2026-08-04",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 118180,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 118180
+      }
     },
     {
       "date": "2026-08-05",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 105080,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 105080
+      }
     },
     {
       "date": "2026-08-06",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 188299,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 188299
+      }
     },
     {
       "date": "2026-08-07",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 96157,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 96157
+      }
     },
     {
       "date": "2026-08-08",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 51696,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 51696
+      }
     },
     {
       "date": "2026-08-09",
       "messages": 44,
       "sessions": 1,
-      "tokens": 17765,
+      "tokens": 75145,
       "level": 1,
       "modelTokens": {
-        "claude-opus-5": 17765
+        "claude-opus-5": 17765,
+        "claude-haiku-4-5-20251001": 57380
       }
     },
     {
       "date": "2026-08-10",
       "messages": 1196,
       "sessions": 6,
-      "tokens": 1957254,
+      "tokens": 2057915,
       "level": 2,
       "modelTokens": {
-        "claude-opus-5": 1957254
+        "claude-opus-5": 1957254,
+        "claude-haiku-4-5-20251001": 100661
       }
     },
     {
       "date": "2026-08-11",
       "messages": 2761,
       "sessions": 4,
-      "tokens": 3751733,
+      "tokens": 3835534,
       "level": 4,
       "modelTokens": {
-        "claude-opus-5": 3751733
+        "claude-opus-5": 3751733,
+        "claude-haiku-4-5-20251001": 83801
       }
     },
     {
       "date": "2026-08-12",
       "messages": 2117,
       "sessions": 11,
-      "tokens": 5954161,
+      "tokens": 6070934,
       "level": 3,
       "modelTokens": {
         "claude-sonnet-5": 1899379,
         "claude-opus-5": 4045463,
-        "claude-haiku-4-5-20251001": 9319
+        "claude-haiku-4-5-20251001": 126092
       }
     },
     {
       "date": "2026-08-13",
       "messages": 2160,
       "sessions": 11,
-      "tokens": 3337728,
+      "tokens": 3441595,
       "level": 3,
       "modelTokens": {
         "claude-sonnet-5": 505135,
         "claude-opus-5": 2294580,
-        "claude-fable-5": 538013
+        "claude-fable-5": 538013,
+        "claude-haiku-4-5-20251001": 103867
       }
     },
     {
       "date": "2026-08-14",
       "messages": 2149,
       "sessions": 7,
-      "tokens": 2881134,
+      "tokens": 2928716,
       "level": 3,
       "modelTokens": {
         "claude-opus-5": 2880922,
-        "claude-haiku-4-5-20251001": 212
+        "claude-haiku-4-5-20251001": 47794
       }
     },
     {
       "date": "2026-08-15",
       "messages": 1134,
       "sessions": 5,
-      "tokens": 766481,
+      "tokens": 1122704,
       "level": 2,
       "modelTokens": {
         "claude-sonnet-5": 608984,
-        "claude-opus-5": 157497
+        "claude-opus-5": 157497,
+        "claude-haiku-4-5-20251001": 54269,
+        "claude-sonnet-4-6": 301954
       }
     },
     {
       "date": "2026-08-16",
       "messages": 1527,
       "sessions": 5,
-      "tokens": 1209129,
+      "tokens": 1274948,
       "level": 2,
       "modelTokens": {
         "claude-sonnet-5": 465178,
-        "claude-opus-5": 743951
+        "claude-opus-5": 743951,
+        "claude-sonnet-4-6": 56064,
+        "claude-haiku-4-5-20251001": 9755
       }
     },
     {
       "date": "2026-08-17",
       "messages": 3115,
       "sessions": 12,
-      "tokens": 4302118,
+      "tokens": 4378858,
       "level": 4,
       "modelTokens": {
         "claude-sonnet-5": 2866145,
         "claude-opus-5": 1413703,
-        "claude-opus-4-8": 22270
+        "claude-opus-4-8": 22270,
+        "claude-haiku-4-5-20251001": 18446,
+        "claude-sonnet-4-6": 58294
       }
     },
     {
       "date": "2026-08-18",
       "messages": 4886,
       "sessions": 24,
-      "tokens": 4247476,
+      "tokens": 4341800,
       "level": 4,
       "modelTokens": {
         "claude-sonnet-5": 2380080,
         "claude-opus-4-7": 46098,
-        "claude-opus-5": 1821298
+        "claude-opus-5": 1821298,
+        "claude-haiku-4-5-20251001": 8843,
+        "claude-sonnet-4-6": 85481
       }
     },
     {
       "date": "2026-08-19",
       "messages": 4375,
       "sessions": 18,
-      "tokens": 5184344,
+      "tokens": 5263333,
       "level": 4,
       "modelTokens": {
-        "claude-haiku-4-5-20251001": 1110,
+        "claude-haiku-4-5-20251001": 5206,
         "claude-sonnet-5": 3443524,
-        "claude-opus-5": 1739710
+        "claude-opus-5": 1739710,
+        "claude-sonnet-4-6": 74893
       }
     },
     {
       "date": "2026-08-20",
       "messages": 4162,
       "sessions": 10,
-      "tokens": 6858759,
+      "tokens": 6934400,
       "level": 4,
       "modelTokens": {
         "claude-opus-5": 3094583,
         "claude-sonnet-5": 3757676,
-        "claude-haiku-4-5-20251001": 6500
+        "claude-haiku-4-5-20251001": 9754,
+        "claude-sonnet-4-6": 72387
       }
     },
     {
       "date": "2026-08-21",
       "messages": 2382,
       "sessions": 11,
-      "tokens": 2544131,
+      "tokens": 2668230,
       "level": 3,
       "modelTokens": {
         "claude-sonnet-5": 258710,
-        "claude-opus-5": 2285421
+        "claude-opus-5": 2285421,
+        "claude-haiku-4-5-20251001": 8489,
+        "claude-sonnet-4-6": 115610
       }
     },
     {
       "date": "2026-08-22",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 28421,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-sonnet-4-6": 28421
+      }
     },
     {
       "date": "2026-08-23",
       "messages": 164,
       "sessions": 0,
-      "tokens": 106265,
+      "tokens": 201124,
       "level": 1,
       "modelTokens": {
-        "claude-opus-5": 106265
+        "claude-opus-5": 106265,
+        "claude-haiku-4-5-20251001": 4019,
+        "claude-sonnet-4-6": 90840
       }
     },
     {
       "date": "2026-08-24",
       "messages": 1553,
       "sessions": 7,
-      "tokens": 1740067,
+      "tokens": 1859979,
       "level": 2,
       "modelTokens": {
         "claude-sonnet-5": 1181621,
-        "claude-opus-5": 558446
+        "claude-opus-5": 558446,
+        "claude-haiku-4-5-20251001": 18232,
+        "claude-sonnet-4-6": 101680
       }
     },
     {
       "date": "2026-08-25",
       "messages": 2100,
       "sessions": 3,
-      "tokens": 1235065,
+      "tokens": 1365032,
       "level": 3,
       "modelTokens": {
-        "claude-sonnet-5": 1235065
+        "claude-sonnet-5": 1235065,
+        "claude-sonnet-4-6": 129967
       }
     },
     {
       "date": "2026-08-26",
       "messages": 79,
       "sessions": 1,
-      "tokens": 30437,
+      "tokens": 182525,
       "level": 1,
       "modelTokens": {
-        "claude-sonnet-5": 30437
+        "claude-sonnet-5": 30437,
+        "claude-haiku-4-5-20251001": 118998,
+        "claude-sonnet-4-6": 33090
       }
     },
     {
       "date": "2026-08-27",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 138534,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 52260,
+        "claude-sonnet-4-6": 86274
+      }
     },
     {
       "date": "2026-08-28",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 86026,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 10664,
+        "claude-sonnet-4-6": 75362
+      }
     },
     {
       "date": "2026-08-29",
       "messages": 110,
       "sessions": 3,
-      "tokens": 65920,
+      "tokens": 93919,
       "level": 1,
       "modelTokens": {
-        "claude-sonnet-5": 65920
+        "claude-sonnet-5": 65920,
+        "claude-sonnet-4-6": 27999
       }
     },
     {
       "date": "2026-08-30",
       "messages": 17,
       "sessions": 1,
-      "tokens": 14446,
+      "tokens": 40553,
       "level": 1,
       "modelTokens": {
-        "claude-sonnet-5": 14446
+        "claude-sonnet-5": 14446,
+        "claude-haiku-4-5-20251001": 3746,
+        "claude-sonnet-4-6": 22361
       }
     },
     {
       "date": "2026-08-31",
       "messages": 0,
       "sessions": 0,
-      "tokens": 0,
+      "tokens": 143225,
       "level": 0,
-      "modelTokens": {}
+      "modelTokens": {
+        "claude-haiku-4-5-20251001": 4105,
+        "claude-sonnet-4-6": 139120
+      }
     },
     {
       "date": "2026-09-01",
       "messages": 30,
       "sessions": 1,
-      "tokens": 34641,
+      "tokens": 217843,
       "level": 1,
       "modelTokens": {
-        "claude-sonnet-5": 34641
+        "claude-sonnet-5": 34641,
+        "claude-haiku-4-5-20251001": 8085,
+        "claude-sonnet-4-6": 175117
       }
     },
     {
       "date": "2026-09-02",
       "messages": 2545,
       "sessions": 10,
-      "tokens": 3649592,
+      "tokens": 3763044,
       "level": 3,
       "modelTokens": {
         "claude-opus-5": 3610887,
-        "claude-sonnet-5": 38705
+        "claude-sonnet-5": 38705,
+        "claude-haiku-4-5-20251001": 5103,
+        "claude-sonnet-4-6": 108349
       }
     },
     {
       "date": "2026-09-03",
       "messages": 2229,
       "sessions": 11,
-      "tokens": 3174792,
+      "tokens": 3567469,
       "level": 3,
       "modelTokens": {
         "claude-sonnet-5": 3113,
-        "claude-opus-5": 3171679
+        "claude-opus-5": 3171679,
+        "claude-haiku-4-5-20251001": 59335,
+        "claude-sonnet-4-6": 333342
       }
     },
     {
       "date": "2026-09-04",
       "messages": 2258,
       "sessions": 6,
-      "tokens": 2237312,
+      "tokens": 2281956,
       "level": 3,
       "modelTokens": {
-        "claude-opus-5": 2237312
+        "claude-opus-5": 2237312,
+        "claude-haiku-4-5-20251001": 11840,
+        "claude-sonnet-4-6": 32804
       }
     },
     {
       "date": "2026-09-05",
       "messages": 370,
       "sessions": 2,
-      "tokens": 229299,
+      "tokens": 334697,
       "level": 1,
       "modelTokens": {
-        "claude-opus-5": 229299
+        "claude-opus-5": 229299,
+        "claude-haiku-4-5-20251001": 35868,
+        "claude-sonnet-4-6": 69530
       }
     },
     {
       "date": "2026-09-06",
       "messages": 2152,
       "sessions": 13,
-      "tokens": 3962237,
+      "tokens": 4054252,
       "level": 3,
       "modelTokens": {
         "claude-opus-5": 535210,
         "claude-fable-5-1": 3424083,
-        "claude-sonnet-5": 2944
+        "claude-sonnet-5": 2944,
+        "claude-haiku-4-5-20251001": 9185,
+        "claude-sonnet-4-6": 82830
       }
     },
     {
       "date": "2026-09-07",
       "messages": 3438,
       "sessions": 18,
-      "tokens": 5210414,
+      "tokens": 5357599,
       "level": 4,
       "modelTokens": {
         "claude-fable-5-1": 1035856,
         "claude-sonnet-5": 1736433,
-        "claude-opus-5": 2438125
+        "claude-opus-5": 2438125,
+        "claude-haiku-4-5-20251001": 10677,
+        "claude-sonnet-4-6": 136508
       }
     },
     {
       "date": "2026-09-08",
       "messages": 2037,
       "sessions": 10,
-      "tokens": 3262097,
+      "tokens": 4420011,
       "level": 3,
       "modelTokens": {
         "claude-opus-5": 1586689,
         "claude-sonnet-5": 1664615,
-        "claude-opus-4-7": 10793
+        "claude-opus-4-7": 10793,
+        "claude-haiku-4-5-20251001": 1060654,
+        "claude-sonnet-4-6": 97260
       }
     },
     {
       "date": "2026-09-09",
       "messages": 1407,
       "sessions": 3,
-      "tokens": 1485039,
+      "tokens": 2257982,
       "level": 2,
       "modelTokens": {
         "claude-sonnet-5": 797485,
-        "claude-opus-5": 687554
+        "claude-opus-5": 687554,
+        "claude-haiku-4-5-20251001": 710325,
+        "claude-sonnet-4-6": 62618
       }
     },
     {
       "date": "2026-09-10",
       "messages": 2085,
       "sessions": 7,
-      "tokens": 3143741,
+      "tokens": 3214459,
       "level": 3,
       "modelTokens": {
         "claude-opus-5": 2716681,
         "claude-sonnet-5": 1429,
-        "claude-fable-5-1": 425631
+        "claude-fable-5-1": 425631,
+        "claude-sonnet-4-6": 70718
       }
     },
     {
       "date": "2026-09-11",
       "messages": 2974,
       "sessions": 11,
-      "tokens": 3675528,
+      "tokens": 3760954,
       "level": 4,
       "modelTokens": {
         "claude-opus-5": 3042114,
-        "claude-sonnet-5": 633414
+        "claude-sonnet-5": 633414,
+        "claude-haiku-4-5-20251001": 14768,
+        "claude-sonnet-4-6": 70658
       }
     },
     {
       "date": "2026-09-12",
       "messages": 190,
       "sessions": 3,
-      "tokens": 64160,
+      "tokens": 90203,
       "level": 1,
       "modelTokens": {
         "claude-sonnet-5": 50158,
-        "claude-opus-5": 14002
+        "claude-opus-5": 14002,
+        "claude-sonnet-4-6": 26043
       }
     },
     {
       "date": "2026-09-13",
       "messages": 255,
       "sessions": 3,
-      "tokens": 327813,
+      "tokens": 568055,
       "level": 1,
       "modelTokens": {
         "claude-sonnet-5": 18069,
-        "claude-opus-5": 309744
+        "claude-opus-5": 309744,
+        "claude-haiku-4-5-20251001": 189496,
+        "claude-sonnet-4-6": 50746
       }
     },
     {
       "date": "2026-09-14",
       "messages": 1764,
       "sessions": 3,
-      "tokens": 1521609,
+      "tokens": 2763770,
       "level": 2,
       "modelTokens": {
         "claude-sonnet-5": 341718,
         "claude-opus-5": 1152879,
-        "claude-fable-5-1": 27012
+        "claude-fable-5-1": 27012,
+        "claude-haiku-4-5-20251001": 1028733,
+        "claude-sonnet-4-6": 213428
       }
     },
     {
       "date": "2026-09-15",
       "messages": 2863,
       "sessions": 7,
-      "tokens": 2575276,
+      "tokens": 4142882,
       "level": 4,
       "modelTokens": {
         "claude-opus-5": 2051770,
-        "claude-fable-5-1": 523506
+        "claude-fable-5-1": 523506,
+        "claude-haiku-4-5-20251001": 1479755,
+        "claude-sonnet-4-6": 87851
       }
     },
     {
       "date": "2026-09-16",
       "messages": 1909,
       "sessions": 6,
-      "tokens": 1931002,
+      "tokens": 3748127,
       "level": 2,
       "modelTokens": {
         "claude-opus-5": 1920467,
-        "claude-opus-4-7": 10535
+        "claude-opus-4-7": 10535,
+        "claude-haiku-4-5-20251001": 1749944,
+        "claude-sonnet-4-6": 67181
       }
     },
     {
       "date": "2026-09-17",
-      "messages": 1919,
-      "sessions": 7,
-      "tokens": 1883734,
-      "level": 2,
+      "messages": 2051,
+      "sessions": 8,
+      "tokens": 2122819,
+      "level": 3,
       "modelTokens": {
         "claude-sonnet-5": 58684,
         "claude-fable-5-1": 1114301,
-        "claude-opus-5": 710749
+        "claude-opus-5": 773659,
+        "claude-opus-4-7": 11398,
+        "claude-sonnet-4-6": 164777
       }
     }
   ]
