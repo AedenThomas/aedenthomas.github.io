@@ -27,9 +27,10 @@ const MODEL_COLORS = [
 ];
 const MODEL_COLOR_REST = "#e6edfc";
 
-// The day heatmap and the stacked per-day token chart. Flip to false to hide
-// both; the numbers, summary line and model legend stay visible either way.
-const SHOW_GRAPHS = true;
+// The day heatmap and the stacked per-day token chart, hidden for now. Flip to
+// true to bring both back; the numbers, summary line and model legend stay
+// visible either way.
+const SHOW_GRAPHS = false;
 
 const LEGEND_LIMIT = 6;
 const CHART_TICKS = 7;
