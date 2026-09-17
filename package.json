@@ -26,6 +26,7 @@
   "scripts": {
     "postinstall": "node scripts/vendor-rrweb.js",
     "vendor": "node scripts/vendor-rrweb.js",
+    "claude-stats": "node scripts/collect-claude-stats.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
