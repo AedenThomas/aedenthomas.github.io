@@ -38,6 +38,12 @@ const STATE_FILE = path.join(STATE_DIR, 'state.json');
 
 const OUTPUT_FILE = path.join(__dirname, '../public/claude-stats.json');
 
+// Tokens counted here are "tokens processed": uncached input + output + cache
+// reads + cache writes. That matches the headline number Claude Code's own stats
+// panel reports. Note the panel mixes windows — its Sessions and Messages tiles
+// are lifetime, while its Total tokens tile covers only the ~35 days that
+// dailyModelTokens retains, so the two will not appear to agree there.
+//
 // Moby-Dick is ~206k words; the panel's comparison works out to ~268k tokens.
 const MOBY_DICK_TOKENS = 268000;
 
@@ -164,8 +170,17 @@ function readStatsCache() {
 // Cache field semantics, verified against the panel:
 //   dailyActivity[].sessionCount  sessions bucketed by START date (sums to totalSessions)
 //   dailyActivity[].messageCount  user + assistant entries on that date
-//   dailyModelTokens[]            input + output tokens per model per date
+//   dailyModelTokens[]            tokens processed per model per date, cache included,
+//                                 but only for a rolling ~35-day retention window
+//   modelUsage                    LIFETIME per-model in/out/cacheRead/cacheCreation
 //   hourCounts                    sessions bucketed by START hour (also sums to totalSessions)
+//
+// Only modelUsage reaches back over the whole history, and it has no per-day
+// breakdown. dailyModelTokens covers recent days in detail but drops the rest.
+// So the two are used for different jobs: dailyModelTokens supplies per-day
+// figures where it can, and the difference between the lifetime totals and what
+// those days account for is carried as `residual` — real tokens with no
+// surviving per-day detail, added to the totals but not to any day.
 function buildLegacy(cache) {
     const days = {};
 
@@ -183,17 +198,34 @@ function buildLegacy(cache) {
         days[day.date].tokens = Object.values(byModel).reduce((a, b) => a + b, 0);
     }
 
-    // modelUsage is a lifetime in/out split per model with no per-day breakdown,
-    // so like hourCounts it stays a single bucket covering everything through
-    // `through`. Its in+out sums to exactly sum(dailyModelTokens), so the two
-    // views of the legacy window agree.
+    // modelUsage is a lifetime split per model with no per-day breakdown, so like
+    // hourCounts it stays a single bucket covering everything through `through`.
+    // Cache reads and writes are input-side, so they fold into `input`.
     const modelUsage = {};
+    const lifetime = {};
     for (const [model, usage] of Object.entries(cache.modelUsage || {})) {
         if (!model.startsWith('claude-')) continue;
-        modelUsage[model] = {
-            input: usage.inputTokens || 0,
-            output: usage.outputTokens || 0
-        };
+        const input =
+            (usage.inputTokens || 0) +
+            (usage.cacheReadInputTokens || 0) +
+            (usage.cacheCreationInputTokens || 0);
+        const output = usage.outputTokens || 0;
+        modelUsage[model] = { input, output };
+        lifetime[model] = input + output;
+    }
+
+    // What the retained per-day rows account for, per model...
+    const detailed = {};
+    for (const day of cache.dailyModelTokens || []) {
+        addInto(detailed, day.tokensByModel || {});
+    }
+
+    // ...and the remainder, which is everything older than the retention window.
+    // Without this the totals would silently shrink to the last ~35 days.
+    const residual = {};
+    for (const [model, total] of Object.entries(lifetime)) {
+        const gap = total - (detailed[model] || 0);
+        if (gap > 0) residual[model] = gap;
     }
 
     return {
@@ -202,6 +234,7 @@ function buildLegacy(cache) {
         // so it stays a single bucket covering everything through `through`.
         hourCounts: Object.assign({}, cache.hourCounts || {}),
         modelUsage,
+        residual,
         firstSessionDate: cache.firstSessionDate ? localDateKey(new Date(cache.firstSessionDate)) : null,
         days
     };
@@ -260,10 +293,17 @@ async function scanTranscripts() {
             const message = entry.message || {};
             const usage = message.usage || {};
 
-            // Tokens: input + output only. Cache reads/writes are excluded, which
-            // is what the panel does (including them gives ~16.9B, not 265.7M).
+            // Tokens processed: uncached input + output + cache reads + writes.
+            // Checked against the panel's own per-day figures — on every day whose
+            // transcripts have not been pruned yet the two agree exactly, and
+            // counting every .jsonl (subagent files included) is what makes them
+            // agree: subagent calls are distinct spend, not duplicates of the
+            // parent session, and dropping them undercounts by about a third.
             if (type === 'assistant' && typeof message.model === 'string' && message.model.startsWith('claude-')) {
-                const input = usage.input_tokens || 0;
+                const input =
+                    (usage.input_tokens || 0) +
+                    (usage.cache_read_input_tokens || 0) +
+                    (usage.cache_creation_input_tokens || 0);
                 const output = usage.output_tokens || 0;
                 if (input + output > 0) {
                     const day = dayFor(date);
@@ -346,6 +386,12 @@ function computeWindow(combined, legacy, today, from) {
         for (const [model, io] of Object.entries(legacy.modelUsage || {})) {
             addIo(model, io.input || 0, io.output || 0);
         }
+        // Tokens from before the per-day retention window. They have no date, so
+        // they can only join the totals here, never a day or the heatmap.
+        for (const [model, n] of Object.entries(legacy.residual || {})) {
+            tokens += n;
+            modelTokens[model] = (modelTokens[model] || 0) + n;
+        }
     }
     for (const date of dates) {
         if (legacy.through && date <= legacy.through) continue;
@@ -418,6 +464,9 @@ function computeWindow(combined, legacy, today, from) {
 }
 
 // Fold the Bedrock snapshot into the day map and the legacy model split.
+//
+// Bedrock's cache read/write metrics are folded into its input side by the
+// snapshot script, so both sources count tokens the same way.
 //
 // Tokens merge; sessions, messages, streaks and peak hour do not. Bedrock has no
 // notion of a session or a user message — only invocations — so those stay

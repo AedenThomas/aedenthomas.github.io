@@ -13,12 +13,20 @@ const { execFileSync } = require('child_process');
 // Re-run it by hand (needs a configured AWS CLI) only if that changes:
 //   node scripts/fetch-bedrock-stats.js
 //
-// Counts uncached input + output only. Bedrock reports cache reads and writes as
-// separate metrics, and the portfolio excludes them everywhere else — including
-// them here would add ~1.35B tokens against ~45M of real work.
+// Counts tokens processed: uncached input + output + cache reads + cache writes.
+// Bedrock reports the cache metrics separately, so all four are summed to match
+// how the transcript side counts (and how Claude Code's own panel reports its
+// headline total).
 
 const REGIONS = ['us-east-1', 'eu-west-2'];
-const METRICS = { InputTokenCount: 'input', OutputTokenCount: 'output' };
+// Cache reads and writes are input-side tokens, so they fold into `input` —
+// the same treatment the transcript side gives cache_read / cache_creation.
+const METRICS = {
+    InputTokenCount: 'input',
+    OutputTokenCount: 'output',
+    CacheReadInputTokenCount: 'input',
+    CacheWriteInputTokenCount: 'input'
+};
 const OUTPUT_FILE = path.join(__dirname, 'bedrock-snapshot.json');
 
 // CloudWatch keeps hourly rollups for 455 days; anything older is already gone.
