@@ -25,6 +25,13 @@ const CLAUDE_DIR = path.join(os.homedir(), '.claude');
 const PROJECTS_DIR = path.join(CLAUDE_DIR, 'projects');
 const STATS_CACHE = path.join(CLAUDE_DIR, 'stats-cache.json');
 
+// Prompt history. Third source, and the only one that reaches days the other two
+// have both lost: the stats cache is built from transcripts, so a day only ever
+// entered it if the panel happened to be opened while that day's transcript still
+// existed. Spring 2026 never was, so March and April read as zero days despite
+// real work. history.jsonl kept the prompts.
+const HISTORY_FILE = path.join(CLAUDE_DIR, 'history.jsonl');
+
 // A frozen snapshot of the AWS Bedrock work, captured once by
 // scripts/fetch-bedrock-stats.js. That traffic is finished, so it is history
 // rather than something to re-collect daily, and committing it keeps the site
@@ -354,7 +361,11 @@ function computeWindow(combined, legacy, today, from) {
     const dates = Object.keys(combined)
         .filter((d) => !from || d >= from)
         .sort();
-    const activeDates = dates.filter((d) => (combined[d].messages || 0) > 0);
+    // Any activity, not just messages: the history-only days have real sessions
+    // but no message counts, and they were real working days.
+    const activeDates = dates.filter(
+        (d) => (combined[d].messages || 0) > 0 || (combined[d].sessions || 0) > 0
+    );
 
     let sessions = 0;
     let messages = 0;
@@ -463,6 +474,64 @@ function computeWindow(combined, legacy, today, from) {
     };
 }
 
+// Fill in days that only history.jsonl remembers.
+//
+// It stores prompts — text, timestamp, project, sessionId — and no usage data at
+// all, so this adds days and sessions and never a single token. Days already
+// carrying session data are left alone; this only covers what was lost.
+//
+// Messages stay untouched too: the cache counts user + assistant entries, while
+// history.jsonl holds only your own prompts, and mixing the two definitions for
+// a ~0.1% gain would make the number mean less, not more.
+function mergeHistory(combined) {
+    if (!fs.existsSync(HISTORY_FILE)) return null;
+
+    const byDate = {};
+    let lines;
+    try {
+        lines = fs.readFileSync(HISTORY_FILE, 'utf8').split('\n');
+    } catch (e) {
+        console.warn(`Ignoring unreadable history file: ${e.message}`);
+        return null;
+    }
+
+    for (const line of lines) {
+        if (!line.trim()) continue;
+        let entry;
+        try {
+            entry = JSON.parse(line);
+        } catch (e) {
+            continue;
+        }
+        const ts = entry.timestamp;
+        if (typeof ts !== 'number') continue;
+        // Seconds or milliseconds, depending on when the entry was written.
+        const when = new Date(ts > 1e11 ? ts : ts * 1000);
+        if (isNaN(when)) continue;
+        const date = localDateKey(when);
+        const bucket = (byDate[date] = byDate[date] || { prompts: 0, sessions: new Set() });
+        bucket.prompts++;
+        if (entry.sessionId) bucket.sessions.add(entry.sessionId);
+    }
+
+    let days = 0;
+    let sessions = 0;
+    for (const [date, bucket] of Object.entries(byDate)) {
+        const existing = combined[date];
+        // Already accounted for by the cache or the transcript scan.
+        if (existing && ((existing.messages || 0) > 0 || (existing.sessions || 0) > 0)) continue;
+
+        const day = existing || emptyDay();
+        combined[date] = day;
+        day.sessions = bucket.sessions.size;
+        day.promptsOnly = true; // no tokens survive for this day; see levelFor
+        days++;
+        sessions += day.sessions;
+    }
+
+    return { days, sessions };
+}
+
 // Fold the Bedrock snapshot into the day map and the legacy model split.
 //
 // Bedrock's cache read/write metrics are folded into its input side by the
@@ -539,6 +608,11 @@ function buildOutput(state) {
     for (const [date, day] of Object.entries(legacy.days || {})) combined[date] = day;
     for (const [date, day] of Object.entries(JSON.parse(JSON.stringify(state.days || {})))) combined[date] = day;
 
+    const history = mergeHistory(combined);
+    if (history && history.days) {
+        console.log(`History: +${history.days} days, +${history.sessions} sessions (no tokens survive for these)`);
+    }
+
     const bedrock = mergeBedrock(combined, legacy);
     if (bedrock) {
         console.log(
@@ -563,8 +637,11 @@ function buildOutput(state) {
         .sort((a, b) => a - b);
     const quantile = (q) => sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))] || 0;
     const thresholds = [quantile(0.25), quantile(0.5), quantile(0.75)];
-    const levelFor = (count) => {
-        if (!count) return 0;
+    // A day whose tokens are lost but whose activity is not still gets the lowest
+    // shade rather than reading as a day off. The scale stays a token scale;
+    // level 1 just doubles as "something happened here, the count is gone".
+    const levelFor = (count, active) => {
+        if (!count) return active ? 1 : 0;
         if (count <= thresholds[0]) return 1;
         if (count <= thresholds[1]) return 2;
         if (count <= thresholds[2]) return 3;
@@ -582,7 +659,7 @@ function buildOutput(state) {
                 messages: day.messages || 0,
                 sessions: day.sessions || 0,
                 tokens: day.tokens || 0,
-                level: levelFor(day.tokens || 0),
+                level: levelFor(day.tokens || 0, (day.messages || 0) > 0 || (day.sessions || 0) > 0),
                 // Per-model split drives the stacked chart. Only models actually
                 // used that day are listed, which keeps the payload small.
                 modelTokens: Object.assign({}, day.modelTokens)

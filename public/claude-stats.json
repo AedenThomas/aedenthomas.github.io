@@ -1,22 +1,22 @@
 {
-  "updatedAt": "2026-09-17T22:18:35.371Z",
+  "updatedAt": "2026-09-17T22:28:56.935Z",
   "firstSessionDate": "2026-02-05",
   "windows": {
     "all": {
       "from": null,
       "totals": {
-        "sessions": 842,
-        "messages": 224718,
-        "toolCalls": 97443,
-        "tokens": 31365399086,
-        "activeDays": 105,
+        "sessions": 923,
+        "messages": 224791,
+        "toolCalls": 97462,
+        "tokens": 31372185342,
+        "activeDays": 137,
         "currentStreak": 17,
         "longestStreak": 27,
         "peakHour": 11,
         "peakHourLabel": "11 AM",
         "favoriteModel": "Opus 4.8"
       },
-      "mobyDickMultiple": 117035,
+      "mobyDickMultiple": 117060,
       "models": [
         {
           "id": "claude-opus-4-8",
@@ -24,15 +24,15 @@
           "tokens": 11428230522,
           "inputTokens": 11307110365,
           "outputTokens": 121120157,
-          "share": 0.3643578865572608
+          "share": 0.36427907069324494
         },
         {
           "id": "claude-opus-5",
           "label": "Opus 5",
-          "tokens": 10406593047,
-          "inputTokens": 10343274732,
-          "outputTokens": 63318315,
-          "share": 0.331785768721336
+          "tokens": 10412932037,
+          "inputTokens": 10349576416,
+          "outputTokens": 63355621,
+          "share": 0.3319160563245661
         },
         {
           "id": "claude-sonnet-5",
@@ -40,7 +40,7 @@
           "tokens": 3758140665,
           "inputTokens": 3730541359,
           "outputTokens": 27599306,
-          "share": 0.11981804072365375
+          "share": 0.11979212235396082
         },
         {
           "id": "claude-opus-4-6",
@@ -48,7 +48,7 @@
           "tokens": 1813954757,
           "inputTokens": 1810551084,
           "outputTokens": 3403673,
-          "share": 0.05783298825646577
+          "share": 0.05782047814729502
         },
         {
           "id": "claude-fable-5",
@@ -56,7 +56,7 @@
           "tokens": 875975322,
           "inputTokens": 868434936,
           "outputTokens": 7540386,
-          "share": 0.027928078313245282
+          "share": 0.02792203706725124
         },
         {
           "id": "claude-haiku-4-5-20251001",
@@ -64,7 +64,7 @@
           "tokens": 869449957,
           "inputTokens": 861027167,
           "outputTokens": 8422790,
-          "share": 0.027720034889914105
+          "share": 0.02771403864671201
         },
         {
           "id": "claude-sonnet-4-6",
@@ -72,7 +72,7 @@
           "tokens": 760223698,
           "inputTokens": 755930495,
           "outputTokens": 4293203,
-          "share": 0.02423765423534264
+          "share": 0.024232411281283575
         },
         {
           "id": "claude-fable-5-1",
@@ -80,15 +80,15 @@
           "tokens": 560216249,
           "inputTokens": 553740959,
           "outputTokens": 6475290,
-          "share": 0.017860963524294945
+          "share": 0.017857099940373034
         },
         {
           "id": "claude-opus-4-7",
           "label": "Opus 4.7",
-          "tokens": 255104182,
-          "inputTokens": 252770942,
-          "outputTokens": 2333240,
-          "share": 0.008133299413807433
+          "tokens": 255551448,
+          "inputTokens": 253212923,
+          "outputTokens": 2338525,
+          "share": 0.008145796832899508
         },
         {
           "id": "claude-sonnet-4-20250514",
@@ -96,7 +96,7 @@
           "tokens": 248810009,
           "inputTokens": 247060498,
           "outputTokens": 1749511,
-          "share": 0.007932626915340503
+          "share": 0.007930910973769549
         },
         {
           "id": "claude-sonnet-4-5-20250929",
@@ -104,7 +104,7 @@
           "tokens": 204402937,
           "inputTokens": 201792988,
           "outputTokens": 2609949,
-          "share": 0.006516828829104094
+          "share": 0.006515419145071554
         },
         {
           "id": "claude-opus-4-5-20251101",
@@ -112,7 +112,7 @@
           "tokens": 184297645,
           "inputTokens": 182908176,
           "outputTokens": 1389469,
-          "share": 0.005875826559537117
+          "share": 0.005874555533537176
         },
         {
           "id": "claude-3-sonnet-20240229",
@@ -120,7 +120,7 @@
           "tokens": 96,
           "inputTokens": 33,
           "outputTokens": 63,
-          "share": 3.060697545622806e-9
+          "share": 3.0600354726158813e-9
         }
       ],
       "hourCounts": {
@@ -147,16 +147,16 @@
         "20": 19,
         "21": 11,
         "22": 29,
-        "23": 39
+        "23": 40
       }
     },
     "d30": {
       "from": "2026-08-19",
       "totals": {
-        "sessions": 179,
-        "messages": 64507,
-        "toolCalls": 24907,
-        "tokens": 25679872431,
+        "sessions": 180,
+        "messages": 64580,
+        "toolCalls": 24926,
+        "tokens": 25686658687,
         "activeDays": 26,
         "currentStreak": 17,
         "longestStreak": 17,
@@ -164,7 +164,7 @@
         "peakHourLabel": "11 AM",
         "favoriteModel": "Opus 4.8"
       },
-      "mobyDickMultiple": 95820,
+      "mobyDickMultiple": 95845,
       "models": [
         {
           "id": "claude-opus-4-8",
@@ -172,15 +172,15 @@
           "tokens": 11424671504,
           "inputTokens": 11307110365,
           "outputTokens": 121120157,
-          "share": 0.4448881720381316
+          "share": 0.44477063534082845
         },
         {
           "id": "claude-opus-5",
           "label": "Opus 5",
-          "tokens": 7810517655,
-          "inputTokens": 10343274732,
-          "outputTokens": 63318315,
-          "share": 0.30414939466643803
+          "tokens": 7816856645,
+          "inputTokens": 10349576416,
+          "outputTokens": 63355621,
+          "share": 0.3043158216975922
         },
         {
           "id": "claude-sonnet-5",
@@ -188,7 +188,7 @@
           "tokens": 2368259597,
           "inputTokens": 3730541359,
           "outputTokens": 27599306,
-          "share": 0.09222240505140147
+          "share": 0.09219804046365028
         },
         {
           "id": "claude-opus-4-6",
@@ -196,7 +196,7 @@
           "tokens": 1251973707,
           "inputTokens": 1810551084,
           "outputTokens": 3403673,
-          "share": 0.04875311239820076
+          "share": 0.048740232128113375
         },
         {
           "id": "claude-fable-5",
@@ -204,7 +204,7 @@
           "tokens": 809096136,
           "inputTokens": 868434936,
           "outputTokens": 7540386,
-          "share": 0.03150701539402052
+          "share": 0.03149869143585744
         },
         {
           "id": "claude-haiku-4-5-20251001",
@@ -212,7 +212,7 @@
           "tokens": 662131696,
           "inputTokens": 861027167,
           "outputTokens": 8422790,
-          "share": 0.025784072634282004
+          "share": 0.025777260642120978
         },
         {
           "id": "claude-fable-5-1",
@@ -220,7 +220,7 @@
           "tokens": 560216249,
           "inputTokens": 553740959,
           "outputTokens": 6475290,
-          "share": 0.02181538286474208
+          "share": 0.02180961937581726
         },
         {
           "id": "claude-sonnet-4-6",
@@ -228,15 +228,15 @@
           "tokens": 439404151,
           "inputTokens": 755930495,
           "outputTokens": 4293203,
-          "share": 0.01711083854410289
+          "share": 0.017106317966625303
         },
         {
           "id": "claude-opus-4-7",
           "label": "Opus 4.7",
-          "tokens": 253204628,
-          "inputTokens": 252770942,
-          "outputTokens": 2333240,
-          "share": 0.009860042283322977
+          "tokens": 253651894,
+          "inputTokens": 253212923,
+          "outputTokens": 2338525,
+          "share": 0.009874849706644526
         },
         {
           "id": "claude-sonnet-4-5-20250929",
@@ -244,7 +244,7 @@
           "tokens": 100397108,
           "inputTokens": 201792988,
           "outputTokens": 2609949,
-          "share": 0.003909564125357707
+          "share": 0.003908531242750187
         }
       ],
       "hourCounts": {
@@ -271,16 +271,16 @@
         "20": 19,
         "21": 11,
         "22": 29,
-        "23": 39
+        "23": 40
       }
     },
     "d7": {
       "from": "2026-09-11",
       "totals": {
-        "sessions": 43,
-        "messages": 18892,
-        "toolCalls": 5775,
-        "tokens": 19373377894,
+        "sessions": 44,
+        "messages": 18965,
+        "toolCalls": 5794,
+        "tokens": 19380164150,
         "activeDays": 7,
         "currentStreak": 7,
         "longestStreak": 7,
@@ -288,7 +288,7 @@
         "peakHourLabel": "11 AM",
         "favoriteModel": "Opus 4.8"
       },
-      "mobyDickMultiple": 72288,
+      "mobyDickMultiple": 72314,
       "models": [
         {
           "id": "claude-opus-4-8",
@@ -296,15 +296,15 @@
           "tokens": 11424671504,
           "inputTokens": 11307110365,
           "outputTokens": 121120157,
-          "share": 0.5897098361736008
+          "share": 0.5895033404038531
         },
         {
           "id": "claude-opus-5",
           "label": "Opus 5",
-          "tokens": 3816219004,
-          "inputTokens": 10343274732,
-          "outputTokens": 63318315,
-          "share": 0.19698263384321305
+          "tokens": 3822557994,
+          "inputTokens": 10349576416,
+          "outputTokens": 63355621,
+          "share": 0.19724074390773413
         },
         {
           "id": "claude-opus-4-6",
@@ -312,7 +312,7 @@
           "tokens": 1251973707,
           "inputTokens": 1810551084,
           "outputTokens": 3403673,
-          "share": 0.06462340815577342
+          "share": 0.06460077929732086
         },
         {
           "id": "claude-fable-5",
@@ -320,7 +320,7 @@
           "tokens": 809096136,
           "inputTokens": 868434936,
           "outputTokens": 7540386,
-          "share": 0.041763297057792886
+          "share": 0.041748673011110696
         },
         {
           "id": "claude-haiku-4-5-20251001",
@@ -328,7 +328,7 @@
           "tokens": 658409221,
           "inputTokens": 861027167,
           "outputTokens": 8422790,
-          "share": 0.033985256706519494
+          "share": 0.03397335625766617
         },
         {
           "id": "claude-sonnet-5",
@@ -336,7 +336,7 @@
           "tokens": 495433523,
           "inputTokens": 3730541359,
           "outputTokens": 27599306,
-          "share": 0.025572903481815498
+          "share": 0.02556394874498522
         },
         {
           "id": "claude-sonnet-4-6",
@@ -344,15 +344,15 @@
           "tokens": 432655364,
           "inputTokens": 755930495,
           "outputTokens": 4293203,
-          "share": 0.022332469142306608
+          "share": 0.022324649092304
         },
         {
           "id": "claude-opus-4-7",
           "label": "Opus 4.7",
-          "tokens": 251144919,
-          "inputTokens": 252770942,
-          "outputTokens": 2333240,
-          "share": 0.012963403716900624
+          "tokens": 251592185,
+          "inputTokens": 253212923,
+          "outputTokens": 2338525,
+          "share": 0.012981942931582445
         },
         {
           "id": "claude-fable-5-1",
@@ -360,7 +360,7 @@
           "tokens": 133377408,
           "inputTokens": 553740959,
           "outputTokens": 6475290,
-          "share": 0.006884571638965832
+          "share": 0.006882160902646431
         },
         {
           "id": "claude-sonnet-4-5-20250929",
@@ -368,7 +368,7 @@
           "tokens": 100397108,
           "inputTokens": 201792988,
           "outputTokens": 2609949,
-          "share": 0.005182220083111749
+          "share": 0.005180405450796968
         }
       ],
       "hourCounts": {
@@ -395,7 +395,7 @@
         "20": 19,
         "21": 11,
         "22": 29,
-        "23": 39
+        "23": 40
       }
     }
   },
@@ -2150,7 +2150,7 @@
     {
       "date": "2026-02-24",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 2,
       "tokens": 74956949,
       "level": 4,
       "modelTokens": {
@@ -2268,7 +2268,7 @@
     {
       "date": "2026-03-06",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 11172596,
       "level": 3,
       "modelTokens": {
@@ -2311,7 +2311,7 @@
     {
       "date": "2026-03-10",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 3,
       "tokens": 715440,
       "level": 3,
       "modelTokens": {
@@ -2352,7 +2352,7 @@
     {
       "date": "2026-03-14",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 134986,
       "level": 2,
       "modelTokens": {
@@ -2362,7 +2362,7 @@
     {
       "date": "2026-03-15",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 4,
       "tokens": 129523,
       "level": 2,
       "modelTokens": {
@@ -2522,9 +2522,9 @@
     {
       "date": "2026-03-31",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 0,
-      "level": 0,
+      "level": 1,
       "modelTokens": {}
     },
     {
@@ -2654,7 +2654,7 @@
     {
       "date": "2026-04-13",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 48971,
       "level": 1,
       "modelTokens": {
@@ -2684,7 +2684,7 @@
     {
       "date": "2026-04-16",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 2,
       "tokens": 47245,
       "level": 1,
       "modelTokens": {
@@ -2780,7 +2780,7 @@
     {
       "date": "2026-04-26",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 2,
       "tokens": 46741,
       "level": 1,
       "modelTokens": {
@@ -2790,7 +2790,7 @@
     {
       "date": "2026-04-27",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 3,
       "tokens": 28927,
       "level": 1,
       "modelTokens": {
@@ -2800,7 +2800,7 @@
     {
       "date": "2026-04-28",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 119913,
       "level": 2,
       "modelTokens": {
@@ -2867,7 +2867,7 @@
     {
       "date": "2026-05-05",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 4,
       "tokens": 5414379,
       "level": 3,
       "modelTokens": {
@@ -2889,7 +2889,7 @@
     {
       "date": "2026-05-07",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 3,
       "tokens": 18983,
       "level": 1,
       "modelTokens": {
@@ -2909,7 +2909,7 @@
     {
       "date": "2026-05-09",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 14950,
       "level": 1,
       "modelTokens": {
@@ -2919,7 +2919,7 @@
     {
       "date": "2026-05-10",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 13628,
       "level": 1,
       "modelTokens": {
@@ -2929,7 +2929,7 @@
     {
       "date": "2026-05-11",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 66838,
       "level": 1,
       "modelTokens": {
@@ -2939,15 +2939,15 @@
     {
       "date": "2026-05-12",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 0,
-      "level": 0,
+      "level": 1,
       "modelTokens": {}
     },
     {
       "date": "2026-05-13",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 70795,
       "level": 1,
       "modelTokens": {
@@ -2967,7 +2967,7 @@
     {
       "date": "2026-05-15",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 141779,
       "level": 2,
       "modelTokens": {
@@ -2977,7 +2977,7 @@
     {
       "date": "2026-05-16",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 2,
       "tokens": 51210,
       "level": 1,
       "modelTokens": {
@@ -2987,7 +2987,7 @@
     {
       "date": "2026-05-17",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 3,
       "tokens": 18424,
       "level": 1,
       "modelTokens": {
@@ -3007,7 +3007,7 @@
     {
       "date": "2026-05-19",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 52589,
       "level": 1,
       "modelTokens": {
@@ -3037,7 +3037,7 @@
     {
       "date": "2026-05-22",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 29664,
       "level": 1,
       "modelTokens": {
@@ -3067,7 +3067,7 @@
     {
       "date": "2026-05-25",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 88973,
       "level": 2,
       "modelTokens": {
@@ -3077,7 +3077,7 @@
     {
       "date": "2026-05-26",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 1,
       "tokens": 43950,
       "level": 1,
       "modelTokens": {
@@ -3199,7 +3199,7 @@
       "messages": 1175,
       "sessions": 5,
       "tokens": 0,
-      "level": 0,
+      "level": 1,
       "modelTokens": {}
     },
     {
@@ -3207,7 +3207,7 @@
       "messages": 2742,
       "sessions": 4,
       "tokens": 0,
-      "level": 0,
+      "level": 1,
       "modelTokens": {}
     },
     {
@@ -3245,7 +3245,7 @@
       "messages": 2229,
       "sessions": 12,
       "tokens": 0,
-      "level": 0,
+      "level": 1,
       "modelTokens": {}
     },
     {
@@ -3521,7 +3521,7 @@
       "messages": 1452,
       "sessions": 8,
       "tokens": 0,
-      "level": 0,
+      "level": 1,
       "modelTokens": {}
     },
     {
@@ -3727,7 +3727,7 @@
     {
       "date": "2026-07-31",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 6,
       "tokens": 215344,
       "level": 2,
       "modelTokens": {
@@ -3738,15 +3738,15 @@
     {
       "date": "2026-08-01",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 4,
       "tokens": 0,
-      "level": 0,
+      "level": 1,
       "modelTokens": {}
     },
     {
       "date": "2026-08-02",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 7,
       "tokens": 234250,
       "level": 2,
       "modelTokens": {
@@ -3756,7 +3756,7 @@
     {
       "date": "2026-08-03",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 5,
       "tokens": 191680,
       "level": 2,
       "modelTokens": {
@@ -3766,7 +3766,7 @@
     {
       "date": "2026-08-04",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 3,
       "tokens": 320547,
       "level": 3,
       "modelTokens": {
@@ -3776,7 +3776,7 @@
     {
       "date": "2026-08-05",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 10,
       "tokens": 341083,
       "level": 3,
       "modelTokens": {
@@ -3786,7 +3786,7 @@
     {
       "date": "2026-08-06",
       "messages": 0,
-      "sessions": 0,
+      "sessions": 2,
       "tokens": 598716,
       "level": 3,
       "modelTokens": {
@@ -4299,15 +4299,15 @@
     },
     {
       "date": "2026-09-17",
-      "messages": 2139,
-      "sessions": 10,
-      "tokens": 290010579,
+      "messages": 2212,
+      "sessions": 11,
+      "tokens": 296796835,
       "level": 4,
       "modelTokens": {
         "claude-sonnet-5": 12803398,
         "claude-fable-5-1": 99161977,
-        "claude-opus-5": 175115180,
-        "claude-opus-4-7": 2369317,
+        "claude-opus-5": 181454170,
+        "claude-opus-4-7": 2816583,
         "claude-sonnet-4-6": 560707
       }
     }
