@@ -32,6 +32,8 @@ const MODEL_COLOR_REST = "#e6edfc";
 // visible either way.
 const SHOW_GRAPHS = false;
 
+const SHOW_SESSION_COUNTS = false;
+
 const LEGEND_LIMIT = 6;
 const CHART_TICKS = 7;
 
@@ -252,9 +254,19 @@ function ClaudeCodeStats() {
   return (
     <div>
       <div className="flex flex-wrap gap-y-5">
-        <Stat value={formatCount(t.sessions)} label="sessions" first />
-        <Stat value={formatCount(t.messages)} label="messages" />
-        <Stat value={formatTokens(t.tokens)} label="tokens" />
+        {/* Sessions and messages are hidden; set SHOW_SESSION_COUNTS to bring
+            them back. They stay in the payload either way. */}
+        {SHOW_SESSION_COUNTS && (
+          <>
+            <Stat value={formatCount(t.sessions)} label="sessions" first />
+            <Stat value={formatCount(t.messages)} label="messages" />
+          </>
+        )}
+        <Stat
+          value={formatTokens(t.tokens)}
+          label="tokens"
+          first={!SHOW_SESSION_COUNTS}
+        />
         <Stat value={formatCount(t.activeDays)} label="active days" />
         {tools && tools.subagents > 0 && (
           <Stat value={formatCount(tools.subagents)} label="subagents" />
