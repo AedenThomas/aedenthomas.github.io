@@ -483,8 +483,9 @@ function computeWindow(combined, legacy, today, from) {
 // Messages stay untouched too: the cache counts user + assistant entries, while
 // history.jsonl holds only your own prompts, and mixing the two definitions for
 // a ~0.1% gain would make the number mean less, not more.
-function mergeHistory(combined) {
-    if (!fs.existsSync(HISTORY_FILE)) return null;
+// Parse history.jsonl into { date: {prompts, sessions} }.
+function readHistory() {
+    if (!fs.existsSync(HISTORY_FILE)) return {};
 
     const byDate = {};
     let lines;
@@ -492,7 +493,7 @@ function mergeHistory(combined) {
         lines = fs.readFileSync(HISTORY_FILE, 'utf8').split('\n');
     } catch (e) {
         console.warn(`Ignoring unreadable history file: ${e.message}`);
-        return null;
+        return {};
     }
 
     for (const line of lines) {
@@ -514,16 +515,41 @@ function mergeHistory(combined) {
         if (entry.sessionId) bucket.sessions.add(entry.sessionId);
     }
 
+    const out = {};
+    for (const [date, bucket] of Object.entries(byDate)) {
+        out[date] = { prompts: bucket.prompts, sessions: bucket.sessions.size };
+    }
+    return out;
+}
+
+// history.jsonl is a rolling file — it is capped, and its oldest entries fall off
+// as you keep working. The days it is the only record of would therefore vanish
+// again on a later run, dropping the active-day count back down, so they are
+// banked in the state file the same way scanned days are. Banked days only ever
+// grow.
+function bankHistory(state, history) {
+    state.history = state.history || {};
+    for (const [date, bucket] of Object.entries(history)) {
+        const prev = state.history[date] || { prompts: 0, sessions: 0 };
+        state.history[date] = {
+            prompts: Math.max(prev.prompts, bucket.prompts),
+            sessions: Math.max(prev.sessions, bucket.sessions)
+        };
+    }
+    return state.history;
+}
+
+function mergeHistory(combined, byDate) {
     let days = 0;
     let sessions = 0;
-    for (const [date, bucket] of Object.entries(byDate)) {
+    for (const [date, bucket] of Object.entries(byDate || {})) {
         const existing = combined[date];
         // Already accounted for by the cache or the transcript scan.
         if (existing && ((existing.messages || 0) > 0 || (existing.sessions || 0) > 0)) continue;
 
         const day = existing || emptyDay();
         combined[date] = day;
-        day.sessions = bucket.sessions.size;
+        day.sessions = bucket.sessions;
         day.promptsOnly = true; // no tokens survive for this day; see levelFor
         days++;
         sessions += day.sessions;
@@ -608,7 +634,7 @@ function buildOutput(state) {
     for (const [date, day] of Object.entries(legacy.days || {})) combined[date] = day;
     for (const [date, day] of Object.entries(JSON.parse(JSON.stringify(state.days || {})))) combined[date] = day;
 
-    const history = mergeHistory(combined);
+    const history = mergeHistory(combined, state.history);
     if (history && history.days) {
         console.log(`History: +${history.days} days, +${history.sessions} sessions (no tokens survive for these)`);
     }
@@ -747,6 +773,10 @@ async function main() {
         adopted++;
     }
     console.log(`Adopted ${adopted} scanned days${skipped ? `, skipped ${skipped} already in the baseline` : ''}`);
+
+    // Bank before saving, so a day history.jsonl is about to forget survives.
+    const banked = bankHistory(state, readHistory());
+    console.log(`Banked ${Object.keys(banked).length} days of prompt history`);
 
     saveState(state);
 
