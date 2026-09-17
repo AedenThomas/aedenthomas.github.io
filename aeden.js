@@ -41,7 +41,9 @@
 
   var SESSION_MS = 30 * 60 * 1000;   // inactivity timeout
   var FLUSH_MS = 5000;               // event batch cadence
-  var REPLAY_FLUSH_MS = 10000;       // replay chunk cadence
+  var REPLAY_FLUSH_MS = 20000;       // replay chunk cadence
+  var REPLAY_MIN_BYTES = 8000;       // hold a tiny buffer back rather than
+  var REPLAY_HOLD_MS = 60000;        // spending a chunk (and a fetch on replay) on it
   var REPLAY_MAX_BYTES = 180000;     // flush a chunk early past this (uncompressed)
   var BEACON_MAX = 60000;            // Chromium caps sendBeacon payloads at 64 KB
   var MOUSE_MS = 100;                // ~10 Hz
@@ -528,8 +530,16 @@
       return 60;
     }
 
+    var lastReplayFlush = 0;
     function flushReplay(unloading) {
       if (!rbuf.length) return;
+      // Dribs of a few events each turn into hundreds of chunks over a long
+      // session, and every chunk is a row and a read on the dashboard. Hold a
+      // small buffer unless it has been sitting a while, or we are leaving.
+      var now = Date.now();
+      if (!unloading && rbytes < REPLAY_MIN_BYTES && lastReplayFlush &&
+          now - lastReplayFlush < REPLAY_HOLD_MS) return;
+      lastReplayFlush = now;
       var events = rbuf, from = rfrom;
       rbuf = []; rbytes = 0;
       var seq = (+ls.get("aeden:rseq") || 0) + 1;
