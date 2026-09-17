@@ -106,10 +106,10 @@ function toWeeks(days) {
 function Stat({ value, label, first }) {
   return (
     <div
-      className={`flex-1 min-w-[6.5rem] ${
+      className={`flex-1 min-w-fit pr-6 ${
         first
           ? ""
-          : "sm:border-l sm:border-gray-200 sm:dark:border-zinc-800 sm:pl-5"
+          : "sm:border-l sm:border-gray-200 sm:dark:border-zinc-800 sm:pl-6"
       }`}
     >
       <div className="text-2xl md:text-3xl text-gray-900 dark:text-zinc-100 tabular-nums leading-none">
@@ -242,11 +242,6 @@ function ClaudeCodeStats() {
     `longest was ${t.longestStreak}`,
     `mostly around ${lowerHour(t.peakHourLabel)}`,
     t.favoriteModel ? `${t.favoriteModel.toLowerCase()} is my favorite model` : null,
-    // Subagent and skill counts start where the transcripts do, not where the
-    // history does, so the panel says so rather than implying they are lifetime.
-    tools && tools.since && tools.subagents > 0
-      ? `agents and skills counted since ${formatDate(tools.since)}`
-      : null,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -256,7 +251,7 @@ function ClaudeCodeStats() {
 
   return (
     <div>
-      <div className="flex flex-wrap gap-y-5 gap-x-5">
+      <div className="flex flex-wrap gap-y-5">
         <Stat value={formatCount(t.sessions)} label="sessions" first />
         <Stat value={formatCount(t.messages)} label="messages" />
         <Stat value={formatTokens(t.tokens)} label="tokens" />
