@@ -20,7 +20,12 @@ jobs:
         with:
           node-version: '18'
 
+      # Both fetches are independent, and each writes its own file. Without this
+      # a single failure — an expired PAT, an API blip — aborts the job before the
+      # commit step, so BOTH stats files silently stop updating. The run is still
+      # marked failed, so the breakage stays visible in the Actions tab.
       - name: Fetch ADO Contributions
+        continue-on-error: true
         env:
           ADO_PAT: ${{ secrets.ADO_PAT }}
           ADO_ORG: ${{ secrets.ADO_ORG }}
@@ -30,6 +35,7 @@ jobs:
         run: node scripts/fetch-ado-contributions.js
 
       - name: Fetch GitHub Stats
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: AedenThomas
