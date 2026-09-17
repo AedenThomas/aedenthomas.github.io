@@ -32,6 +32,13 @@ const STATS_CACHE = path.join(CLAUDE_DIR, 'stats-cache.json');
 // real work. history.jsonl kept the prompts.
 const HISTORY_FILE = path.join(CLAUDE_DIR, 'history.jsonl');
 
+// Installed skills, used to tell a skill's slash command apart from a built-in
+// one: /frontend-review counts, /model and /clear do not. Reading the installed
+// set beats hardcoding a denylist of built-ins, which would silently miscount
+// every time Claude Code adds a command.
+const SKILLS_DIR = path.join(CLAUDE_DIR, 'skills');
+const PLUGINS_DIR = path.join(CLAUDE_DIR, 'plugins');
+
 // A frozen snapshot of the AWS Bedrock work, captured once by
 // scripts/fetch-bedrock-stats.js. That traffic is finished, so it is history
 // rather than something to re-collect daily, and committing it keeps the site
@@ -257,6 +264,15 @@ function buildLegacy(cache) {
 // what makes the token total match the panel exactly.
 async function scanTranscripts() {
     const days = {};
+    const tools = {}; // date -> { subagents, skills, agentNames, skillNames }
+    const skillNames = knownSkillNames();
+
+    const toolsFor = (date) => {
+        if (!tools[date]) {
+            tools[date] = { subagents: 0, skills: 0, agentNames: {}, skillNames: {} };
+        }
+        return tools[date];
+    };
     const sessionStart = {}; // sessionId -> earliest Date seen, across every file
     const files = listTranscripts(PROJECTS_DIR);
 
@@ -299,6 +315,52 @@ async function scanTranscripts() {
 
             const message = entry.message || {};
             const usage = message.usage || {};
+
+            // Subagent launches and skill runs. Counted from every file, the same
+            // as tokens: a subagent's own transcript can launch further subagents,
+            // and those are real launches too.
+            if (Array.isArray(message.content)) {
+                for (const block of message.content) {
+                    if (!block || block.type !== 'tool_use') continue;
+
+                    // 'Task' is what the Agent tool used to be called.
+                    if (block.name === 'Agent' || block.name === 'Task') {
+                        const bucket = toolsFor(date);
+                        const kind = (block.input && block.input.subagent_type) || 'general-purpose';
+                        bucket.subagents++;
+                        bucket.agentNames[kind] = (bucket.agentNames[kind] || 0) + 1;
+                    }
+
+                    if (block.name === 'Skill') {
+                        const bucket = toolsFor(date);
+                        const kind = (block.input && block.input.skill) || '(unknown)';
+                        bucket.skills++;
+                        bucket.skillNames[kind] = (bucket.skillNames[kind] || 0) + 1;
+                    }
+                }
+            }
+
+            // A skill typed as /name never produces a Skill tool call, so it has
+            // to be read off the user turn. Only names that match an installed
+            // skill count — /model and /clear are the CLI's own commands.
+            if (type === 'user') {
+                const text =
+                    typeof message.content === 'string'
+                        ? message.content
+                        : Array.isArray(message.content)
+                        ? message.content
+                              .filter((b) => b && b.type === 'text')
+                              .map((b) => b.text || '')
+                              .join('\n')
+                        : '';
+                for (const match of text.match(/<command-name>([^<]+)<\/command-name>/g) || []) {
+                    const name = match.replace(/<\/?command-name>/g, '').trim().replace(/^\//, '');
+                    if (!skillNames.has(name)) continue;
+                    const bucket = toolsFor(date);
+                    bucket.skills++;
+                    bucket.skillNames[name] = (bucket.skillNames[name] || 0) + 1;
+                }
+            }
 
             // Tokens processed: uncached input + output + cache reads + writes.
             // Checked against the panel's own per-day figures — on every day whose
@@ -349,7 +411,7 @@ async function scanTranscripts() {
 
     console.log(`Scanned ${mainFiles} session transcripts + ${auxFiles} subagent/tool files`);
     console.log(`Transcript window: ${Object.keys(days).length} active days, ${Object.keys(sessionStart).length} sessions`);
-    return days;
+    return { days, tools };
 }
 
 // ---------------------------------------------------------------------------
@@ -371,6 +433,8 @@ function computeWindow(combined, legacy, today, from) {
     let messages = 0;
     let toolCalls = 0;
     let tokens = 0;
+    let subagents = 0;
+    let skills = 0;
     const modelTokens = {};
     const modelIo = {};
 
@@ -387,6 +451,8 @@ function computeWindow(combined, legacy, today, from) {
         messages += day.messages || 0;
         toolCalls += day.toolCalls || 0;
         tokens += day.tokens || 0;
+        subagents += day.subagents || 0;
+        skills += day.skills || 0;
         addInto(modelTokens, day.modelTokens);
     }
 
@@ -461,6 +527,8 @@ function computeWindow(combined, legacy, today, from) {
             messages,
             toolCalls,
             tokens,
+            subagents,
+            skills,
             activeDays: activeDates.length,
             currentStreak,
             longestStreak,
@@ -483,6 +551,54 @@ function computeWindow(combined, legacy, today, from) {
 // Messages stay untouched too: the cache counts user + assistant entries, while
 // history.jsonl holds only your own prompts, and mixing the two definitions for
 // a ~0.1% gain would make the number mean less, not more.
+// Every skill name installed on this machine, personal and plugin-provided.
+// Plugin skills are addressed as "plugin:skill" but can be typed either way, so
+// both spellings go in.
+function knownSkillNames() {
+    const names = new Set();
+
+    const addSkillDirs = (dir, prefix) => {
+        let entries;
+        try {
+            entries = fs.readdirSync(dir, { withFileTypes: true });
+        } catch (e) {
+            return;
+        }
+        for (const entry of entries) {
+            if (!entry.isDirectory()) continue;
+            if (fs.existsSync(path.join(dir, entry.name, 'SKILL.md'))) {
+                names.add(entry.name);
+                if (prefix) names.add(`${prefix}:${entry.name}`);
+            }
+        }
+    };
+
+    addSkillDirs(SKILLS_DIR, null);
+
+    // plugins/<marketplace>/<plugin>/skills/<skill>/SKILL.md, at varying depths.
+    const walkPlugins = (dir, depth) => {
+        if (depth > 5) return;
+        let entries;
+        try {
+            entries = fs.readdirSync(dir, { withFileTypes: true });
+        } catch (e) {
+            return;
+        }
+        for (const entry of entries) {
+            if (!entry.isDirectory()) continue;
+            const full = path.join(dir, entry.name);
+            if (entry.name === 'skills') {
+                addSkillDirs(full, path.basename(dir));
+            } else {
+                walkPlugins(full, depth + 1);
+            }
+        }
+    };
+    walkPlugins(PLUGINS_DIR, 0);
+
+    return names;
+}
+
 // Parse history.jsonl into { date: {prompts, sessions} }.
 function readHistory() {
     if (!fs.existsSync(HISTORY_FILE)) return {};
@@ -537,6 +653,63 @@ function bankHistory(state, history) {
         };
     }
     return state.history;
+}
+
+// Tool counts are banked per date, taking the max, so a re-run is idempotent and
+// a day whose transcripts have since been pruned keeps the count it had.
+function bankTools(state, scannedTools) {
+    state.tools = state.tools || {};
+
+    for (const [date, bucket] of Object.entries(scannedTools || {})) {
+        const prev = state.tools[date] || { subagents: 0, skills: 0, agentNames: {}, skillNames: {} };
+        const merged = {
+            subagents: Math.max(prev.subagents || 0, bucket.subagents || 0),
+            skills: Math.max(prev.skills || 0, bucket.skills || 0),
+            agentNames: Object.assign({}, prev.agentNames),
+            skillNames: Object.assign({}, prev.skillNames)
+        };
+        for (const [name, n] of Object.entries(bucket.agentNames || {})) {
+            merged.agentNames[name] = Math.max(merged.agentNames[name] || 0, n);
+        }
+        for (const [name, n] of Object.entries(bucket.skillNames || {})) {
+            merged.skillNames[name] = Math.max(merged.skillNames[name] || 0, n);
+        }
+        state.tools[date] = merged;
+    }
+
+    let subagents = 0;
+    let skills = 0;
+    for (const bucket of Object.values(state.tools)) {
+        subagents += bucket.subagents || 0;
+        skills += bucket.skills || 0;
+    }
+    return { subagents, skills, days: Object.keys(state.tools).length };
+}
+
+// Attach banked tool counts to their days without touching anything else on them.
+function mergeTools(combined, tools) {
+    let subagents = 0;
+    let skills = 0;
+    const agentNames = {};
+    const skillNames = {};
+
+    for (const [date, bucket] of Object.entries(tools || {})) {
+        const day = combined[date] || emptyDay();
+        combined[date] = day;
+        day.subagents = bucket.subagents || 0;
+        day.skills = bucket.skills || 0;
+        subagents += day.subagents;
+        skills += day.skills;
+        addInto(agentNames, bucket.agentNames);
+        addInto(skillNames, bucket.skillNames);
+    }
+
+    const rank = (obj) =>
+        Object.entries(obj)
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count);
+
+    return { subagents, skills, agents: rank(agentNames), skills_: rank(skillNames) };
 }
 
 function mergeHistory(combined, byDate) {
@@ -634,6 +807,7 @@ function buildOutput(state) {
     for (const [date, day] of Object.entries(legacy.days || {})) combined[date] = day;
     for (const [date, day] of Object.entries(JSON.parse(JSON.stringify(state.days || {})))) combined[date] = day;
 
+    const tools = mergeTools(combined, state.tools);
     const history = mergeHistory(combined, state.history);
     if (history && history.days) {
         console.log(`History: +${history.days} days, +${history.sessions} sessions (no tokens survive for these)`);
@@ -693,9 +867,22 @@ function buildOutput(state) {
         }
     }
 
+    const toolDates = Object.keys(state.tools || {}).sort();
+
     return {
         updatedAt: new Date().toISOString(),
         firstSessionDate: legacy.firstSessionDate || dates[0] || null,
+        // Skills and subagents exist only inside transcripts, which are pruned on
+        // a rolling window, so these counts start the day collection began rather
+        // than at the first session. Stated here so the UI can be honest about it.
+        toolUse: {
+            subagents: tools.subagents,
+            skills: tools.skills,
+            since: toolDates[0] || null,
+            days: toolDates.length,
+            topAgents: tools.agents.slice(0, 8),
+            topSkills: tools.skills_.slice(0, 8)
+        },
         windows: {
             all: computeWindow(combined, legacy, today, null),
             d30: computeWindow(combined, legacy, today, shiftDate(today, -29)),
@@ -760,7 +947,7 @@ async function main() {
     }
 
     const boundary = state.legacy ? state.legacy.through : null;
-    const scanned = await scanTranscripts();
+    const { days: scanned, tools: scannedTools } = await scanTranscripts();
 
     let adopted = 0;
     let skipped = 0;
@@ -773,6 +960,17 @@ async function main() {
         adopted++;
     }
     console.log(`Adopted ${adopted} scanned days${skipped ? `, skipped ${skipped} already in the baseline` : ''}`);
+
+    // Banked separately from the days themselves, and NOT gated on the legacy
+    // boundary. The stats cache knows nothing about skills or subagents, so a day
+    // it already covers still needs its tool counts kept — but writing them into
+    // state.days would shadow that day's real token figures, since scanned days
+    // take precedence over baseline ones.
+    const bankedTools = bankTools(state, scannedTools);
+    console.log(
+        `Banked tools: ${bankedTools.subagents} subagents, ${bankedTools.skills} skill runs ` +
+        `over ${bankedTools.days} days`
+    );
 
     // Bank before saving, so a day history.jsonl is about to forget survives.
     const banked = bankHistory(state, readHistory());

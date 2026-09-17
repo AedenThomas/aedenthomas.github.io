@@ -235,12 +235,18 @@ function ClaudeCodeStats() {
   }
 
   const t = data.windows.all.totals;
+  const tools = data.toolUse;
 
   const summary = [
     `${t.currentStreak} day streak`,
     `longest was ${t.longestStreak}`,
     `mostly around ${lowerHour(t.peakHourLabel)}`,
     t.favoriteModel ? `${t.favoriteModel.toLowerCase()} is my favorite model` : null,
+    // Subagent and skill counts start where the transcripts do, not where the
+    // history does, so the panel says so rather than implying they are lifetime.
+    tools && tools.since && tools.subagents > 0
+      ? `agents and skills counted since ${formatDate(tools.since)}`
+      : null,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -255,6 +261,12 @@ function ClaudeCodeStats() {
         <Stat value={formatCount(t.messages)} label="messages" />
         <Stat value={formatTokens(t.tokens)} label="tokens" />
         <Stat value={formatCount(t.activeDays)} label="active days" />
+        {tools && tools.subagents > 0 && (
+          <Stat value={formatCount(tools.subagents)} label="subagents" />
+        )}
+        {tools && tools.skills > 0 && (
+          <Stat value={formatCount(tools.skills)} label="skill runs" />
+        )}
       </div>
 
       {SHOW_GRAPHS && (
