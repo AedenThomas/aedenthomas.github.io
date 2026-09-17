@@ -455,6 +455,7 @@ tr.on td{background:var(--hot-wash)}
 .rtimeline li.bad .k{color:var(--down)}
 .rtimeline li .d{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rplayer .empty,.rtimeline .empty{padding:24px 14px}
+.rplayer .rload{padding:6px 2px 0;color:var(--dim);font-size:12px}
 .chk{display:inline-flex;align-items:center;gap:5px;color:var(--dim);font-size:10px;cursor:pointer}
 .chk input{accent-color:var(--hot);margin:0}
 
@@ -2315,19 +2316,18 @@ function renderReplays() {
   set("#rcount", rows.length ? "showing " + Math.min(300, rows.length) + " of " + plural(rows.length, "session") : "");
 }
 
-async function fetchChunk(sid, seq) {
-  const r = await fetch("/api/visitor/replay/" + sid + "/" + seq, { credentials: "same-origin" });
+/* Chunks per bundled request; the Worker pulls that run from R2 in parallel
+   and returns one array, so a 900-chunk session is ~8 requests, not 900. */
+const BUNDLE = 120;
+const BUNDLE_CONC = 4;
+let repAbort = null;
+
+async function fetchBundle(sid, from, to, signal) {
+  const r = await fetch("/api/visitor/replay/" + sid + "/bundle?from=" + from + "&to=" + to,
+                        { credentials: "same-origin", signal });
   if (r.status === 401) { lock(); throw new Error("locked"); }
-  if (!r.ok) return null;
-  const buf = await r.arrayBuffer();
-  const u8 = new Uint8Array(buf);
-  let text;
-  // Normally the Worker labels the body gzip and the browser has already
-  // inflated it. If the bytes still carry the gzip magic, inflate here.
-  if (u8[0] === 0x1f && u8[1] === 0x8b && window.DecompressionStream) {
-    text = await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
-  } else text = new TextDecoder().decode(buf);
-  try { return JSON.parse(text); } catch (_) { return null; }
+  if (!r.ok) return [];
+  try { const a = await r.json(); return Array.isArray(a) ? a : []; } catch (_) { return []; }
 }
 
 function destroyPlayer() {
@@ -2337,44 +2337,7 @@ function destroyPlayer() {
   PLAYER = null;
 }
 
-async function openReplay(sid) {
-  S.sid = sid; REP.open = sid;
-  writeHash();
-  document.querySelectorAll("#rtbody tr").forEach(tr => tr.classList.toggle("on", tr.dataset.sid === sid));
-  const host = q1("#rplayer");
-  destroyPlayer();
-  host.innerHTML = '<div class="empty">loading replay…</div>';
-  set("#rtimeline", ""); set("#rtn", "");
-  const vendorReady = ensureVendor();
-  vendorReady.catch(() => {});
-  const d = await api("sessions/" + sid, {}, false);
-  if (REP.open !== sid) return;
-  const s = d.session;
-  set("#rtitle", (s.company ? esc(trim(s.company, 20)) + " · " : "") + esc(placeOf(s)));
-  set("#rinfo", fmtDur(sessDur(s)) + " · " + plural(d.page_views.length, "page") + " · " + esc(devLine(s)) +
-    (s.visitor_id ? ' · <button type="button" class="lnk" data-vid="' + s.visitor_id + '">visitor timeline</button>' : "") +
-    (s.net ? ' · <button type="button" class="lnk" data-ov-filter="net" data-value="' + esc(s.net) + '">overview</button>' : ""));
-
-  const events = [];
-  for (const ch of d.replay) {
-    const arr = await fetchChunk(sid, ch.seq).catch(() => null);
-    if (Array.isArray(arr)) for (const ev of arr) events.push(ev);
-  }
-  if (REP.open !== sid) return;
-  events.sort((a, b) => a.timestamp - b.timestamp);
-  const t0 = events.length ? events[0].timestamp : null;
-  renderTimeline(d, t0);
-  if (events.length < 2 || !events.some(e => e.type === 2)) {
-    host.innerHTML = '<div class="empty"><b>no replay for this session</b>' +
-      (d.replay.length ? "the chunks in R2 could not be read" :
-        "the recorder had not loaded before the visitor left, or their browser blocked it") + "</div>";
-    return;
-  }
-  try { await vendorReady; } catch (err) {
-    host.innerHTML = '<div class="empty"><b>replay player unavailable</b>' + esc(err.message) + "</div>";
-    return;
-  }
-  if (REP.open !== sid) return;
+function mountPlayer(host, s, events) {
   host.innerHTML = "";
   const W = Math.max(320, Math.min(host.clientWidth - 20, 1100));
   const H = Math.max(220, Math.min(Math.round(W * ((s.vh || 720) / (s.vw || 1280))), 640));
@@ -2388,6 +2351,117 @@ async function openReplay(sid) {
               outbound: "#6fb98a", download: "#f0a93c", copy: "#79828f" }
     }
   });
+}
+
+/** The first chunks are playable on their own — an rrweb run only needs a full
+    snapshot (type 2) plus something after it — so the player goes up as soon as
+    that arrives and the rest of the session is streamed in behind it. */
+function playable(evs) {
+  return evs.length > 1 && evs.some(e => e.type === 2);
+}
+
+async function openReplay(sid) {
+  S.sid = sid; REP.open = sid;
+  writeHash();
+  document.querySelectorAll("#rtbody tr").forEach(tr => tr.classList.toggle("on", tr.dataset.sid === sid));
+  const host = q1("#rplayer");
+  destroyPlayer();
+  if (repAbort) repAbort.abort();
+  const ac = repAbort = new AbortController();
+  const signal = ac.signal;
+  const status = m => { if (REP.open === sid) host.innerHTML = '<div class="empty">' + m + "</div>"; };
+  status("loading replay…");
+  set("#rtimeline", ""); set("#rtn", "");
+  const vendorReady = ensureVendor();
+  vendorReady.catch(() => {});
+  const d = await api("sessions/" + sid, {}, false);
+  if (REP.open !== sid) return;
+  const s = d.session;
+  set("#rtitle", (s.company ? esc(trim(s.company, 20)) + " · " : "") + esc(placeOf(s)));
+  set("#rinfo", fmtDur(sessDur(s)) + " · " + plural(d.page_views.length, "page") + " · " + esc(devLine(s)) +
+    (s.visitor_id ? ' · <button type="button" class="lnk" data-vid="' + s.visitor_id + '">visitor timeline</button>' : "") +
+    (s.net ? ' · <button type="button" class="lnk" data-ov-filter="net" data-value="' + esc(s.net) + '">overview</button>' : ""));
+
+  const seqs = d.replay.map(c => c.seq).sort((a, b) => a - b);
+  const ranges = [];
+  for (let i = 0; i < seqs.length; i += BUNDLE) ranges.push([seqs[i], seqs[Math.min(i + BUNDLE, seqs.length) - 1]]);
+
+  // Range 0 is fetched first so the player can go up; the rest run as a small
+  // pool of parallel requests and are appended strictly in order.
+  const rest = ranges.slice(1);
+  const parts = new Array(rest.length).fill(null);
+  let done = 0;
+  const pump = (async () => {
+    let next = 0;
+    const worker = async () => {
+      for (;;) {
+        const i = next++;
+        if (i >= rest.length) return;
+        parts[i] = await fetchBundle(sid, rest[i][0], rest[i][1], signal).catch(() => []);
+        done++;
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(BUNDLE_CONC, rest.length) }, worker));
+  })();
+
+  let head = [];
+  try {
+    head = ranges.length ? await fetchBundle(sid, ranges[0][0], ranges[0][1], signal) : [];
+  } catch (err) { if (err.name === "AbortError") return; throw err; }
+  if (REP.open !== sid) return;
+  head.sort((a, b) => a.timestamp - b.timestamp);
+  renderTimeline(d, head.length ? head[0].timestamp : null);
+
+  if (!playable(head)) {
+    // No usable snapshot up front: wait for everything and try the whole run.
+    if (rest.length) { status("loading replay… " + plural(ranges.length, "part") + ""); await pump; }
+    if (REP.open !== sid) return;
+    const all = head.concat(...parts.filter(Boolean)).sort((a, b) => a.timestamp - b.timestamp);
+    if (!playable(all)) {
+      host.innerHTML = '<div class="empty"><b>no replay for this session</b>' +
+        (d.replay.length ? "the chunks in R2 could not be read" :
+          "the recorder had not loaded before the visitor left, or their browser blocked it") + "</div>";
+      return;
+    }
+    try { await vendorReady; } catch (err) {
+      host.innerHTML = '<div class="empty"><b>replay player unavailable</b>' + esc(err.message) + "</div>";
+      return;
+    }
+    if (REP.open !== sid) return;
+    mountPlayer(host, s, all);
+    return;
+  }
+
+  try { await vendorReady; } catch (err) {
+    host.innerHTML = '<div class="empty"><b>replay player unavailable</b>' + esc(err.message) + "</div>";
+    return;
+  }
+  if (REP.open !== sid) return;
+  mountPlayer(host, s, head);
+
+  if (!rest.length) return;
+  const note = document.createElement("div");
+  note.className = "rload";
+  note.textContent = "streaming the rest of the session…";
+  host.appendChild(note);
+  await pump;
+  if (REP.open !== sid || !PLAYER) return;
+  const tail = [];
+  for (const p of parts) if (p) for (const ev of p) tail.push(ev);
+  tail.sort((a, b) => a.timestamp - b.timestamp);
+  let ok = true;
+  try {
+    for (const ev of tail) PLAYER.addEvent(ev);
+  } catch (_) { ok = false; }
+  if (!ok) {
+    // Older players have no addEvent — remount once with the full run instead.
+    const at = (() => { try { return PLAYER.getReplayer().getCurrentTime(); } catch (_) { return 0; } })();
+    destroyPlayer();
+    mountPlayer(host, s, head.concat(tail));
+    if (at) { try { PLAYER.goto(at, false); } catch (_) {} }
+  }
+  note.remove();
+  renderTimeline(d, head.length ? head[0].timestamp : null);
 }
 function renderTimeline(d, t0) {
   const items = [];

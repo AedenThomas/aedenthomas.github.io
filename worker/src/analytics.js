@@ -19,6 +19,8 @@
 import { parseUA } from "./ua.js";
 
 export const VID_RE = /^[a-f0-9]{32}$/;
+/** Chunks a single /bundle call will pull from R2 at once. */
+const BUNDLE_MAX = 120;
 const PVID_RE = /^[a-f0-9]{8,32}$/;
 const DAY_MS = 86400e3;
 const COOKIE_MAX_AGE = 31536000; // 1 year, sliding
@@ -589,9 +591,41 @@ export async function handleRead(kind, rest, url, env, sinceISO) {
       ).bind(sid).all();
       return respond({ sid, chunks: results });
     }
+    if (!env.REPLAYS) return respond({ error: "no replay bucket bound" }, 503);
+
+    // A long session can hold hundreds of small chunks, and fetching them one
+    // at a time is what used to make the dashboard sit on "loading replay".
+    // /bundle?from=&to= pulls a whole run of chunks from R2 in parallel inside
+    // the Worker and hands back one concatenated event array.
+    if (rest[1] === "bundle") {
+      const from = int(url.searchParams.get("from"), 1, 1e6) || 1;
+      const to = Math.min(int(url.searchParams.get("to"), 1, 1e6) || from, from + BUNDLE_MAX - 1);
+      const { results } = await db.prepare(
+        `SELECT seq, key, gz FROM replay_chunks WHERE session_id = ? AND seq >= ? AND seq <= ? ORDER BY seq`
+      ).bind(sid, from, to).all();
+      const parts = await Promise.all(results.map(async row => {
+        const obj = await env.REPLAYS.get(row.key);
+        if (!obj) return "";
+        const text = row.gz
+          ? await new Response(obj.body.pipeThrough(new DecompressionStream("gzip"))).text()
+          : await obj.text();
+        // Every chunk is a JSON array; splice off the brackets and glue the
+        // bodies together rather than parsing and re-serialising each one.
+        const t = text.trim();
+        return t.startsWith("[") && t.endsWith("]") ? t.slice(1, -1).trim() : "";
+      }));
+      const body = "[" + parts.filter(Boolean).join(",") + "]";
+      return new Response(body, {
+        headers: {
+          "content-type": "application/json",
+          "cache-control": "private, max-age=86400",
+          "access-control-allow-origin": "*",
+        },
+      });
+    }
+
     const seq = int(rest[1], 1, 1e6);
     if (!seq) return respond({ error: "bad seq" }, 400);
-    if (!env.REPLAYS) return respond({ error: "no replay bucket bound" }, 503);
     const row = await db.prepare(`SELECT key, gz FROM replay_chunks WHERE session_id = ? AND seq = ?`)
       .bind(sid, seq).first();
     if (!row) return respond({ error: "not found" }, 404);
