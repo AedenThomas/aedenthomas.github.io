@@ -27,10 +27,9 @@ const MODEL_COLORS = [
 ];
 const MODEL_COLOR_REST = "#e6edfc";
 
-// Temporarily hidden: the day heatmap and the stacked per-day token chart.
-// Flip to true to bring both back; the numbers, summary line and model legend
-// stay visible either way.
-const SHOW_GRAPHS = false;
+// The day heatmap and the stacked per-day token chart. Flip to false to hide
+// both; the numbers, summary line and model legend stay visible either way.
+const SHOW_GRAPHS = true;
 
 const LEGEND_LIMIT = 6;
 const CHART_TICKS = 7;
@@ -293,6 +292,9 @@ function ClaudeCodeStats() {
               ? `${formatCount(hovered.messages)} messages · ${formatTokens(
                   hovered.tokens
                 )} tokens`
+              : hovered.tokens
+              ? // Bedrock days: real spend, but no session to count messages in.
+                `${formatTokens(hovered.tokens)} tokens · via api`
               : "nothing"}
           </span>
         ) : (

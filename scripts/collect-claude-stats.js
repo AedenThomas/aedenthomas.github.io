@@ -550,10 +550,15 @@ function buildOutput(state) {
     const dates = Object.keys(combined).sort();
     const today = localDateKey(new Date());
 
-    // Heatmap shading. Quantiles over active days spread the four levels evenly;
-    // a max-relative scale would flatten everything against outlier days.
+    // Heatmap shading, keyed off tokens rather than messages. Quantiles over
+    // active days spread the four levels evenly; a max-relative scale would
+    // flatten everything against outlier days.
+    //
+    // Tokens, because the Bedrock days have no messages to shade by — that work
+    // went through the API, not a chat session. Shading by messages left 160 real
+    // working days rendering as blank squares.
     const sorted = dates
-        .map((d) => combined[d].messages || 0)
+        .map((d) => combined[d].tokens || 0)
         .filter((n) => n > 0)
         .sort((a, b) => a - b);
     const quantile = (q) => sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))] || 0;
@@ -577,7 +582,7 @@ function buildOutput(state) {
                 messages: day.messages || 0,
                 sessions: day.sessions || 0,
                 tokens: day.tokens || 0,
-                level: levelFor(day.messages || 0),
+                level: levelFor(day.tokens || 0),
                 // Per-model split drives the stacked chart. Only models actually
                 // used that day are listed, which keeps the payload small.
                 modelTokens: Object.assign({}, day.modelTokens)
