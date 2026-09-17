@@ -34,7 +34,50 @@ const ContactLinks = ({
   const [isAiUsageOpen, setIsAiUsageOpen] = useState(false);
   const [hasOpenedAiUsage, setHasOpenedAiUsage] = useState(false);
   const [aiUsageHeight, setAiUsageHeight] = useState(0);
+  const [canHoverAiUsage, setCanHoverAiUsage] = useState(false);
   const aiUsageRef = useRef(null);
+  const aiUsageCloseTimer = useRef(null);
+  // A click pins the panel open so it survives the pointer leaving; hovering
+  // away again is what unpins it.
+  const aiUsagePinned = useRef(false);
+
+  // Hover opens it on a mouse, tap opens it on a touchscreen. Asking the device
+  // beats asking the viewport width: a small window on a laptop still has a
+  // mouse, and a tablet at desktop width does not.
+  useEffect(() => {
+    const query = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const update = () => setCanHoverAiUsage(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => () => clearTimeout(aiUsageCloseTimer.current), []);
+
+  const openAiUsage = useCallback(() => {
+    clearTimeout(aiUsageCloseTimer.current);
+    setHasOpenedAiUsage(true);
+    setIsAiUsageOpen(true);
+  }, []);
+
+  // Delayed, so the pointer can cross the gap between the button and the panel
+  // without the panel collapsing out from under it.
+  const closeAiUsageSoon = useCallback(() => {
+    clearTimeout(aiUsageCloseTimer.current);
+    aiUsageCloseTimer.current = setTimeout(() => {
+      if (aiUsagePinned.current) return;
+      setIsAiUsageOpen(false);
+    }, 180);
+  }, []);
+
+  const toggleAiUsage = useCallback(() => {
+    clearTimeout(aiUsageCloseTimer.current);
+    setHasOpenedAiUsage(true);
+    setIsAiUsageOpen((open) => {
+      aiUsagePinned.current = !open;
+      return !open;
+    });
+  }, []);
 
   // The panel animates height in plain CSS rather than via framer. Everything
   // below it (~60 layoutId nodes across the experience list) is part of framer's
@@ -798,19 +841,20 @@ const ContactLinks = ({
           </motion.button>
 
           <button
-            onClick={() => {
-              setHasOpenedAiUsage(true);
-              setIsAiUsageOpen((open) => !open);
-            }}
+            onClick={toggleAiUsage}
             aria-expanded={isAiUsageOpen}
             className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hover:underline flex items-center mb-2 md:mb-0 custom-cursor-clickable"
             onMouseEnter={() => {
               handleClickableHover(true);
-              // Warm the payload only — mounting the panel here would add an
-              // in-flow sibling and shift the sections below by 16px.
               prefetchClaudeStats().catch(() => {});
+              if (canHoverAiUsage) openAiUsage();
             }}
-            onMouseLeave={() => handleClickableHover(false)}
+            onMouseLeave={() => {
+              handleClickableHover(false);
+              if (canHoverAiUsage) closeAiUsageSoon();
+            }}
+            onFocus={() => canHoverAiUsage && openAiUsage()}
+            onBlur={() => canHoverAiUsage && closeAiUsageSoon()}
           >
             <svg
               className="w-4 h-4 mr-2"
@@ -834,6 +878,20 @@ const ContactLinks = ({
           style={{ height: isAiUsageOpen ? aiUsageHeight : 0 }}
           aria-hidden={!isAiUsageOpen}
           inert={!isAiUsageOpen ? "" : undefined}
+          // Hovering the panel itself keeps it open, so the pointer can travel
+          // from the button down into the stats without it collapsing.
+          onMouseEnter={() => canHoverAiUsage && openAiUsage()}
+          onMouseLeave={() => canHoverAiUsage && closeAiUsageSoon()}
+          // Unmount once collapsed. A mounted-but-zero-height sibling stops the
+          // links row's bottom margin collapsing into the section's, shifting
+          // everything below by 16px — which used to be avoided by never
+          // mounting before a click, but hover would now trigger it on a pass of
+          // the mouse. The payload is cached, so remounting costs no request.
+          onTransitionEnd={(event) => {
+            if (event.propertyName === "height" && !isAiUsageOpen) {
+              setHasOpenedAiUsage(false);
+            }
+          }}
         >
           <div ref={aiUsageRef} className="pt-4">
             <div className="pt-6 border-t border-gray-200 dark:border-zinc-800">
