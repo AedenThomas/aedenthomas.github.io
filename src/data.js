@@ -210,6 +210,20 @@ export const education = [
   },
 ];
 
+export const hackathons = [
+  {
+    title: "AI Interviewer",
+    event: "MoonHacks By Moon Corp",
+    logo: "/moonhacks.png",
+    eventUrl: "https://moonhacks.devpost.com/",
+    url: "https://devpost.com/software/ai-interviewer-2q6g93",
+    period: "May 2024",
+    awards: ["third place", "most innovative project"],
+    description:
+      "building an app that runs the first round of job interviews so nobody has to sit through twenty of them",
+  },
+];
+
 export const projects = [
   {
     icon: "💰",

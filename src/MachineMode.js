@@ -9,6 +9,7 @@ import {
   coursework,
   experience,
   notableInteractions,
+  hackathons,
 } from './data';
 
 const renderDescription = (text) => {
@@ -76,6 +77,14 @@ function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
       lines.push(`### ${interaction.company}`);
       lines.push(`*${interaction.period}*`);
       lines.push(`${interaction.description}\n`);
+    });
+    lines.push('## Hackathons');
+    hackathons.forEach(h => {
+      lines.push(`### ${h.title}`);
+      if (h.period) lines.push(`*${h.period}*`);
+      lines.push(`Won ${(h.awards || []).join(' and ')} at ${h.event} for ${h.description}`);
+      if (h.url) lines.push(`[View Submission](${h.url})`);
+      lines.push('');
     });
     lines.push('## Projects');
     projects.forEach(p => {
@@ -205,6 +214,26 @@ function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
                 >
                    {interaction.description.replace(/\*\*/g, '').replace(/\\n/g, ' ').replace(/•/g, ' ')}
                 </motion.p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Hackathons */}
+        <section>
+          <h2 className={`text-lg font-semibold mb-4 ${dimColor}`}>## Hackathons</h2>
+          <div className="space-y-6">
+            {hackathons.map((hackathon, index) => (
+              <div key={index} className="space-y-1">
+                <div className="flex items-baseline gap-2">
+                  <span className={dimColor}>###</span>
+                  <h3 className="font-bold text-lg inline-block">{hackathon.title}</h3>
+                </div>
+                {hackathon.period && <p className="text-sm">{hackathon.period}</p>}
+                <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  won {(hackathon.awards || []).join(' and ')} at {hackathon.event} for{' '}
+                  {hackathon.description}
+                </p>
               </div>
             ))}
           </div>
