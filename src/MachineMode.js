@@ -11,6 +11,7 @@ import {
   notableInteractions,
   hackathons,
 } from './data';
+import { buildLlmsText } from './llmsText';
 
 const renderDescription = (text) => {
   if (!text) return null;
@@ -52,54 +53,11 @@ function MachineMode({ email, linkedinUrl, githubUrl, isDarkMode }) {
   const textColor = isDarkMode ? 'text-gray-100' : 'text-gray-900';
   const dimColor = isDarkMode ? 'text-gray-500' : 'text-gray-500';
 
-  // Re-implement markdown generation for the copy button
-  const markdownContent = useMemo(() => {
-    const lines = [];
-    lines.push('# Aeden Geo Thomas');
-    lines.push('Software Engineer | Full-Stack Developer\n');
-    lines.push('## Contact');
-    lines.push(`- Email: ${email}`);
-    lines.push(`- LinkedIn: ${linkedinUrl}`);
-    lines.push(`- GitHub: ${githubUrl}`);
-    lines.push(`- Website: https://aeden.me\n`);
-    lines.push('## Experience');
-    experience.forEach(exp => {
-      lines.push(`### ${exp.company}`);
-      lines.push(`**${exp.position}** | ${exp.period}`);
-      lines.push(`${exp.location}`);
-      lines.push(`${exp.description}`);
-      exp.highlights.forEach(h => lines.push(`- ${h}`));
-      exp.highlights.forEach(h => lines.push(`- ${h}`));
-      lines.push('');
-    });
-    lines.push('## Professional Development');
-    notableInteractions.forEach(interaction => {
-      lines.push(`### ${interaction.company}`);
-      lines.push(`*${interaction.period}*`);
-      lines.push(`${interaction.description}\n`);
-    });
-    lines.push('## Hackathons');
-    hackathons.forEach(h => {
-      lines.push(`### ${h.title}`);
-      if (h.period) lines.push(`*${h.period}*`);
-      lines.push(`Won ${(h.awards || []).join(' and ')} at ${h.event} for ${h.description}`);
-      if (h.url) lines.push(`[View Submission](${h.url})`);
-      lines.push('');
-    });
-    lines.push('## Projects');
-    projects.forEach(p => {
-      lines.push(`### ${p.title} ${p.status === 'Live' ? '🟢' : '🔧'}`);
-      lines.push(`${p.description}`);
-      if (p.url) lines.push(`[View Project](${p.url})`);
-      lines.push(`Technologies: ${p.technologies.join(', ')}\n`);
-    });
-    lines.push('## Skills\n' + skills.join(' • ') + '\n');
-    lines.push('## Education');
-    education.forEach(e => {
-      lines.push(`### ${e.university}\n${e.degree} in ${e.branch}\n*${e.period}*\n`);
-    });
-    return lines.join('\n');
-  }, [email, linkedinUrl, githubUrl]);
+  // Same text that is published at /llms.txt (see src/llmsText.js)
+  const markdownContent = useMemo(
+    () => buildLlmsText({ email, linkedinUrl, githubUrl }),
+    [email, linkedinUrl, githubUrl]
+  );
 
   return (
     <motion.div

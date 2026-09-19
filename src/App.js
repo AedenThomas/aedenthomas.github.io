@@ -7,6 +7,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import useInView from "./useInView.js";
+import { contact } from "./llmsText";
 import "./App.css";
 import Privacy from "./BillifyPrivacy.js";
 import AIResume from "./AIResume.js";
@@ -165,9 +166,7 @@ function App() {
     setIsDarkMode((prev) => !prev);
   }, []);
 
-  const email = "hey@aeden.me";
-  const linkedinUrl = "https://www.linkedin.com/in/aedenthomas/";
-  const githubUrl = "https://github.com/AedenThomas/";
+  const { email, linkedinUrl, githubUrl } = contact;
 
   // Transition state
   const [isNavigating, setIsNavigating] = useState(false);

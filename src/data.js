@@ -287,18 +287,18 @@ export const projects = [
   //   technologies: ["React", "Node.js", "LLM API"],
   //   image: "/InsightX.webp",
   // },
-  {
-    icon: "🎙️",
-    title: "AI Interviewer",
-    description:
-      "won **3rd place** and **most innovative project** at MoonHacks by Moon Corp for building an AI-powered system that conducts fair, efficient, and personalized job interviews at scale.",
-    popupDescription:
-      "AI Interviewer is an end-to-end automated interviewing system. It generates customized interview questions, conducts voice-based conversations, analyzes candidate responses, provides feedback, and produces standardized evaluation scores for recruiters.",
-    status: "Live",
-    url: "https://ai-interviewer-beige.vercel.app/",
-    technologies: ["TypeScript", "React"],
-    image: "/InterviewPal.webp",
-  },
+  // {
+  //   icon: "🎙️",
+  //   title: "AI Interviewer",
+  //   description:
+  //     "won **3rd place** and **most innovative project** at MoonHacks by Moon Corp for building an AI-powered system that conducts fair, efficient, and personalized job interviews at scale.",
+  //   popupDescription:
+  //     "AI Interviewer is an end-to-end automated interviewing system. It generates customized interview questions, conducts voice-based conversations, analyzes candidate responses, provides feedback, and produces standardized evaluation scores for recruiters.",
+  //   status: "Live",
+  //   url: "https://ai-interviewer-beige.vercel.app/",
+  //   technologies: ["TypeScript", "React"],
+  //   image: "/InterviewPal.webp",
+  // },
   {
     icon: "📧",
     title: "Email Asterisk Decoder",
