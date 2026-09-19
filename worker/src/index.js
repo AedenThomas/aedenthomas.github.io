@@ -624,15 +624,76 @@ const DASH_HEADERS = {
 };
 
 /**
- * Optional gate on the dashboard and every read endpoint. Off until the
- * DASHBOARD_TOKEN secret exists. With it set, `?token=` once on the dashboard
- * URL stores an HttpOnly cookie and everything the page fetches rides on it.
+ * The value the `aeden_dash` cookie carries when the gate was passed with the
+ * password rather than the token: a hash of it, so the password itself is
+ * never what sits in the browser. Null when no password is configured.
  */
-function authorized(request, env, url) {
-  if (!env.DASHBOARD_TOKEN) return true;
-  if (url.searchParams.get("token") === env.DASHBOARD_TOKEN) return true;
-  return readCookie(request, "aeden_dash") === env.DASHBOARD_TOKEN;
+async function passSecret(env) {
+  if (!env.DASHBOARD_PASS) return null;
+  const src = `aeden_dash:${env.DASHBOARD_PASS}`;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(src));
+  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
+
+/** Constant-time-ish string compare, so the gate does not leak by timing. */
+function same(a, b) {
+  if (typeof a !== "string" || typeof b !== "string" || a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+/**
+ * Optional gate on the dashboard and every read endpoint. Off until either the
+ * DASHBOARD_TOKEN or the DASHBOARD_PASS secret exists.
+ *
+ * Two ways through, both ending in the same HttpOnly `aeden_dash` cookie that
+ * the page's own fetches ride on: `?token=` once on the dashboard URL, or the
+ * password form the dashboard serves in place of itself when locked.
+ */
+async function authorized(request, env, url) {
+  const secret = await passSecret(env);
+  if (!env.DASHBOARD_TOKEN && !secret) return true;
+  const cookie = readCookie(request, "aeden_dash");
+  if (env.DASHBOARD_TOKEN) {
+    if (same(url.searchParams.get("token") || "", env.DASHBOARD_TOKEN)) return true;
+    if (same(cookie || "", env.DASHBOARD_TOKEN)) return true;
+  }
+  if (secret && same(cookie || "", secret)) return true;
+  return false;
+}
+
+/** The cookie the gate hands out, given the value it should carry. */
+const dashCookie = (value) =>
+  `aeden_dash=${value}; Path=/; Max-Age=2592000; HttpOnly; Secure; SameSite=Strict`;
+
+/** The form served in place of the dashboard while it is locked. */
+const LOGIN_PAGE = (failed) => `<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin:0; min-height:100vh; display:grid; place-items:center;
+         background:#fafafa; color:#111;
+         font:15px/1.5 ui-sans-serif,system-ui,-apple-system,sans-serif; }
+  @media (prefers-color-scheme: dark) { body { background:#0d0d0d; color:#eee; } }
+  form { width:min(320px, calc(100vw - 48px)); display:grid; gap:10px; }
+  h1 { font-size:15px; font-weight:600; margin:0 0 6px; }
+  input { font:inherit; padding:9px 11px; border-radius:8px;
+          border:1px solid color-mix(in srgb, currentColor 22%, transparent);
+          background:transparent; color:inherit; }
+  button { font:inherit; font-weight:600; padding:9px 11px; border:0; border-radius:8px;
+           background:#111; color:#fff; cursor:pointer; }
+  @media (prefers-color-scheme: dark) { button { background:#eee; color:#111; } }
+  .err { color:#c0392b; font-size:13px; margin:0; }
+</style></head>
+<body><form method="POST" autocomplete="on">
+  <h1>Dashboard</h1>
+  ${failed ? '<p class="err">Wrong password.</p>' : ""}
+  <input name="pass" type="password" placeholder="Password" autocomplete="current-password" autofocus required>
+  <button type="submit">Sign in</button>
+</form></body></html>`;
 
 export default {
   async fetch(request, env, ctx) {
@@ -676,7 +737,7 @@ export default {
     // or spends provider quota.
     if (path === "/dashboard" || path.endsWith("/api/visitor/dashboard")) {
       const t = url.searchParams.get("token");
-      if (env.DASHBOARD_TOKEN && t === env.DASHBOARD_TOKEN) {
+      if (env.DASHBOARD_TOKEN && same(t || "", env.DASHBOARD_TOKEN)) {
         // Swap the token in the URL for a cookie and drop it from the address
         // bar, so the link that gets copied around does not carry it.
         url.searchParams.delete("token");
@@ -684,10 +745,34 @@ export default {
           status: 302,
           headers: {
             location: url.pathname + url.search,
-            "set-cookie": `aeden_dash=${t}; Path=/; Max-Age=2592000; HttpOnly; Secure; SameSite=Strict`,
+            "set-cookie": dashCookie(env.DASHBOARD_TOKEN),
             "cache-control": "no-store",
           },
         });
+      }
+
+      // The login form posts back here. A match sets the same cookie the token
+      // route sets, then redirects so a refresh does not re-post the password.
+      if (request.method === "POST") {
+        const secret = await passSecret(env);
+        if (!secret) return new Response(DASHBOARD, { headers: DASH_HEADERS });
+        const form = await request.formData();
+        if (!same(String(form.get("pass") || ""), env.DASHBOARD_PASS)) {
+          return new Response(LOGIN_PAGE(true), { status: 401, headers: DASH_HEADERS });
+        }
+        return new Response(null, {
+          status: 303,
+          headers: {
+            location: url.pathname,
+            "set-cookie": dashCookie(secret),
+            "cache-control": "no-store",
+          },
+        });
+      }
+
+      // Locked: the shell itself never goes out, only the form.
+      if (!(await authorized(request, env, url))) {
+        return new Response(LOGIN_PAGE(false), { status: 401, headers: DASH_HEADERS });
       }
       return new Response(DASHBOARD, { headers: DASH_HEADERS });
     }
@@ -702,7 +787,7 @@ export default {
     //   /replay/<sid>[/<seq>]         chunk index, or one chunk from R2
     const read = /\/api\/visitor\/(log|sessions|visitors|engagement|heat|replay|me)(?:\/([^/]+))?(?:\/([^/]+))?$/.exec(path);
     if (read) {
-      if (!authorized(request, env, url)) return respond({ error: "unauthorized" }, 401);
+      if (!(await authorized(request, env, url))) return respond({ error: "unauthorized" }, 401);
 
       // Who is asking, as far as the log is concerned. The dashboard uses this
       // for its "exclude my IP" toggle: it never sees the address, only the

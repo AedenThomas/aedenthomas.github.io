@@ -66,6 +66,7 @@ npx wrangler secret put MAIL_RELAY_URL    # Apps Script /exec URL — see Alerts
 npx wrangler secret put MAIL_RELAY_SECRET # shared secret, must match relay.gs
 npx wrangler secret put IPREGISTRY_KEY   # optional fallback provider
 npx wrangler secret put DASHBOARD_TOKEN  # optional; locks the dashboard + reads
+npx wrangler secret put DASHBOARD_PASS   # optional; password for the login form
 ```
 
 ### Local
@@ -396,12 +397,27 @@ Reads, public unless `DASHBOARD_TOKEN` is set. All take `since` (`24h`, `3d`,
 ### Locking it down
 
 Replays are recordings of real people, so the dashboard should not stay public
-for long. Set `DASHBOARD_TOKEN` and every read endpoint answers `401` without
-it. Open `https://aeden.me/dashboard?token=<the token>` once: the Worker swaps
-the token for an HttpOnly cookie (30 days) and redirects to the clean URL, and
-the page's own fetches ride on that cookie. The dashboard shows an unlock
-prompt when it meets a `401`. Without the secret, everything is public as it
-was.
+for long. Two ways to lock it, and either one is enough — with neither set,
+everything is public as it was. Both end in the same HttpOnly `aeden_dash`
+cookie (30 days) that the page's own fetches ride on, and with either set every
+read endpoint answers `401` without it.
+
+**A password.** Set `DASHBOARD_PASS`:
+
+```bash
+npx wrangler secret put DASHBOARD_PASS
+```
+
+`/dashboard` then serves a password form instead of the page itself, so the
+shell never goes out to anyone who has not signed in. The cookie carries a hash
+of the password, never the password. Changing the secret signs every browser
+out.
+
+**A token.** Set `DASHBOARD_TOKEN` and open
+`https://aeden.me/dashboard?token=<the token>` once: the Worker swaps the token
+for the cookie and redirects to the clean URL, so the link that gets copied
+around does not carry it. Handy as a bookmark-sized bypass alongside the
+password. The dashboard shows an unlock prompt when it meets a `401`.
 
 ## The dashboard
 

@@ -62,11 +62,6 @@ built a Chrome extension that 117+ people use to tailor resumes and generate cov
 [View Project](https://chromewebstore.google.com/detail/ai-resume-tailor/gckmlapghemhhedhmcigalmiilifkbpb)
 Technologies: Chrome Extension, JavaScript, C#, .NET API
 
-### AI Interviewer 🟢
-won 3rd place and most innovative project at MoonHacks by Moon Corp for building an AI-powered system that conducts fair, efficient, and personalized job interviews at scale.
-[View Project](https://ai-interviewer-beige.vercel.app/)
-Technologies: TypeScript, React
-
 ### Email Asterisk Decoder 📂
 Python script to predict and decode emails hidden behind asterisks for OSINT purposes.
 [View Project](https://github.com/AedenThomas/generateEmailAddress)
