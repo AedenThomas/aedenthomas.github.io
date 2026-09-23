@@ -693,6 +693,7 @@ export default {
                   v.visitor_id, v.session_id, v.browser, v.os, v.region, v.timezone, v.protocol, v.lang,
                   v.vw, v.vh, v.sw, v.sh, v.ref_host,
                   s.replay_chunks AS replay_chunks, s.page_views AS session_pages,
+                  s.source AS source, s.ref_host AS session_ref_host,
                   s.started_at AS session_started, s.last_seen_at AS session_last
            FROM visits v LEFT JOIN sessions s ON s.session_id = v.session_id
            ${where.length ? "WHERE " + where.join(" AND ") : ""}

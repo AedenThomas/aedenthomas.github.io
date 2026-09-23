@@ -1366,8 +1366,19 @@ function renderHeat(v) {
 const COLS = [
   ["seen_at", "time (utc)"], ["company", "company"], ["type", "type"], ["asn", "asn"],
   ["net", "network"], ["city", "city"], ["country", "country"], [null, "path"],
-  ["device", "device"], ["status", "status"], [null, "src"]
+  [null, "source"], ["device", "device"], ["status", "status"], [null, "mode"]
 ];
+/* A log row's source: the visit's own referrer, else the session's (the
+   tracker may report it before or after the lookup), plus the ?s= tag. */
+function logSource(r) {
+  return sourceOf({ source: r.source, ref_host: r.ref_host || r.session_ref_host, browser: r.browser });
+}
+function srcCell(r) {
+  const s = logSource(r);
+  return s.k === "direct"
+    ? '<span style="color:var(--dimmer)" title="' + esc(s.how) + '">direct</span>'
+    : '<span title="' + esc(s.how) + '">' + esc(trim(s.label, 18)) + "</span>";
+}
 function renderTable(v) {
   set("#thead", COLS.map(c => {
     if (!c[0]) return "<th><span style=\"padding:9px 12px;display:block\">" + c[1] + "</span></th>";
@@ -1391,13 +1402,14 @@ function renderTable(v) {
     "<td>" + esc(r.place) + "</td>" +
     "<td>" + esc(r.country || "??") + "</td>" +
     "<td>" + esc(trim(r.path || "/", 18)) + "</td>" +
+    "<td>" + srcCell(r) + "</td>" +
     "<td>" + esc(r.device || "—") + "</td>" +
     "<td>" + (r.sight ? '<span class="tag ok">greeted</span>'
       : '<span class="tag" title="' + esc(r.reason || "unclassified") + '">' +
         esc(reasonLabel(r.reason)) + "</span>") +
       (r.replay_chunks ? ' <span class="tag ok" title="' + plural(r.replay_chunks, "chunk") + ' in R2">▶ replay</span>' : "") + "</td>" +
     "<td>" + (r.test ? '<span class="tag">test</span>' : "live") + "</td></tr>").join("")
-    : '<tr><td colspan="11">' + emptyHtml(v) + "</td></tr>");
+    : '<tr><td colspan="12">' + emptyHtml(v) + "</td></tr>");
 
   const more = q1("#more");
   more.hidden = v.sorted.length <= S.rows;
@@ -1462,6 +1474,7 @@ function openDrawer(r, v) {
       row("coordinates", r.ll ? r.ll[0].toFixed(3) + ", " + r.ll[1].toFixed(3) +
         (r.exact ? "" : " <span style='color:var(--dimmer)'>(city)</span>") : "") +
       row("landed on", esc(r.path || "/")) +
+      row("source", srcCell(r) + (r.source ? " <span style='color:var(--dimmer)'>(?s=" + esc(r.source) + ")</span>" : "")) +
       row("referrer", r.referrer ? esc(trim(r.referrer, 44)) : "<span style='color:var(--dimmer)'>direct</span>") +
       row("device", esc(r.device || "—")) +
       row("visitor", r.visitor_id ? '<span class="mono">' + shortId(r.visitor_id) + "</span>" : "") +
@@ -1508,7 +1521,7 @@ function closeDrawer() {
 
 /* =========================================================== export === */
 const CSVCOLS = ["seen_at","company","domain","type","asn","net","country","city",
-                 "path","referrer","device","shown","reason","test","lat","lon"];
+                 "path","referrer","source","device","shown","reason","test","lat","lon"];
 function csvCell(x) {
   if (x == null) return "";
   const s = String(x);
@@ -1516,7 +1529,7 @@ function csvCell(x) {
 }
 function download(v) {
   const lines = [CSVCOLS.join(",")];
-  for (const r of v.sorted) lines.push(CSVCOLS.map(c => csvCell(r[c])).join(","));
+  for (const r of v.sorted) lines.push(CSVCOLS.map(c => csvCell(c === "source" ? logSource(r).label : r[c])).join(","));
   const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
