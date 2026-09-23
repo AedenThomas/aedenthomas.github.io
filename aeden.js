@@ -66,6 +66,19 @@
     }
     if (ls.get("aeden:notrack") === "1" || /(?:^|;\s*)aeden_notrack=1/.test(document.cookie)) return;
 
+    // ?s=<tag> marks where a link was placed (resume, email signature, …) for
+    // the places that send no referrer. Read once, then dropped from the
+    // address bar so the visitor only ever sees plain aeden.me.
+    var srcTag = null;
+    var sm = /[?&]s=([A-Za-z0-9_.-]{1,40})(?:&|$)/.exec(location.search);
+    if (sm) {
+      srcTag = sm[1].toLowerCase();
+      var rest = location.search.slice(1).split("&").filter(function (kv) { return kv.split("=")[0] !== "s"; }).join("&");
+      tryOr(function () {
+        history.replaceState(history.state, "", location.pathname + (rest ? "?" + rest : "") + location.hash);
+      }, null);
+    }
+
     var cfg = window.AEDEN_TRACK || {};
     var cid = ls.get("aeden:cid");
     if (!/^[a-f0-9]{32}$/.test(cid || "")) { cid = rid(); ls.set("aeden:cid", cid); }
@@ -144,6 +157,7 @@
       var v = vp();
       push({ t: "pv", id: page.id, p: page.path, title: page.title,
              ref: reason === "load" ? (document.referrer || null) : null,
+             src: reason === "load" ? srcTag : null,
              vw: v.vw, vh: v.vh, why: reason });
       customEvent("page_view", { path: page.path });
       measureScroll();
