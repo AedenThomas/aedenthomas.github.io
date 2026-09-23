@@ -22,8 +22,6 @@ import {
   handleCollect, handleReplay, handleRead,
 } from "./analytics.js";
 
-const DAY_MS = 86400e3;
-
 const TIMEOUT_MS = 2500;
 
 // Only these org types are plausible employers. `isp` means a home broadband
@@ -394,92 +392,18 @@ const json = (body, cookies = null) =>
   respond(body, 200, Array.isArray(cookies) ? cookies : [cookies]);
 
 /**
- * Ping a chat webhook. Shape is inferred from the host so you can point
- * ALERT_WEBHOOK at Discord, Slack, Telegram or ntfy without a code change.
- */
-async function notify(webhook, text) {
-  if (!webhook) return;
-  const opts = { method: "POST", signal: AbortSignal.timeout(4000) };
-  if (webhook.includes("api.telegram.org")) {
-    const sep = webhook.includes("?") ? "&" : "?";
-    return fetch(`${webhook}${sep}text=${encodeURIComponent(text)}`, {
-      signal: AbortSignal.timeout(4000),
-    });
-  }
-  if (webhook.includes("ntfy.sh")) {
-    return fetch(webhook, { ...opts, body: text });
-  }
-  const body = webhook.includes("slack.com") ? { text } : { content: text };
-  return fetch(webhook, {
-    ...opts,
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  });
-}
-
-/**
- * Send an alert email through the Google Apps Script relay.
+ * Log a lookup.
  *
- * Apps Script hands out a public /exec URL that runs as the Google account
- * that deployed it, so MailApp.sendEmail posts from that account's Gmail with
- * no API key, no sending domain and no DNS — which is what makes this the one
- * free way to get real email out of a Worker here. Cloudflare's own Email
- * Sending needs Workers Paid, and Email Routing is zone-level: enabling it
- * would rewrite aeden.me's MX and break SimpleLogin. See README.
+ * Every hit is written. Three rows per hit: the visit itself, the visitor
+ * (identity plus latest dimensions) and the session (company columns — the
+ * tracker fills in the rest). Runs inside ctx.waitUntil so the visitor never
+ * waits on it. Stores only the /24, never the full address.
  *
- * The URL carries no auth of its own — anyone who learns it could make the
- * account send mail — so every payload is signed with a shared secret that
- * relay.gs checks before it does anything.
- *
- * Both halves must be set or this is a no-op, same as ALERT_WEBHOOK.
- */
-async function mail(env, subject, text) {
-  if (!env.MAIL_RELAY_URL || !env.MAIL_RELAY_SECRET) return;
-  return fetch(env.MAIL_RELAY_URL, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    // script.google.com answers 302 to googleusercontent.com; Workers' fetch
-    // follows that on its own. Apps Script is slow (~1-2s) next to a webhook,
-    // but record() already runs in ctx.waitUntil so nobody is kept waiting.
-    signal: AbortSignal.timeout(8000),
-    body: JSON.stringify({ secret: env.MAIL_RELAY_SECRET, subject, text }),
-  });
-}
-
-/**
- * Fan one alert out to every channel that is configured. `head` is the whole
- * story in one line (and the email subject); `detail` is the supporting line.
- * The webhook gets them joined, exactly as it did when it was the only sink.
- * Channels are independent: either can be removed by clearing its secret, and
- * one failing never stops the other.
- */
-const alert = (env, head, detail) =>
-  Promise.all([
-    notify(env.ALERT_WEBHOOK, `${head}\n${detail}`).catch(() => {}),
-    mail(env, head, detail).catch(() => {}),
-  ]);
-
-const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
-const fmtDays = (ms) => {
-  const d = ms / DAY_MS;
-  return d < 1.5 ? "a day" : d < 60 ? `${Math.round(d)} days` : `${Math.round(d / 30)} months`;
-};
-
-/**
- * Log a lookup and decide whether to alert.
- *
- * Every hit is written. The once-per-day dedupe that used to live here now
- * guards only the webhook, so the log is a real visit log rather than a
- * "companies seen today" list. Three rows per hit: the visit itself, the
- * visitor (identity plus latest dimensions) and the session (company columns
- * — the tracker fills in the rest). Runs inside ctx.waitUntil so the visitor
- * never waits on it. Stores only the /24, never the full address.
- *
- * Alerts, each at most once per subject per UTC day:
- *   🆕  a company never seen before
- *   ↩️  a company — or an anonymous visitor — back after more than 24 hours,
- *       with days away and total visits
- *   👀  a company seen again within 24 hours (the original daily alert)
+ * Deliberately does not alert. At this point the visit is 1.2 seconds old and
+ * nothing is known about it beyond its network, which is not enough to tell a
+ * reader from a crawler — see the header of alerts.js for what the log had to
+ * say about that. The alert is sent from the collect handler instead, once the
+ * session has shown interaction.
  */
 async function record(env, answer, ip, request, isTest = false, vid = null) {
   const now = Date.now();
@@ -551,68 +475,6 @@ async function record(env, answer, ip, request, isTest = false, vid = null) {
     if (sid) stmts.push(sessionFromLookup(db, sid, vid, nowISO, c, answer, path, referrer));
     await runBatches(db, stmts);
   }
-
-  if (isTest || (!env.ALERT_WEBHOOK && !env.MAIL_RELAY_URL)) return;
-
-  // First caller for `key` wins. KV is best-effort: without it, alert anyway.
-  const once = async (key, ttl = 86400) => {
-    if (!env.VISITOR_CACHE) return true;
-    try {
-      if (await env.VISITOR_CACHE.get(key)) return false;
-      await env.VISITOR_CACHE.put(key, "1", { expirationTtl: ttl });
-    } catch (_) { /* fall through */ }
-    return true;
-  };
-
-  const where = [c.city, c.country].filter(Boolean).join(", ");
-  const dev = [c.device, c.browser, c.os].filter(Boolean).join(" · ");
-  const vidPrevMs = vidPrev ? Date.parse(vidPrev.last_seen_at) : NaN;
-  const vidBack = Number.isFinite(vidPrevMs) && now - vidPrevMs > DAY_MS;
-
-  // Every visit alerts, employer or not — deduped per *session* rather than per
-  // request, so one person reading four pages is one email, not four. Sessions
-  // lapse after 30 minutes idle, so the same person returning this evening is a
-  // new session and does alert again.
-  //
-  // With no session id (cookies blocked, tracker not loaded) fall back to the
-  // /24 for the day: coarse, but it stops a bot loop from emptying the relay's
-  // ~100/day Gmail quota in a minute.
-  if (!(await once(sid ? `vis:${sid}` : `net:${c.net}:${day}`, sid ? 21600 : 86400))) return;
-
-  if (answer.show) {
-    const prevMs = coPrev && coPrev.last ? Date.parse(coPrev.last) : NaN;
-    let head;
-    if (!Number.isFinite(prevMs)) head = `🆕 ${answer.company} visited aeden.me for the first time`;
-    else if (now - prevMs > DAY_MS) {
-      head = `↩️ ${answer.company} is back after ${fmtDays(now - prevMs)} — ${plural(Number(coPrev.n) + 1, "visit")} total`;
-    } else head = `👀 ${answer.company} just visited aeden.me`;
-    // Everything that identifies the visit goes in `head` so it survives as an
-    // email subject on its own; `detail` is the technical line under it.
-    if (where) head += ` — from ${where}`;
-    if (answer.domain) head += ` (${answer.domain})`;
-    await alert(
-      env,
-      head,
-      `${c.net} · AS${answer.asn || "?"} · ${answer.type || "?"}` +
-        (dev ? ` · ${dev}` : "") +
-        (path !== "/" ? ` · ${path}` : "") +
-        (vidBack ? `\nsame browser last here ${fmtDays(now - vidPrevMs)} ago · ${plural(Number(vidPrev.n) + 1, "visit")}` : "")
-    );
-    return;
-  }
-
-  // No employer resolved: still an alert, just a thinner one. The subject says
-  // which of the three this is so the inbox is skimmable without opening it.
-  const head = vidBack
-    ? `↩️ a returning visitor is back after ${fmtDays(now - vidPrevMs)} — ${plural(Number(vidPrev.n) + 1, "visit")} total`
-    : vidPrev
-      ? `👀 someone is back on aeden.me — ${plural(Number(vidPrev.n) + 1, "visit")} total`
-      : `👋 a new visitor is on aeden.me`;
-  await alert(
-    env,
-    head + (where ? ` · ${where}` : "") + (dev ? ` · ${dev}` : ""),
-    `${c.net} · ${answer.reason || "no employer"}` + (path !== "/" ? ` · ${path}` : "")
-  );
 }
 
 const DASH_HEADERS = {

@@ -17,6 +17,7 @@
  * very first request so the first batch and every later one agree.
  */
 import { parseUA } from "./ua.js";
+import { maybeAlertSession } from "./alerts.js";
 
 export const VID_RE = /^[a-f0-9]{32}$/;
 /** Chunks a single /bundle call will pull from R2 at once. */
@@ -81,6 +82,12 @@ export function refHost(ref) {
     const h = new URL(ref).hostname.replace(/^www\./, "");
     return h && h !== "aeden.me" ? h : null;
   } catch (_) { return null; }
+}
+
+/** A ?s= tag as the tracker forwards it: short, lowercase, slug characters only. */
+function srcTag(v) {
+  const t = String(v || "").toLowerCase().slice(0, 40);
+  return /^[a-z0-9][a-z0-9_.-]*$/.test(t) ? t : null;
 }
 
 export function firstLang(request) {
@@ -214,7 +221,18 @@ export async function handleCollect(request, env, ctx) {
   if (c.bot || isNoTrack(request) || !env.DB) return respond({ ok: true, skipped: true }, 200, [cookie]);
   if (!VID_RE.test(String(body.sid || ""))) return respond({ error: "bad sid" }, 400, [cookie]);
 
-  ctx.waitUntil(store(env, body, vid, c).catch(() => {}));
+  // A mouse move in this batch is the earliest proof of a human on the page,
+  // and it is decided here rather than from the stored totals because heat is
+  // aggregated into cells that carry no per-session trace.
+  const moved = Array.isArray(body.heat) && body.heat.some((h) => h && h.k === "m");
+
+  // The alert rides on the same background task: it needs the session totals
+  // this batch is about to add, so it has to run after store() has committed.
+  ctx.waitUntil(
+    store(env, body, vid, c)
+      .then(() => (c.test ? null : maybeAlertSession(env, body.sid, moved)))
+      .catch(() => {})
+  );
   return respond({ ok: true }, 200, [cookie]);
 }
 
@@ -231,7 +249,7 @@ async function store(env, body, vid, c) {
   const stmts = [];
 
   let pv = 0, clicks = 0, rage = 0, dead = 0, active = 0, visible = 0, hidden = 0, maxScroll = 0;
-  let landing = null, exit = null, landingRef = null, first = nowISO, last = nowISO;
+  let landing = null, exit = null, landingRef = null, landingSrc = null, first = nowISO, last = nowISO;
 
   for (const ev of events) {
     if (!ev || typeof ev !== "object") continue;
@@ -243,7 +261,7 @@ async function store(env, body, vid, c) {
 
     if (ev.t === "pv") {
       pv++;
-      if (!landing) { landing = path; landingRef = str(ev.ref, 500); }
+      if (!landing) { landing = path; landingRef = str(ev.ref, 500); landingSrc = srcTag(ev.src); }
       exit = path;
       if (!pvid) continue;
       stmts.push(db.prepare(
@@ -302,10 +320,10 @@ async function store(env, body, vid, c) {
   // The session row. Tallies add; dimensions from the client win over the
   // UA-only guess the lookup may have written first.
   stmts.push(db.prepare(
-    `INSERT INTO sessions (session_id, visitor_id, started_at, last_seen_at, landing_path, exit_path, referrer, ref_host,
+    `INSERT INTO sessions (session_id, visitor_id, started_at, last_seen_at, landing_path, exit_path, referrer, ref_host, source,
         net, country, city, region, timezone, protocol, lang, device, browser, os, vw, vh, sw, sh,
         page_views, events, clicks, rage_clicks, dead_clicks, max_scroll, active_ms, visible_ms, hidden_ms, test)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
      ON CONFLICT(session_id) DO UPDATE SET
        visitor_id   = COALESCE(sessions.visitor_id, excluded.visitor_id),
        started_at   = MIN(sessions.started_at, excluded.started_at),
@@ -314,6 +332,7 @@ async function store(env, body, vid, c) {
        exit_path    = COALESCE(excluded.exit_path, sessions.exit_path),
        referrer     = COALESCE(sessions.referrer, excluded.referrer),
        ref_host     = COALESCE(sessions.ref_host, excluded.ref_host),
+       source       = COALESCE(sessions.source, excluded.source),
        net = COALESCE(sessions.net, excluded.net), country = COALESCE(sessions.country, excluded.country),
        city = COALESCE(sessions.city, excluded.city), region = COALESCE(sessions.region, excluded.region),
        timezone = COALESCE(sessions.timezone, excluded.timezone), protocol = COALESCE(sessions.protocol, excluded.protocol),
@@ -331,7 +350,7 @@ async function store(env, body, vid, c) {
        hidden_ms   = sessions.hidden_ms + excluded.hidden_ms,
        test = MAX(sessions.test, excluded.test)`
   ).bind(
-    sid, vid, first, last, landing, exit, landingRef, refHost(landingRef),
+    sid, vid, first, last, landing, exit, landingRef, refHost(landingRef), landingSrc,
     c.net, c.country, c.city, c.region, c.timezone, c.protocol, c.lang, c.device, c.browser, c.os,
     c.vw, c.vh, c.sw, c.sh,
     pv, events.length, clicks, rage, dead, maxScroll, active, visible, hidden, c.test
@@ -544,7 +563,8 @@ export async function handleRead(kind, rest, url, env, sinceISO) {
     const tyW = where([since && "at >= ?", testWhere, notMine]);
     const b = since ? [since] : [];
     if (xnet) b.push(xnet);
-    const [pages, clicks, types, hourly] = await db.batch([
+    const sW = where([since && "started_at >= ?", testWhere, xnet && "(net IS NULL OR net != ?)"]);
+    const [pages, clicks, types, hourly, sources] = await db.batch([
       db.prepare(
         `SELECT path, COUNT(*) AS views,
                 COUNT(ended_at) AS ended,
@@ -565,8 +585,15 @@ export async function handleRead(kind, rest, url, env, sinceISO) {
       db.prepare(
         `SELECT substr(at, 1, 13) AS hour, COUNT(*) AS views FROM page_views ${pvW} GROUP BY hour ORDER BY hour`
       ).bind(...b),
+      // Raw ingredients only; the dashboard folds them into named sources.
+      db.prepare(
+        `SELECT source, ref_host, browser, COUNT(*) AS sessions, COUNT(DISTINCT visitor_id) AS visitors,
+                SUM(active_ms) AS active_ms, SUM(page_views) AS page_views, MAX(started_at) AS last_at
+         FROM sessions ${sW} GROUP BY source, ref_host, browser`
+      ).bind(...b),
     ]);
-    return respond({ since, pages: pages.results, clicks: clicks.results, types: types.results, hourly: hourly.results });
+    return respond({ since, pages: pages.results, clicks: clicks.results, types: types.results, hourly: hourly.results,
+                     sources: sources.results });
   }
 
   /* ---- heat ----------------------------------------------------------- */

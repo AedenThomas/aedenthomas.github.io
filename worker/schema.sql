@@ -103,6 +103,7 @@ CREATE TABLE IF NOT EXISTS sessions (
   exit_path     TEXT,
   referrer      TEXT,
   ref_host      TEXT,
+  source        TEXT,                        -- ?s= tag from the landing URL (resume, email, …)
   company       TEXT NOT NULL DEFAULT '',
   domain        TEXT,
   type          TEXT,

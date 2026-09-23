@@ -636,6 +636,11 @@ tr.on td{background:var(--hot-wash)}
       <div class="dbody" id="eclicks"></div>
     </aside>
   </div>
+  <div class="phead"><h2>sources</h2>
+    <div class="r"><span>referrer · in-app browser · hidden ?s= tag on your links</span></div></div>
+  <div class="tablewrap">
+    <table class="tight"><thead><tr id="srcthead"></tr></thead><tbody id="srctbody"></tbody></table>
+  </div>
 </main>
 
 <!-- =================================================================== -->
@@ -2006,7 +2011,8 @@ async function openVisitor(vid) {
           (s.company ? "<b>" + esc(trim(s.company, 22)) + "</b>" : "") +
           '<span class="ago">' + ago(t, NOW) + "</span></div>" +
         '<div class="m"><span>' + esc(placeOf(s)) + "</span><span>" + esc(devLine(s)) + "</span>" +
-          (s.ref_host ? "<span>from " + esc(s.ref_host) + "</span>" : "<span>direct</span>") +
+          (s.source ? "<span>tag " + esc(s.source) + "</span>" : "") +
+          (s.ref_host ? "<span>from " + esc(s.ref_host) + "</span>" : s.source ? "" : "<span>direct</span>") +
           (s.vw ? "<span>" + s.vw + "×" + s.vh + "</span>" : "") + "</div>" +
         (pages.length ? '<ol class="pages">' + pages.map(p =>
           '<li><b><button type="button" class="lnk" data-heat="' + esc(p.path) + '" title="heatmap for ' + esc(p.path) + '">' + esc(trim(p.path, 30)) + "</button></b>" +
@@ -2075,6 +2081,51 @@ function renderEngagement() {
   }).join("") : '<tr><td colspan="9"><div class="empty"><b>no page views in this window</b>the tracker has not reported yet</div></td></tr>');
   set("#ecount", plural(d.pages.length, "page"));
   renderClicks();
+  renderSources();
+}
+
+/* Where a session came from, most specific signal first: the ?s= tag on a
+   link you placed, then the referrer, then an in-app browser that sends none. */
+function sourceOf(r) {
+  if (r.source) return { k: "tag:" + r.source, label: r.source, how: "?s= tag" };
+  const h = (r.ref_host || "").toLowerCase();
+  const is = re => re.test(h);
+  if (is(/(^|\.)(linkedin\.com|lnkd\.in)$/) || r.browser === "LinkedIn app") return { k: "linkedin", label: "LinkedIn", how: h || "LinkedIn app" };
+  if (is(/^mail\.google\.com$/)) return { k: "gmail", label: "Gmail", how: h };
+  if (is(/(^|\.)(outlook\.(com|live\.com|office\.com|office365\.com)|safelinks\.protection\.outlook\.com|live\.com|office\.com)$/)) return { k: "outlook", label: "Outlook", how: h };
+  if (is(/(^|\.)google\.[a-z.]+$/) || is(/(^|\.)(bing\.com|duckduckgo\.com|search\.yahoo\.com|ecosia\.org|search\.brave\.com)$/)) return { k: "search", label: "search engine", how: h };
+  if (is(/(^|\.)(chatgpt\.com|openai\.com|claude\.ai|perplexity\.ai|gemini\.google\.com|copilot\.microsoft\.com)$/)) return { k: "ai", label: "AI assistant", how: h };
+  if (is(/(^|\.)github\.(com|io)$/)) return { k: "github", label: "GitHub", how: h };
+  if (is(/^(t\.co|x\.com|twitter\.com)$/) || r.browser === "X app") return { k: "x", label: "X", how: h || "X app" };
+  if (h) return { k: "host:" + h, label: h, how: "referrer" };
+  if (r.browser === "Slack") return { k: "slack", label: "Slack", how: "Slack in-app" };
+  if (/app$/.test(r.browser || "")) return { k: "app:" + r.browser, label: r.browser, how: "in-app browser" };
+  return { k: "direct", label: "direct / unknown", how: "no referrer: resume PDF, mail app, typed or bookmarked" };
+}
+function renderSources() {
+  const by = new Map();
+  for (const r of ENG.sources || []) {
+    const s = sourceOf(r);
+    const o = by.get(s.k) || { ...s, hows: new Set(), sessions: 0, visitors: 0, active: 0, pages: 0, last: "" };
+    o.hows.add(s.how); o.sessions += r.sessions; o.visitors += r.visitors;
+    o.active += r.active_ms || 0; o.pages += r.page_views || 0;
+    if ((r.last_at || "") > o.last) o.last = r.last_at;
+    by.set(s.k, o);
+  }
+  const rows = [...by.values()].sort((a, b) => b.sessions - a.sessions);
+  const total = sum(rows, r => r.sessions);
+  set("#srcthead", ["source", "sessions", "share", "visitors", "pages / session", "avg active", "last seen", "signal"]
+    .map(h => '<th><span style="padding:8px 10px;display:block">' + h + "</span></th>").join(""));
+  set("#srctbody", rows.length ? rows.map(r =>
+    "<tr>" +
+      '<td class="first co">' + esc(trim(r.label, 34)) + "</td>" +
+      "<td>" + r.sessions + "</td><td>" + pct(r.sessions, total) + "%</td>" +
+      "<td>" + r.visitors + "</td>" +
+      "<td>" + (r.pages / r.sessions).toFixed(1) + "</td>" +
+      "<td>" + fmtDur(r.active / r.sessions) + "</td>" +
+      "<td>" + (r.last ? ago(new Date(r.last), NOW) + " ago" : "—") + "</td>" +
+      '<td style="color:var(--dimmer)">' + esc(trim([...r.hows].join(", "), 60)) + "</td></tr>").join("")
+    : '<tr><td colspan="8"><div class="empty"><b>no sessions in this window</b>the tracker has not reported yet</div></td></tr>');
 }
 function renderClicks() {
   const list = ENG.clicks.filter(c => !S.epath || c.path === S.epath);

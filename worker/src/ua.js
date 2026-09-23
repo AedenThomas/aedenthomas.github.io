@@ -15,8 +15,23 @@
 const BOT =
   /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|pingdom|uptime|monitor|facebookexternalhit|linkedinbot|twitterbot|discordbot|telegrambot|whatsapp|skypeuripreview|preview|python-requests|python-urllib|go-http-client|okhttp|curl\/|wget\/|java\/|libwww|httpclient|scrapy|phantomjs|puppeteer|playwright|selenium/i;
 
+/**
+ * The AI crawlers and agent fetchers, which mostly post-date the list above
+ * and mostly do *not* say "bot". Two families, both unwanted here:
+ *
+ *   training / index crawlers  GPTBot, ClaudeBot, Google-Extended, Bytespider
+ *   user-triggered fetchers    ChatGPT-User, Claude-User, Perplexity-User —
+ *                              a person asked an assistant about the page,
+ *                              but nobody is actually on the site
+ *
+ * Kept separate from BOT only for readability; isBot() tests both, so a match
+ * is dropped at exactly the same place.
+ */
+const AI_AGENT =
+  /gptbot|oai-searchbot|chatgpt|claude-?(bot|user|web|searchbot)|anthropic-ai|perplexity|youbot|google-extended|googleother|amazonbot|applebot-extended|bytespider|meta-externalagent|meta-externalfetcher|cohere-ai|diffbot|duckassist|imagesift|timpibot|omgili|ccbot|petalbot|firecrawl|browserbase|node-fetch|axios|undici|got \(|aiohttp|httpx/i;
+
 export function isBot(ua) {
-  return !ua || BOT.test(ua);
+  return !ua || BOT.test(ua) || AI_AGENT.test(ua);
 }
 
 /** Coarse device bucket. Tablets first: iPadOS and most tablet UAs also say "Mobile". */
