@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-09-24T17:36:06.125Z",
+  "updatedAt": "2026-09-24T20:00:10.100Z",
   "firstSessionDate": "2026-02-05",
   "toolUse": {
-    "subagents": 635,
+    "subagents": 640,
     "skills": 118,
     "since": "2026-08-13",
     "days": 28,
@@ -17,7 +17,7 @@
       },
       {
         "name": "Plan",
-        "count": 55
+        "count": 60
       }
     ],
     "topSkills": [
@@ -60,19 +60,19 @@
       "from": null,
       "totals": {
         "sessions": 984,
-        "messages": 236519,
-        "toolCalls": 100814,
-        "tokens": 33374004823,
-        "subagents": 635,
+        "messages": 236911,
+        "toolCalls": 100936,
+        "tokens": 33597979738,
+        "subagents": 640,
         "skills": 118,
         "activeDays": 144,
         "currentStreak": 24,
         "longestStreak": 27,
         "peakHour": 11,
         "peakHourLabel": "11 AM",
-        "favoriteModel": "Opus 5"
+        "favoriteModel": "Opus 5.5"
       },
-      "mobyDickMultiple": 124529,
+      "mobyDickMultiple": 125365,
       "models": [
         {
           "id": "claude-opus-5",
@@ -80,7 +80,7 @@
           "tokens": 11563802072,
           "inputTokens": 11494610988,
           "outputTokens": 69191084,
-          "share": 0.3464912926491429
+          "share": 0.34418147049839143
         },
         {
           "id": "claude-opus-4-8",
@@ -88,7 +88,7 @@
           "tokens": 11428230522,
           "inputTokens": 11307110365,
           "outputTokens": 121120157,
-          "share": 0.3424291026087505
+          "share": 0.34014636032042245
         },
         {
           "id": "claude-sonnet-5",
@@ -96,7 +96,7 @@
           "tokens": 3855245149,
           "inputTokens": 3826982242,
           "outputTokens": 28262907,
-          "share": 0.11551640773849
+          "share": 0.11474633829365756
         },
         {
           "id": "claude-opus-4-6",
@@ -104,7 +104,15 @@
           "tokens": 1813954757,
           "inputTokens": 1810551084,
           "outputTokens": 3403673,
-          "share": 0.05435232500925081
+          "share": 0.05398999496830996
+        },
+        {
+          "id": "claude-opus-5-5",
+          "label": "Opus 5.5",
+          "tokens": 950555102,
+          "inputTokens": 942624643,
+          "outputTokens": 7930459,
+          "share": 0.028292031527267777
         },
         {
           "id": "claude-fable-5",
@@ -112,7 +120,7 @@
           "tokens": 875975322,
           "inputTokens": 868434936,
           "outputTokens": 7540386,
-          "share": 0.026247234236519125
+          "share": 0.026072261749990108
         },
         {
           "id": "claude-haiku-4-5-20251001",
@@ -120,7 +128,7 @@
           "tokens": 869449957,
           "inputTokens": 861027167,
           "outputTokens": 8422790,
-          "share": 0.02605171185211823
+          "share": 0.02587804278054952
         },
         {
           "id": "claude-sonnet-4-6",
@@ -128,15 +136,7 @@
           "tokens": 760223698,
           "inputTokens": 755930495,
           "outputTokens": 4293203,
-          "share": 0.02277891736493323
-        },
-        {
-          "id": "claude-opus-5-5",
-          "label": "Opus 5.5",
-          "tokens": 726580187,
-          "inputTokens": 720114637,
-          "outputTokens": 6465550,
-          "share": 0.021770842032696976
+          "share": 0.022627065791702098
         },
         {
           "id": "claude-fable-5-1",
@@ -144,7 +144,7 @@
           "tokens": 583313250,
           "inputTokens": 576233828,
           "outputTokens": 7079422,
-          "share": 0.017478071723595015
+          "share": 0.01736155728852532
         },
         {
           "id": "claude-opus-4-7",
@@ -152,7 +152,7 @@
           "tokens": 259719222,
           "inputTokens": 257262631,
           "outputTokens": 2456591,
-          "share": 0.007782081394709098
+          "share": 0.007730203542752074
         },
         {
           "id": "claude-sonnet-4-20250514",
@@ -160,7 +160,7 @@
           "tokens": 248810009,
           "inputTokens": 247060498,
           "outputTokens": 1749511,
-          "share": 0.007455203842618561
+          "share": 0.007405505061323399
         },
         {
           "id": "claude-sonnet-4-5-20250929",
@@ -168,7 +168,7 @@
           "tokens": 204402937,
           "inputTokens": 201792988,
           "outputTokens": 2609949,
-          "share": 0.006124615193293609
+          "share": 0.006083786542939548
         },
         {
           "id": "claude-opus-4-5-20251101",
@@ -176,7 +176,7 @@
           "tokens": 184297645,
           "inputTokens": 182908176,
           "outputTokens": 1389469,
-          "share": 0.005522191477391697
+          "share": 0.005485378776854122
         },
         {
           "id": "claude-3-sonnet-20240229",
@@ -184,7 +184,7 @@
           "tokens": 96,
           "inputTokens": 33,
           "outputTokens": 63,
-          "share": 2.876490265676498e-9
+          "share": 2.857314658459123e-9
         }
       ],
       "hourCounts": {
@@ -218,19 +218,19 @@
       "from": "2026-08-26",
       "totals": {
         "sessions": 192,
-        "messages": 58185,
-        "toolCalls": 21658,
-        "tokens": 24987873902,
-        "subagents": 434,
+        "messages": 58577,
+        "toolCalls": 21780,
+        "tokens": 25211848817,
+        "subagents": 439,
         "skills": 76,
         "activeDays": 27,
         "currentStreak": 24,
         "longestStreak": 24,
         "peakHour": 11,
         "peakHourLabel": "11 AM",
-        "favoriteModel": "Opus 5"
+        "favoriteModel": "Opus 5.5"
       },
-      "mobyDickMultiple": 93238,
+      "mobyDickMultiple": 94074,
       "models": [
         {
           "id": "claude-opus-4-8",
@@ -238,7 +238,7 @@
           "tokens": 11424671504,
           "inputTokens": 11307110365,
           "outputTokens": 121120157,
-          "share": 0.45720862642441873
+          "share": 0.4531469146481833
         },
         {
           "id": "claude-opus-5",
@@ -246,7 +246,7 @@
           "tokens": 7661257549,
           "inputTokens": 11494610988,
           "outputTokens": 69191084,
-          "share": 0.3065990159485638
+          "share": 0.303875277240046
         },
         {
           "id": "claude-opus-4-6",
@@ -254,7 +254,7 @@
           "tokens": 1251973707,
           "inputTokens": 1810551084,
           "outputTokens": 3403673,
-          "share": 0.05010325055705494
+          "share": 0.04965814748801014
         },
         {
           "id": "claude-sonnet-5",
@@ -262,7 +262,15 @@
           "tokens": 1074371705,
           "inputTokens": 3826982242,
           "outputTokens": 28262907,
-          "share": 0.04299572301403396
+          "share": 0.042613761204040146
+        },
+        {
+          "id": "claude-opus-5-5",
+          "label": "Opus 5.5",
+          "tokens": 950555102,
+          "inputTokens": 942624643,
+          "outputTokens": 7930459,
+          "share": 0.037702713073507484
         },
         {
           "id": "claude-fable-5",
@@ -270,15 +278,7 @@
           "tokens": 809096136,
           "inputTokens": 868434936,
           "outputTokens": 7540386,
-          "share": 0.032379550944317874
-        },
-        {
-          "id": "claude-opus-5-5",
-          "label": "Opus 5.5",
-          "tokens": 726580187,
-          "inputTokens": 720114637,
-          "outputTokens": 6465550,
-          "share": 0.02907731125303323
+          "share": 0.03209190019632506
         },
         {
           "id": "claude-haiku-4-5-20251001",
@@ -286,7 +286,7 @@
           "tokens": 661002133,
           "inputTokens": 861027167,
           "outputTokens": 8422790,
-          "share": 0.026452916146142955
+          "share": 0.02621791594094819
         },
         {
           "id": "claude-fable-5-1",
@@ -294,7 +294,7 @@
           "tokens": 583313250,
           "inputTokens": 576233828,
           "outputTokens": 7079422,
-          "share": 0.02334385279386704
+          "share": 0.023136472625786966
         },
         {
           "id": "claude-sonnet-4-6",
@@ -302,7 +302,7 @@
           "tokens": 437390955,
           "inputTokens": 755930495,
           "outputTokens": 4293203,
-          "share": 0.0175041284710898
+          "share": 0.01734862675779149
         },
         {
           "id": "claude-opus-4-7",
@@ -310,7 +310,7 @@
           "tokens": 257819668,
           "inputTokens": 257262631,
           "outputTokens": 2456591,
-          "share": 0.010317791301938835
+          "share": 0.010226130970060227
         },
         {
           "id": "claude-sonnet-4-5-20250929",
@@ -318,7 +318,7 @@
           "tokens": 100397108,
           "inputTokens": 201792988,
           "outputTokens": 2609949,
-          "share": 0.004017833145538818
+          "share": 0.003982139855301037
         }
       ],
       "hourCounts": {
@@ -352,10 +352,10 @@
       "from": "2026-09-18",
       "totals": {
         "sessions": 52,
-        "messages": 11399,
-        "toolCalls": 3261,
-        "tokens": 1965533324,
-        "subagents": 38,
+        "messages": 11791,
+        "toolCalls": 3383,
+        "tokens": 2189508239,
+        "subagents": 43,
         "skills": 15,
         "activeDays": 7,
         "currentStreak": 7,
@@ -364,7 +364,7 @@
         "peakHourLabel": "10 AM",
         "favoriteModel": "Opus 5.5"
       },
-      "mobyDickMultiple": 7334,
+      "mobyDickMultiple": 8169,
       "models": [
         {
           "id": "claude-opus-5",
@@ -372,15 +372,15 @@
           "tokens": 1116330587,
           "inputTokens": 1110649766,
           "outputTokens": 5680821,
-          "share": 0.567953019859357
+          "share": 0.509854481072816
         },
         {
           "id": "claude-opus-5-5",
           "label": "Opus 5.5",
-          "tokens": 726580187,
-          "inputTokens": 720114637,
-          "outputTokens": 6465550,
-          "share": 0.3696605792067456
+          "tokens": 950555102,
+          "inputTokens": 942624643,
+          "outputTokens": 7930459,
+          "share": 0.43414091121855786
         },
         {
           "id": "claude-sonnet-5",
@@ -388,7 +388,7 @@
           "tokens": 97104484,
           "inputTokens": 96440883,
           "outputTokens": 663601,
-          "share": 0.04940363147971741
+          "share": 0.04434990573241684
         },
         {
           "id": "claude-fable-5-1",
@@ -396,7 +396,7 @@
           "tokens": 23097001,
           "inputTokens": 22492869,
           "outputTokens": 604132,
-          "share": 0.011751009620633631
+          "share": 0.010548944547725906
         },
         {
           "id": "claude-opus-4-7",
@@ -404,7 +404,7 @@
           "tokens": 2421065,
           "inputTokens": 2346340,
           "outputTokens": 74725,
-          "share": 0.0012317598335463277
+          "share": 0.001105757428483465
         }
       ],
       "hourCounts": {
@@ -4417,12 +4417,12 @@
     },
     {
       "date": "2026-09-24",
-      "messages": 1809,
+      "messages": 2201,
       "sessions": 9,
-      "tokens": 433222026,
+      "tokens": 657196941,
       "level": 4,
       "modelTokens": {
-        "claude-opus-5-5": 433222026
+        "claude-opus-5-5": 657196941
       }
     }
   ]
