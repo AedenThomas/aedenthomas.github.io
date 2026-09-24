@@ -238,12 +238,14 @@ function ClaudeCodeStats() {
 
   const t = data.windows.all.totals;
   const tools = data.toolUse;
+  // Favorite model reflects recent use, not lifetime totals.
+  const favoriteModel = data.windows.d7?.totals?.favoriteModel;
 
   const summary = [
     `${t.currentStreak} day streak`,
     `longest was ${t.longestStreak}`,
     `mostly around ${lowerHour(t.peakHourLabel)}`,
-    t.favoriteModel ? `${t.favoriteModel.toLowerCase()} is my favorite model` : null,
+    favoriteModel ? `${favoriteModel.toLowerCase()} is my favorite model` : null,
   ]
     .filter(Boolean)
     .join(" · ");

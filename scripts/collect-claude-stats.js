@@ -86,6 +86,7 @@ function emptyDay() {
         tokens: 0,
         modelTokens: {}, // model -> input + output
         modelIo: {}, // model -> {input, output}; scanned days only, see legacy.modelUsage
+        modelFresh: {}, // model -> uncached input + output; only used to pick the favorite
         hourCounts: {}
     };
 }
@@ -116,6 +117,10 @@ function mergeDay(into, from) {
             input: Math.max(prev.input || 0, io.input || 0),
             output: Math.max(prev.output || 0, io.output || 0)
         };
+    }
+    if (!into.modelFresh) into.modelFresh = {};
+    for (const [model, n] of Object.entries(from.modelFresh || {})) {
+        into.modelFresh[model] = Math.max(into.modelFresh[model] || 0, n);
     }
     for (const [hour, n] of Object.entries(from.hourCounts || {})) {
         into.hourCounts[hour] = Math.max(into.hourCounts[hour] || 0, n);
@@ -382,6 +387,11 @@ async function scanTranscripts() {
                     io.input += input;
                     io.output += output;
                     day.modelIo[message.model] = io;
+                    // The Claude app ranks models without cache reads/writes, which
+                    // otherwise swamp the favorite toward long-context sessions.
+                    if (!day.modelFresh) day.modelFresh = {};
+                    day.modelFresh[message.model] =
+                        (day.modelFresh[message.model] || 0) + (usage.input_tokens || 0) + output;
                 }
             }
 
@@ -437,6 +447,7 @@ function computeWindow(combined, legacy, today, from) {
     let skills = 0;
     const modelTokens = {};
     const modelIo = {};
+    const modelFresh = {};
 
     const addIo = (model, input, output) => {
         const io = modelIo[model] || { input: 0, output: 0 };
@@ -454,6 +465,7 @@ function computeWindow(combined, legacy, today, from) {
         subagents += day.subagents || 0;
         skills += day.skills || 0;
         addInto(modelTokens, day.modelTokens);
+        addInto(modelFresh, day.modelFresh);
     }
 
     // Same split as hourCounts: the legacy bucket is lifetime-through-`through`
@@ -520,6 +532,11 @@ function computeWindow(combined, legacy, today, from) {
         }))
         .sort((a, b) => b.tokens - a.tokens);
 
+    // Favorite follows the Claude app: most uncached input + output. Falls back
+    // to the token ranking when the range has no fresh counts (legacy-only days).
+    const freshTop = Object.entries(modelFresh).sort((a, b) => b[1] - a[1])[0];
+    const favoriteModel = freshTop ? modelLabel(freshTop[0]) : models.length ? models[0].label : null;
+
     return {
         from,
         totals: {
@@ -534,7 +551,7 @@ function computeWindow(combined, legacy, today, from) {
             longestStreak,
             peakHour,
             peakHourLabel: formatHour(peakHour),
-            favoriteModel: models.length ? models[0].label : null
+            favoriteModel
         },
         mobyDickMultiple: Math.floor(tokens / MOBY_DICK_TOKENS),
         models,

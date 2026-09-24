@@ -36,10 +36,14 @@ const ContactLinks = ({
   const [aiUsageHeight, setAiUsageHeight] = useState(0);
   const [canHoverAiUsage, setCanHoverAiUsage] = useState(false);
   const aiUsageRef = useRef(null);
-  const aiUsageCloseTimer = useRef(null);
-  // A click pins the panel open so it survives the pointer leaving; hovering
-  // away again is what unpins it.
-  const aiUsagePinned = useRef(false);
+  // Hover opens the panel and it stays open: collapsing when the pointer
+  // drifted off left people unsure whether to hover or click. Only a click (or
+  // Escape) closes it. After a click-close, hover stays inert until the pointer
+  // leaves, so the panel doesn't spring straight back open under the cursor.
+  const aiUsageHoverSuppressed = useRef(false);
+  // When hover opened it. A click right after that is someone who meant to
+  // open it by clicking, so it must not close it again.
+  const aiUsageHoverOpenedAt = useRef(0);
 
   // Hover opens it on a mouse, tap opens it on a touchscreen. Asking the device
   // beats asking the viewport width: a small window on a laptop still has a
@@ -52,41 +56,40 @@ const ContactLinks = ({
     return () => query.removeEventListener("change", update);
   }, []);
 
-  useEffect(() => () => clearTimeout(aiUsageCloseTimer.current), []);
-
   // Mount the content first, then open on the next frame. Opening in the same
   // tick as the mount means the element's first rendered frame already carries
   // the full height — there is no 0 to transition from, so it snaps open. This
   // only showed up from the second hover onwards, once a height had been
   // measured and kept.
   const openAiUsage = useCallback(() => {
-    clearTimeout(aiUsageCloseTimer.current);
     setHasOpenedAiUsage(true);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => setIsAiUsageOpen(true));
     });
   }, []);
 
-  // Delayed, so the pointer can cross the gap between the button and the panel
-  // without the panel collapsing out from under it.
-  const closeAiUsageSoon = useCallback(() => {
-    clearTimeout(aiUsageCloseTimer.current);
-    aiUsageCloseTimer.current = setTimeout(() => {
-      if (aiUsagePinned.current) return;
-      setIsAiUsageOpen(false);
-    }, 180);
-  }, []);
+  const hoverOpenAiUsage = useCallback(() => {
+    if (isAiUsageOpen || aiUsageHoverSuppressed.current) return;
+    aiUsageHoverOpenedAt.current = Date.now();
+    openAiUsage();
+  }, [isAiUsageOpen, openAiUsage]);
 
   const toggleAiUsage = useCallback(() => {
-    clearTimeout(aiUsageCloseTimer.current);
     if (isAiUsageOpen) {
-      aiUsagePinned.current = false;
+      if (Date.now() - aiUsageHoverOpenedAt.current < 700) return;
+      aiUsageHoverSuppressed.current = true;
       setIsAiUsageOpen(false);
       return;
     }
-    aiUsagePinned.current = true;
     openAiUsage();
   }, [isAiUsageOpen, openAiUsage]);
+
+  useEffect(() => {
+    if (!isAiUsageOpen) return undefined;
+    const onKey = (e) => e.key === "Escape" && setIsAiUsageOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isAiUsageOpen]);
 
   // The panel animates height in plain CSS rather than via framer. Everything
   // below it (~60 layoutId nodes across the experience list) is part of framer's
@@ -856,14 +859,12 @@ const ContactLinks = ({
             onMouseEnter={() => {
               handleClickableHover(true);
               prefetchClaudeStats().catch(() => {});
-              if (canHoverAiUsage) openAiUsage();
+              if (canHoverAiUsage) hoverOpenAiUsage();
             }}
             onMouseLeave={() => {
               handleClickableHover(false);
-              if (canHoverAiUsage) closeAiUsageSoon();
+              aiUsageHoverSuppressed.current = false;
             }}
-            onFocus={() => canHoverAiUsage && openAiUsage()}
-            onBlur={() => canHoverAiUsage && closeAiUsageSoon()}
           >
             {/* Claude mark. It paints with currentColor, so it takes the
                 button's own light/dark text colour — no second asset. */}
@@ -878,6 +879,14 @@ const ContactLinks = ({
               <path d="M4.709 15.955l4.72-2.647.08-.23-.08-.128H9.2l-.79-.048-2.698-.073-2.339-.097-2.266-.122-.571-.121L0 11.784l.055-.352.48-.321.686.06 1.52.103 2.278.158 1.652.097 2.449.255h.389l.055-.157-.134-.098-.103-.097-2.358-1.596-2.552-1.688-1.336-.972-.724-.491-.364-.462-.158-1.008.656-.722.881.06.225.061.893.686 1.908 1.476 2.491 1.833.365.304.145-.103.019-.073-.164-.274-1.355-2.446-1.446-2.49-.644-1.032-.17-.619a2.97 2.97 0 01-.104-.729L6.283.134 6.696 0l.996.134.42.364.62 1.414 1.002 2.229 1.555 3.03.456.898.243.832.091.255h.158V9.01l.128-1.706.237-2.095.23-2.695.08-.76.376-.91.747-.492.584.28.48.685-.067.444-.286 1.851-.559 2.903-.364 1.942h.212l.243-.242.985-1.306 1.652-2.064.73-.82.85-.904.547-.431h1.033l.76 1.129-.34 1.166-1.064 1.347-.881 1.142-1.264 1.7-.79 1.36.073.11.188-.02 2.856-.606 1.543-.28 1.841-.315.833.388.091.395-.328.807-1.969.486-2.309.462-3.439.813-.042.03.049.061 1.549.146.662.036h1.622l3.02.225.79.522.474.638-.079.485-1.215.62-1.64-.389-3.829-.91-1.312-.329h-.182v.11l1.093 1.068 2.006 1.81 2.509 2.33.127.578-.322.455-.34-.049-2.205-1.657-.851-.747-1.926-1.62h-.128v.17l.444.649 2.345 3.521.122 1.08-.17.353-.608.213-.668-.122-1.374-1.925-1.415-2.167-1.143-1.943-.14.08-.674 7.254-.316.37-.729.28-.607-.461-.322-.747.322-1.476.389-1.924.315-1.53.286-1.9.17-.632-.012-.042-.14.018-1.434 1.967-2.18 2.945-1.726 1.845-.414.164-.717-.37.067-.662.401-.589 2.388-3.036 1.44-1.882.93-1.086-.006-.158h-.055L4.132 18.56l-1.13.146-.487-.456.061-.746.231-.243 1.908-1.312-.006.006z" />
             </svg>
             ai usage
+            <svg
+              className={`w-3 h-3 ml-1 transition-transform duration-300 ${isAiUsageOpen ? "rotate-180" : ""}`}
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+            </svg>
           </button>
         </div>
       </div>
@@ -893,10 +902,6 @@ const ContactLinks = ({
         style={{ height: isAiUsageOpen ? aiUsageHeight : 0 }}
         aria-hidden={!isAiUsageOpen}
         inert={!isAiUsageOpen ? "" : undefined}
-        // Hovering the panel itself keeps it open, so the pointer can travel
-        // from the button down into the stats without it collapsing.
-        onMouseEnter={() => canHoverAiUsage && openAiUsage()}
-        onMouseLeave={() => canHoverAiUsage && closeAiUsageSoon()}
       >
         {hasOpenedAiUsage && (
           <div ref={aiUsageRef} className="pt-4">
