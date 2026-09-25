@@ -72,6 +72,20 @@ export const notableInteractions = [
 ];
 
 export const experience = [
+  // {
+  //   company: "Prezly",
+  //   position: "Product Engineer",
+  //   period: "Nov 2026 - Present",
+  //   url: "https://www.prezly.com",
+  //   logo: "/prezly.jpg",
+  //   location: "Remote, Belgium",
+  //   highlights: [
+  //     "joined as a product engineer at a small, bootstrapped and profitable PR SaaS company, taking features all the way from idea to production instead of just closing tickets.",
+  //     "work directly with product and design on a php, symfony, and postgres backend with a react and next.js frontend, with async-first workflows and no jira or sprints.",
+  //     "make product and technical tradeoffs by looking at usage data, sometimes killing a feature after a quick prototype rather than spending weeks building the wrong thing.",
+  //     "lean heavily on ai for coding, debugging, exploring the codebase, prototyping, and reviewing ideas to ship faster without sacrificing quality.",
+  //   ],
+  // },
   {
     company: "Shoutt",
     position: "Full-Stack Engineer",

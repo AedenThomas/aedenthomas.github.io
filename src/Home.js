@@ -1056,11 +1056,11 @@ function Home({
                   )}
                   <div className="w-full">
                     <div className="flex items-center gap-2 mb-1">
-                      <motion.h3 
+                      <motion.h3
                         layoutId={`exp-company-${index}`}
                         className="text-base md:text-lg font-semibold text-gray-900 dark:text-gray-100"
                       >
-                        {exp.company}
+                        {exp.position}
                       </motion.h3>
                       {exp.url && (
                         <a
@@ -1085,11 +1085,11 @@ function Home({
                         </a>
                       )}
                     </div>
-                    <motion.p 
+                    <motion.p
                       layoutId={`exp-pos-${index}`}
                       className="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300"
                     >
-                      {exp.position}
+                      {exp.company}
                     </motion.p>
                     <div className="flex justify-between text-xs md:text-sm text-gray-500 dark:text-gray-400">
                       <motion.span layoutId={`exp-location-${index}`}>{exp.location}</motion.span>
