@@ -22,6 +22,9 @@ const ContactLinks = ({
   handleClickableHover,
   isDarkMode,
   isQuickMessageAnimating,
+  // Visitors from India don't get the GitHub stats hover or the AI usage panel.
+  // Starts true in Home until the geo lookup says otherwise, so nothing flashes.
+  hideStatsExtras = false,
 }) => {
   const [adoContributionData, setAdoContributionData] = useState(null); // <-- NEW STATE FOR ADO
   const [githubStatsData, setGithubStatsData] = useState(null); // <-- STATE FOR GITHUB LINE STATS
@@ -532,7 +535,7 @@ const ContactLinks = ({
   }, []);
 
   const handleGithubClick = (e) => {
-    if (isMobile) {
+    if (isMobile && !hideStatsExtras) {
       if (!githubTapped) {
         e.preventDefault();
         setGithubTapped(true);
@@ -745,7 +748,7 @@ const ContactLinks = ({
               // or helping reset on mobile if they manage to "leave")
               if (isMobile) setGithubTapped(false);
             }}
-            data-tooltip-id="github-tooltip"
+            data-tooltip-id={hideStatsExtras ? undefined : "github-tooltip"}
           >
             <svg
               className="w-4 h-4 mr-2"
@@ -760,8 +763,9 @@ const ContactLinks = ({
               ></path>
             </svg>
             <motion.span layoutId="contact-github">github</motion.span>
-            {/* Always show the info icon now, not just on mobile */}
-            <InformationCircleIcon className="w-4 h-4 ml-1 text-gray-400 animate-pulse" />
+            {!hideStatsExtras && (
+              <InformationCircleIcon className="w-4 h-4 ml-1 text-gray-400 animate-pulse" />
+            )}
           </a>
           {/* <a
             href="https://x.com/realaeden"
@@ -781,6 +785,7 @@ const ContactLinks = ({
             </svg>
             x
           </a> */}
+          {!hideStatsExtras && (
           <Tooltip
             id="github-tooltip"
             place="bottom"
@@ -795,6 +800,7 @@ const ContactLinks = ({
               {formattedSummary}
             </div>
           </Tooltip>
+          )}
 
           <button
             data-cal-namespace="15min"
@@ -852,6 +858,7 @@ const ContactLinks = ({
             quick message
           </motion.button>
 
+          {!hideStatsExtras && (
           <button
             onClick={toggleAiUsage}
             aria-expanded={isAiUsageOpen}
@@ -888,6 +895,7 @@ const ContactLinks = ({
               <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
             </svg>
           </button>
+          )}
         </div>
       </div>
 
@@ -903,7 +911,7 @@ const ContactLinks = ({
         aria-hidden={!isAiUsageOpen}
         inert={!isAiUsageOpen ? "" : undefined}
       >
-        {hasOpenedAiUsage && (
+        {hasOpenedAiUsage && !hideStatsExtras && (
           <div ref={aiUsageRef} className="pt-4">
             <div className="pt-6 border-t border-gray-200 dark:border-zinc-800">
               <ClaudeCodeStats />

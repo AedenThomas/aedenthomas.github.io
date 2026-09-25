@@ -205,9 +205,23 @@ function Home({
   useEffect(() => {
     const fetchUserLocation = async () => {
       try {
-        const response = await fetch('https://ip-api.com/json/?fields=countryCode');
-        const data = await response.json();
-        setIsFromIndia(data.countryCode === 'IN');
+        // Cloudflare fronts the site and answers /cdn-cgi/trace on our own
+        // domain with the visitor's country (loc=XX). Being first-party, ad
+        // blockers leave it alone, unlike third-party geo APIs. localhost has
+        // no Cloudflare in front, so dev falls back to country.is.
+        const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+        let country;
+        if (isLocal) {
+          const response = await fetch('https://api.country.is/');
+          if (!response.ok) throw new Error(`geo lookup ${response.status}`);
+          country = (await response.json()).country;
+        } else {
+          const response = await fetch('/cdn-cgi/trace');
+          if (!response.ok) throw new Error(`geo lookup ${response.status}`);
+          country = (await response.text()).match(/^loc=(\w+)$/m)?.[1];
+        }
+        if (!country) throw new Error('geo lookup returned no country');
+        setIsFromIndia(country === 'IN');
       } catch (error) {
         console.warn('Could not fetch user location, defaulting to India');
         setIsFromIndia(true); // Default to India on error
@@ -990,6 +1004,7 @@ function Home({
             handleClickableHover={handleClickableHover}
             isDarkMode={isDarkMode}
             isQuickMessageAnimating={isQuickMessageAnimating}
+            hideStatsExtras={isFromIndia}
           />
         </div>
 
