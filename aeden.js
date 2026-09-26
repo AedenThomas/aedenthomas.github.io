@@ -79,14 +79,6 @@
       }, null);
     }
 
-    // www.aeden.me (the resume's link) hands its tag over in a cookie instead,
-    // see worker/src/index.js. Expired on read so a later visit isn't tagged.
-    var cm = /(?:^|;\s*)aeden_src=([A-Za-z0-9_.-]{1,40})/.exec(document.cookie);
-    if (cm) {
-      document.cookie = "aeden_src=; Domain=aeden.me; Path=/; Max-Age=0; Secure; SameSite=Lax";
-      if (!srcTag) srcTag = cm[1].toLowerCase();
-    }
-
     var cfg = window.AEDEN_TRACK || {};
     var cid = ls.get("aeden:cid");
     if (!/^[a-f0-9]{32}$/.test(cid || "")) { cid = rid(); ls.set("aeden:cid", cid); }
